@@ -1,224 +1,123 @@
-/**
- * GAME.JS - CONTROLADOR PRINCIPAL
- * 
- * Responsabilidades:
- * - Estado global do jogo (initialized, inCombat, gameEnded)
- * - Sistema de histórico unificado
- * - Inicialização e finalização do jogo
- * - Gerenciamento de eventos principais
- * - Coordenação entre módulos
- * 
- * ARQUIVOS E SUAS FUNÇÕES:
- * 
- * player.js - ESTADO E LÓGICA DO JOGADOR
- * - Objeto player com todos os stats
- * - Sistema de XP e level up
- * - Verificações de morte/game over
- * - Reset do jogador
- * 
- * ui.js - INTERFACE E ATUALIZAÇÕES VISUAIS
- * - Atualização de todas as barras de status
- * - Rendering dos stats do jogador
- * - Rendering dos stats do inimigo
- * - Animações de interface
- * 
- * rooms.js - SISTEMA DE EXPLORAÇÃO
- * - Lógica de exploração de salas
- * - Eventos aleatórios (fontes, armadilhas, salas vazias)
- * - Sistema de subida de andar
- * - Controle de progresso por salas
- * 
- * enemy.js - CRIAÇÃO E LÓGICA DE INIMIGOS
- * - Objeto inimigo e suas propriedades
- * - Criação de inimigos escalados por andar
- * - Remoção de inimigos (morte/fuga)
- * - Stats balanceados por dificuldade
- * 
- * combat.js - SISTEMA DE COMBATE COMPLETO
- * - Inicialização do combate
- * - Ações do jogador (atacar, curar, fugir)
- * - Ações do inimigo
- * - Finalização do combate
- * - Configuração dos botões de combate
- */
-
-// Estado global do jogo
-const gameState = {
-    initialized: false,
-    inCombat: false,
-    gameEnded: false,
-    historyLog: []
-};
-
-// Sistema de histórico unificado
-export function addToHistory(message) {
-    if (typeof message !== 'string' || message.trim() === '') return;
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Torre da Redenção - RPG text-based de exploração e combate">
+    <meta name="theme-color" content="#FFD700">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     
-    gameState.historyLog.push(sanitizeInput(message));
-    updateHistoryDisplay();
-}
+    <title>Torre da Redenção</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- PWA Icons -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiBmaWxsPSIjMjIyMjIyIi8+Cjx0ZXh0IHg9Ijk2IiB5PSIxMDAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI2MCIgZmlsbD0iI0ZGRDcwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+8J+PsDwvdGV4dD4KPC9zdmc+">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiBmaWxsPSIjMjIyMjIyIi8+Cjx0ZXh0IHg9Ijk2IiB5PSIxMDAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI2MCIgZmlsbD0iI0ZGRDcwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+8J+PsDwvdGV4dD4KPC9zdmc+">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Título do Jogo -->
+        <h1 id="game-title">🏰 Torre da Redenção</h1>
+        
+        <!-- Painel de Histórico -->
+        <div id="history-panel" role="log" aria-live="polite" aria-label="Histórico do jogo">
+            <!-- Histórico será preenchido pelo JavaScript -->
+        </div>
+        
+        <!-- Painel de Status do Jogador -->
+        <div class="status-panel" aria-label="Status do jogador">
+            <!-- Barra de XP -->
+            <div id="xp-bar" aria-label="Experiência">
+                <div class="bar-container">
+                    <div class="bar-fill" style="width: 0%; background-color: #4caf50;"></div>
+                </div>
+                XP: 0/100
+            </div>
+            
+            <!-- Level -->
+            <div id="level">Level: 1</div>
+            
+            <!-- Barras de Status Principais -->
+            <div id="health-bar" aria-label="Pontos de Vida">
+                <div class="bar-container">
+                    <div class="bar-fill" style="width: 100%; background-color: #f44336;"></div>
+                </div>
+                ❤️ HP: 50/50
+            </div>
+            
+            <div id="mana-bar" aria-label="Pontos de Mana">
+                <div class="bar-container">
+                    <div class="bar-fill" style="width: 100%; background-color: #673ab7;"></div>
+                </div>
+                🟣 MP: 30/30
+            </div>
+            
+            <div id="energy-bar" aria-label="Energia">
+                <div class="bar-container">
+                    <div class="bar-fill" style="width: 100%; background-color: #ff9800;"></div>
+                </div>
+                ⚡ Energia: 80/80
+            </div>
+            
+            <div id="sanity-bar" aria-label="Sanidade">
+                <div class="bar-container">
+                    <div class="bar-fill" style="width: 100%; background-color: #00bcd4;"></div>
+                </div>
+                🌌 Sanidade: 50/50
+            </div>
+            
+            <!-- Stats Secundários -->
+            <div class="secondary-stats">
+                <div>⚔️ Ataque: 8</div>
+                <div>🛡️ Defesa: 4</div>
+                <div>🎯 Precisão: 85%</div>
+                <div>💨 Agilidade: 15</div>
+            </div>
+        </div>
+        
+        <!-- Painel do Inimigo (oculto inicialmente) -->
+        <div id="enemy-panel" style="display: none; opacity: 0;" aria-label="Status do inimigo">
+            <h3>👹 Inimigo</h3>
+            <div id="enemy-hp-bar" aria-label="Vida do inimigo">
+                <!-- Preenchido pelo JavaScript -->
+            </div>
+            <div id="enemy-secondary-stats">
+                <!-- Preenchido pelo JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Painel de Opções -->
+        <div id="options-panel" role="group" aria-label="Opções de ação">
+            <button type="button" disabled aria-label="Primeira opção">-</button>
+            <button type="button" disabled aria-label="Segunda opção">-</button>
+            <button type="button" disabled aria-label="Terceira opção">-</button>
+        </div>
+        
+        <!-- Botões Principais -->
+        <button id="start-button" type="button" aria-label="Iniciar jogo">🎮 Iniciar</button>
+        <button id="explore-button" type="button" style="display: none;" aria-label="Explorar">🔍 Explorar</button>
+    </div>
 
-function updateHistoryDisplay() {
-    const historyDiv = document.getElementById('history-panel');
-    if (historyDiv) {
-        historyDiv.innerHTML = gameState.historyLog.join('<br>');
-        historyDiv.scrollTop = historyDiv.scrollHeight;
-    }
-}
-
-// Sanitização de entrada
-function sanitizeInput(input) {
-    const tempDiv = document.createElement('div');
-    tempDiv.textContent = input;
-    return tempDiv.innerHTML;
-}
-
-// Validação de nome
-function validatePlayerName(name) {
-    return typeof name === 'string' && name.trim().length > 0 && name.length <= 20;
-}
-
-// Inicialização do jogo
-export function iniciarJogo() {
-    try {
-        // Importações dinâmicas para evitar dependências circulares
-        import('./player.js').then(playerModule => {
-            import('./ui.js').then(uiModule => {
-                const nome = prompt('Digite seu nome:');
-                if (!validatePlayerName(nome)) {
-                    addToHistory('❌ Nome inválido. Tente novamente.');
-                    return;
-                }
-                
-                // Reset do estado do jogo
-                gameState.initialized = true;
-                gameState.inCombat = false;
-                gameState.gameEnded = false;
-                gameState.historyLog = [];
-                
-                // Reset do jogador
-                playerModule.resetPlayer();
-                playerModule.player.nome = sanitizeInput(nome.trim());
-                
-                // Mensagens iniciais
-                addToHistory(`🌟 Bem-vindo à Torre da Redenção, ${playerModule.player.nome}!`);
-                addToHistory(`🏗️ Você está no andar ${playerModule.player.andar}. Explore para encontrar a saída!`);
-                
-                // Configurar interface
-                setupGameInterface();
-                uiModule.updateAllUI();
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(registration => {
+                        console.log('SW registrado com sucesso:', registration.scope);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW falhou ao registrar:', registrationError);
+                    });
             });
-        });
-        
-    } catch (error) {
-        handleCriticalError(error);
-    }
-}
-
-// Configurar interface do jogo
-function setupGameInterface() {
-    const exploreBtn = document.getElementById('explore-button');
-    const startBtn = document.getElementById('start-button');
-    
-    if (exploreBtn) {
-        exploreBtn.style.display = 'block';
-        exploreBtn.disabled = false;
-        exploreBtn.onclick = () => {
-            import('./rooms.js').then(roomsModule => {
-                roomsModule.iniciarExploracao();
-            });
-        };
-    }
-    
-    if (startBtn) {
-        startBtn.style.display = 'none';
-    }
-}
-
-// Finalização do jogo
-export function finalizarJogo(motivo) {
-    gameState.gameEnded = true;
-    gameState.inCombat = false;
-    
-    import('./player.js').then(playerModule => {
-        addToHistory(motivo);
-        addToHistory(`🏆 Pontuação final: ${playerModule.player.pontos}`);
-        addToHistory(`📊 Andar alcançado: ${playerModule.player.andar}`);
-        addToHistory('🔄 Recarregue para jogar novamente.');
-        
-        // Desabilitar controles
-        const exploreBtn = document.getElementById('explore-button');
-        if (exploreBtn) exploreBtn.disabled = true;
-        
-        resetarBotoesCombate();
-    });
-}
-
-function resetarBotoesCombate() {
-    const buttons = document.querySelectorAll('#options-panel button');
-    buttons.forEach((btn, index) => {
-        if (index < 3) {
-            btn.disabled = true;
-            btn.textContent = '-';
-            btn.onclick = null;
         }
-    });
-}
+    </script>
 
-// Getters para estado do jogo (para outros módulos)
-export function isGameInitialized() {
-    return gameState.initialized;
-}
-
-export function isInCombat() {
-    return gameState.inCombat;
-}
-
-export function isGameEnded() {
-    return gameState.gameEnded;
-}
-
-export function setInCombat(value) {
-    gameState.inCombat = value;
-}
-
-// Tratamento de erros
-function handleCriticalError(error) {
-    console.error('Erro crítico:', error);
-    addToHistory('💥 Erro crítico! Recarregue a página.');
-    gameState.gameEnded = true;
-}
-
-// Gerenciamento de eventos
-function addInitEventListeners() {
-    removeAllEventListeners();
-    
-    const startBtn = document.getElementById('start-button');
-    if (startBtn) {
-        startBtn.addEventListener('click', iniciarJogo);
-    }
-}
-
-function removeAllEventListeners() {
-    const startBtn = document.getElementById('start-button');
-    const exploreBtn = document.getElementById('explore-button');
-    
-    if (startBtn) {
-        startBtn.removeEventListener('click', iniciarJogo);
-    }
-    
-    if (exploreBtn) {
-        exploreBtn.removeEventListener('click', () => {});
-    }
-}
-
-// Inicialização
-document.addEventListener('DOMContentLoaded', () => {
-    try {
-        addInitEventListeners();
-        addToHistory('🏰 Torre da Redenção carregada!');
-        addToHistory('👆 Clique em "Iniciar" para começar.');
-    } catch (error) {
-        handleCriticalError(error);
-    }
-});
+    <!-- Carregamento dos Módulos JavaScript -->
+    <script type="module" src="game.js"></script>
+</body>
+</html>

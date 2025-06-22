@@ -23,8 +23,28 @@ export function updateUIStatus() {
     `;
 }
 
+export function updateAllUI() {
+    updateUIStatus();
+    updateGameInfo();
+}
+
+function updateGameInfo() {
+    // Atualiza informações adicionais como andar, salas, etc.
+    const gameInfo = document.querySelector('.game-info');
+    if (gameInfo) {
+        gameInfo.innerHTML = `
+            <div>🏗️ Andar: ${player.andar}</div>
+            <div>🚪 Salas: ${player.salasExploradas}/${player.salasParaSubir}</div>
+            <div>📅 Dia: ${player.dia}</div>
+            <div>🏆 Pontos: ${player.pontos}</div>
+        `;
+    }
+}
+
 function setBar(id, value, max, color, label) {
     const bar = document.getElementById(id);
+    if (!bar) return;
+    
     const percentage = Math.max(0, Math.min(100, (value / max) * 100));
     bar.innerHTML = `
         <div class="bar-container">
@@ -36,9 +56,11 @@ function setBar(id, value, max, color, label) {
 
 export function resetUIOptions() {
     const optionButtons = document.querySelectorAll('#options-panel button');
-    for (let i = 0; i < optionButtons.length - 1; i++) {
-        optionButtons[i].disabled = true;
-        optionButtons[i].textContent = '-';
-        optionButtons[i].onclick = null;
-    }
+    optionButtons.forEach((btn, index) => {
+        if (index < 3) {
+            btn.disabled = true;
+            btn.textContent = '-';
+            btn.onclick = null;
+        }
+    });
 }

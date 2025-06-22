@@ -1,9 +1,10 @@
 import { inimigo, criarInimigo, updateEnemyPanel, removerInimigo } from './enemy.js';
 import { player, verificarEstadosCriticos, ganharXP } from './player.js';
-import { updateUIStatus } from './ui.js';
-import { addToHistory } from './game.js';
+import { updateUIStatus, resetUIOptions } from './ui.js';
+import { addToHistory, setInCombat } from './game.js';
 
 export function iniciarCombate() {
+    setInCombat(true);
     addToHistory('👹 Um inimigo aparece!');
     criarInimigo();
     document.getElementById('enemy-panel').style.display = 'block';
@@ -43,7 +44,7 @@ function atacarInimigo() {
         addToHistory('👑 Inimigo derrotado!');
         const xpGanho = Math.floor(Math.random() * 20) + 10;
         ganharXP(xpGanho);
-        removerInimigo();
+        finalizarCombate();
     } else {
         inimigoAtaca();
     }
@@ -71,9 +72,15 @@ function fugir() {
     const chance = player.agilidade / (player.agilidade + inimigo.agilidade);
     if (Math.random() < chance) {
         addToHistory('✅ Você fugiu!');
-        removerInimigo();
+        finalizarCombate();
     } else {
         addToHistory('❌ Falha na fuga.');
         inimigoAtaca();
     }
+}
+
+function finalizarCombate() {
+    setInCombat(false);
+    removerInimigo();
+    resetUIOptions();
 }
