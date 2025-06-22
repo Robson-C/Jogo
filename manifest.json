@@ -2,7 +2,7 @@
   "name": "Torre da Redenção",
   "short_name": "Torre",
   "description": "RPG text-based de exploração e combate",
-  "start_url": "./",
+  "start_url": "/jogo/",
   "display": "standalone",
   "background_color": "#222222",
   "theme_color": "#FFD700",
