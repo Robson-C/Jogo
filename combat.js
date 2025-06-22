@@ -1,86 +1,122 @@
-import { inimigo, criarInimigo, updateEnemyPanel, removerInimigo } from './enemy.js';
-import { player, verificarEstadosCriticos, ganharXP } from './player.js';
-import { updateUIStatus, resetUIOptions } from './ui.js';
-import { addToHistory, setInCombat } from './game.js';
-
-export function iniciarCombate() {
-    setInCombat(true);
-    addToHistory('👹 Um inimigo aparece!');
-    criarInimigo();
-    document.getElementById('enemy-panel').style.display = 'block';
-    setTimeout(() => document.getElementById('enemy-panel').style.opacity = 1, 10);
-    configurarBotoesCombate();
+export function iniciarExploracao() {
+    requestPlayerData((playerData) => {
+        if (!playerData || playerData.hp <= 0) return;
+        
+        if (Math.random() < 0.2) {
+            // Importar combat dinamicamente para evitar dependência circular
+            import('./combat.js').then(combatModule => {
+                combatModule.iniciarCombate();
+            }).catch(err => {
+                console.error('Erro ao carregar combat:', err);
+                explorarSala();
+            });
+        } else {
+            explorarSala();
+        }
+    });
 }
 
-function configurarBotoesCombate() {
-    const optionButtons = document.querySelectorAll('#options-panel button');
-    
-    optionButtons[0].disabled = false;
-    optionButtons[0].textContent = '⚔️ Atacar (-5⚡)';
-    optionButtons[0].onclick = atacarInimigo;
-    
-    optionButtons[1].disabled = false;
-    optionButtons[1].textContent = '💊 Curar (-15🟣)';
-    optionButtons[1].onclick = curar;
-    
-    const chance = player.agilidade / (player.agilidade + inimigo.agilidade);
-    optionButtons[2].textContent = `🏃 Fugir (${Math.floor(chance * 100)}%)`;
-    optionButtons[2].disabled = false;
-    optionButtons[2].onclick = fugir;
+function explorarSala() {
+    requestPlayerData((playerData) => {
+        if (!playerData) return;
+        
+        // Reset UI options
+        window.dispatchEvent(new CustomEvent('resetUIOptions'));
+        
+        // Modificar stats do player
+        window.dispatchEvent(new CustomEvent('modifyPlayer', { 
+            detail: { property: 'energia', value: playerData.energia - 10 } 
+        }));
+        window.dispatchEvent(new CustomEvent('modifyPlayer', { 
+            detail: { property: 'sanidade', value: playerData.sanidade - 5 } 
+        }));
+        window.dispatchEvent(new CustomEvent('modifyPlayer', { 
+            detail: { property: 'salasExploradas', value: playerData.salasExploradas + 1 } 
+        }));
+        window.dispatchEvent(new CustomEvent('modifyPlayer', { 
+            detail: { property: 'dia', value: playerData.dia + 1 } 
+        }));
+        window.dispatchEvent(new CustomEvent('modifyPlayer', { 
+            detail: { property: 'pontos', value: playerData.pontos + 1 } 
+        }));
+        
+        // Verificar estados críticos
+        window.dispatchEvent(new CustomEvent('checkCriticalStates'));
+        
+        // Processar evento da sala
+        const chance = Math.random();
+        let texto = `Dia ${playerData.dia + 1}, Andar ${playerData.andar}: `;
+        
+        if (chance < 0.45) {
+            texto += "Sala Vazia.";
+        } else if (chance < 0.9) {
+            texto += "Sala com Fonte.";
+            const cura = Math.floor(Math.random() * 10) + 5;
+            const novoHP = Math.min(playerData.maxHp, playerData.hp + cura);
+            window.dispatchEvent(new CustomEvent('modifyPlayer', { 
+                detail: { property: 'hp', value: novoHP } 
+            }));
+            window.dispatchEvent(new CustomEvent('addHistory', { 
+                detail: { message: `💧 Fonte restaura ${cura} HP` } 
+            }));
+        } else {
+            texto += "Sala com Armadilha.";
+            const dano = Math.floor(Math.random() * 15) + 5;
+            window.dispatchEvent(new CustomEvent('modifyPlayer', { 
+                detail: { property: 'hp', value: playerData.hp - dano } 
+            }));
+            window.dispatchEvent(new CustomEvent('addHistory', { 
+                detail: { message: `⚠️ Armadilha causa ${dano} de dano` } 
+            }));
+        }
+        
+        window.dispatchEvent(new CustomEvent('addHistory', { detail: { message: texto } }));
+        
+        // XP por explorar sala
+        const xpGanho = Math.floor(Math.random() * 5) + 2;
+        window.dispatchEvent(new CustomEvent('gainXP', { detail: { amount: xpGanho } }));
+        
+        // Verificar se deve subir de andar
+        if (playerData.salasExploradas + 1 >= playerData.salasParaSubir) {
+            subirAndar(playerData);
+        }
+    });
 }
 
-function atacarInimigo() {
-    if (player.energia < 5) return addToHistory('⚠️ Sem energia.');
+function subirAndar(playerData) {
+    window.dispatchEvent(new CustomEvent('modifyPlayer', { 
+        detail: { property: 'andar', value: playerData.andar + 1 } 
+    }));
+    window.dispatchEvent(new CustomEvent('modifyPlayer', { 
+        detail: { property: 'salasExploradas', value: 0 } 
+    }));
     
-    player.energia -= 5;
-    const dano = Math.floor(player.ataque * (player.precisao / 100));
-    inimigo.hp -= dano;
-    addToHistory(`Você ataca: 🩸 -${dano} HP inimigo.`);
+    // Gerar novas salas necessárias
+    const novasSalas = Math.floor(Math.random() * 21) + 30;
+    window.dispatchEvent(new CustomEvent('modifyPlayer', { 
+        detail: { property: 'salasParaSubir', value: novasSalas } 
+    }));
     
-    updateEnemyPanel();
-    updateUIStatus();
+    window.dispatchEvent(new CustomEvent('addHistory', { 
+        detail: { message: `🏗️ Subindo para o andar ${playerData.andar + 1}!` } 
+    }));
     
-    if (inimigo.hp <= 0) {
-        addToHistory('👑 Inimigo derrotado!');
-        const xpGanho = Math.floor(Math.random() * 20) + 10;
-        ganharXP(xpGanho);
-        finalizarCombate();
-    } else {
-        inimigoAtaca();
-    }
+    // Bonus por subir andar
+    const xpBonus = (playerData.andar + 1) * 10;
+    window.dispatchEvent(new CustomEvent('gainXP', { detail: { amount: xpBonus } }));
 }
 
-function inimigoAtaca() {
-    const dano = Math.max(1, Math.floor(inimigo.ataque * (inimigo.precisao / 100)) - player.defesa);
-    player.hp -= dano;
-    addToHistory(`Inimigo ataca: 🩸 -${dano} HP.`);
-    updateUIStatus();
-    verificarEstadosCriticos();
-}
-
-function curar() {
-    if (player.mp < 15) return addToHistory('⚠️ Mana insuficiente.');
+function requestPlayerData(callback) {
+    const handler = (e) => {
+        callback(e.detail);
+        window.removeEventListener('playerDataResponse', handler);
+    };
     
-    player.mp -= 15;
-    const cura = 15;
-    player.hp = Math.min(player.maxHp, player.hp + cura);
-    addToHistory(`💊 Cura: +${cura} HP, -15 MP.`);
-    updateUIStatus();
+    window.addEventListener('playerDataResponse', handler);
+    window.dispatchEvent(new CustomEvent('requestPlayerData'));
 }
 
-function fugir() {
-    const chance = player.agilidade / (player.agilidade + inimigo.agilidade);
-    if (Math.random() < chance) {
-        addToHistory('✅ Você fugiu!');
-        finalizarCombate();
-    } else {
-        addToHistory('❌ Falha na fuga.');
-        inimigoAtaca();
-    }
-}
-
-function finalizarCombate() {
-    setInCombat(false);
-    removerInimigo();
-    resetUIOptions();
-}
+// Event listeners
+window.addEventListener('startExploration', () => {
+    iniciarExploracao();
+});

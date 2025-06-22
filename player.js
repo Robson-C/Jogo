@@ -1,7 +1,5 @@
-import { updateUIStatus } from './ui.js';
-import { finalizarJogo, addToHistory } from './game.js';
-
 export const player = {
+    nome: '',
     nivel: 1,
     xp: 0,
     xpParaProximo: 100,
@@ -32,6 +30,7 @@ export function getRandomRoomsForFloor() {
 
 export function resetPlayer() {
     Object.assign(player, {
+        nome: '',
         nivel: 1,
         xp: 0,
         xpParaProximo: 100,
@@ -58,14 +57,20 @@ export function resetPlayer() {
 }
 
 export function ganharXP(quantidade) {
+    if (typeof quantidade !== 'number' || quantidade <= 0) return;
+    
     player.xp += quantidade;
-    addToHistory(`✨ +${quantidade} XP`);
+    
+    // Notificar UI e game sobre XP ganho
+    window.dispatchEvent(new CustomEvent('addHistory', { 
+        detail: { message: `✨ +${quantidade} XP` }
+    }));
     
     while (player.xp >= player.xpParaProximo) {
         subirDeNivel();
     }
     
-    updateUIStatus();
+    window.dispatchEvent(new CustomEvent('uiUpdate'));
 }
 
 function subirDeNivel() {
@@ -91,12 +96,55 @@ function subirDeNivel() {
     player.precisao += 1;
     player.agilidade += 1;
     
-    addToHistory(`🌟 LEVEL UP! Nível ${player.nivel}`);
-    addToHistory(`📈 +5 HP/MP/Energia/Sanidade, +2 Ataque, +1 Defesa/Precisão/Agilidade`);
+    window.dispatchEvent(new CustomEvent('addHistory', { 
+        detail: { message: `🌟 LEVEL UP! Nível ${player.nivel}` }
+    }));
+    window.dispatchEvent(new CustomEvent('addHistory', { 
+        detail: { message: `📈 +5 HP/MP/Energia/Sanidade, +2 Ataque, +1 Defesa/Precisão/Agilidade` }
+    }));
 }
 
 export function verificarEstadosCriticos() {
-    if (player.hp <= 0) finalizarJogo('💀 Você foi derrotado!');
-    if (player.energia <= 0) finalizarJogo('💀 Você morreu de exaustão!');
-    if (player.sanidade <= 0) finalizarJogo('💀 Você enlouqueceu!');
+    if (player.hp <= 0) {
+        window.dispatchEvent(new CustomEvent('gameEnd', { 
+            detail: { reason: '💀 Você foi derrotado!' }
+        }));
+        return true;
+    }
+    if (player.energia <= 0) {
+        window.dispatchEvent(new CustomEvent('gameEnd', { 
+            detail: { reason: '💀 Você morreu de exaustão!' }
+        }));
+        return true;
+    }
+    if (player.sanidade <= 0) {
+        window.dispatchEvent(new CustomEvent('gameEnd', { 
+            detail: { reason: '💀 Você enlouqueceu!' }
+        }));
+        return true;
+    }
+    return false;
 }
+
+// Event listeners
+window.addEventListener('gameReset', (e) => {
+    resetPlayer();
+    if (e.detail && e.detail.playerName) {
+        player.nome = e.detail.playerName;
+    }
+});
+
+window.addEventListener('gameEnd', (e) => {
+    if (e.detail && e.detail.reason) {
+        // Adicionar stats finais ao histórico
+        window.dispatchEvent(new CustomEvent('addHistory', { 
+            detail: { message: `🏆 Pontuação final: ${player.pontos}` }
+        }));
+        window.dispatchEvent(new CustomEvent('addHistory', { 
+            detail: { message: `📊 Andar alcançado: ${player.andar}` }
+        }));
+        window.dispatchEvent(new CustomEvent('addHistory', { 
+            detail: { message: '🔄 Recarregue para jogar novamente.' }
+        }));
+    }
+});

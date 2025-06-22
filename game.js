@@ -7,39 +7,6 @@
  * - Inicialização e finalização do jogo
  * - Gerenciamento de eventos principais
  * - Coordenação entre módulos
- * 
- * ARQUIVOS E SUAS FUNÇÕES:
- * 
- * player.js - ESTADO E LÓGICA DO JOGADOR
- * - Objeto player com todos os stats
- * - Sistema de XP e level up
- * - Verificações de morte/game over
- * - Reset do jogador
- * 
- * ui.js - INTERFACE E ATUALIZAÇÕES VISUAIS
- * - Atualização de todas as barras de status
- * - Rendering dos stats do jogador
- * - Rendering dos stats do inimigo
- * - Animações de interface
- * 
- * rooms.js - SISTEMA DE EXPLORAÇÃO
- * - Lógica de exploração de salas
- * - Eventos aleatórios (fontes, armadilhas, salas vazias)
- * - Sistema de subida de andar
- * - Controle de progresso por salas
- * 
- * enemy.js - CRIAÇÃO E LÓGICA DE INIMIGOS
- * - Objeto inimigo e suas propriedades
- * - Criação de inimigos escalados por andar
- * - Remoção de inimigos (morte/fuga)
- * - Stats balanceados por dificuldade
- * 
- * combat.js - SISTEMA DE COMBATE COMPLETO
- * - Inicialização do combate
- * - Ações do jogador (atacar, curar, fugir)
- * - Ações do inimigo
- * - Finalização do combate
- * - Configuração dos botões de combate
  */
 
 // Estado global do jogo
@@ -62,7 +29,10 @@ function updateHistoryDisplay() {
     const historyDiv = document.getElementById('history-panel');
     if (historyDiv) {
         historyDiv.innerHTML = gameState.historyLog.join('<br>');
-        historyDiv.scrollTop = historyDiv.scrollHeight;
+        // Otimização: só scroll se necessário
+        if (historyDiv.scrollHeight > historyDiv.clientHeight) {
+            historyDiv.scrollTop = historyDiv.scrollHeight;
+        }
     }
 }
 
@@ -78,37 +48,54 @@ function validatePlayerName(name) {
     return typeof name === 'string' && name.trim().length > 0 && name.length <= 20;
 }
 
+// Validação de elementos DOM
+function validateDOMElements() {
+    const requiredElements = [
+        'history-panel',
+        'explore-button', 
+        'start-button',
+        'options-panel',
+        'enemy-panel'
+    ];
+    
+    for (const id of requiredElements) {
+        if (!document.getElementById(id)) {
+            throw new Error(`Elemento DOM necessário não encontrado: ${id}`);
+        }
+    }
+}
+
 // Inicialização do jogo
 export function iniciarJogo() {
     try {
-        // Importações dinâmicas para evitar dependências circulares
-        import('./player.js').then(playerModule => {
-            import('./ui.js').then(uiModule => {
-                const nome = prompt('Digite seu nome:');
-                if (!validatePlayerName(nome)) {
-                    addToHistory('❌ Nome inválido. Tente novamente.');
-                    return;
-                }
-                
-                // Reset do estado do jogo
-                gameState.initialized = true;
-                gameState.inCombat = false;
-                gameState.gameEnded = false;
-                gameState.historyLog = [];
-                
-                // Reset do jogador
-                playerModule.resetPlayer();
-                playerModule.player.nome = sanitizeInput(nome.trim());
-                
-                // Mensagens iniciais
-                addToHistory(`🌟 Bem-vindo à Torre da Redenção, ${playerModule.player.nome}!`);
-                addToHistory(`🏗️ Você está no andar ${playerModule.player.andar}. Explore para encontrar a saída!`);
-                
-                // Configurar interface
-                setupGameInterface();
-                uiModule.updateAllUI();
-            });
-        });
+        validateDOMElements();
+        
+        const nome = prompt('Digite seu nome:');
+        if (!validatePlayerName(nome)) {
+            addToHistory('❌ Nome inválido. Tente novamente.');
+            return;
+        }
+        
+        // Reset do estado do jogo
+        gameState.initialized = true;
+        gameState.inCombat = false;
+        gameState.gameEnded = false;
+        gameState.historyLog = [];
+        
+        // Notificar outros módulos para reset
+        window.dispatchEvent(new CustomEvent('gameReset', { 
+            detail: { playerName: sanitizeInput(nome.trim()) }
+        }));
+        
+        // Mensagens iniciais
+        addToHistory(`🌟 Bem-vindo à Torre da Redenção, ${sanitizeInput(nome.trim())}!`);
+        addToHistory('🏗️ Você está no andar 1. Explore para encontrar a saída!');
+        
+        // Configurar interface
+        setupGameInterface();
+        
+        // Notificar UI para atualizar
+        window.dispatchEvent(new CustomEvent('uiUpdate'));
         
     } catch (error) {
         handleCriticalError(error);
@@ -124,9 +111,7 @@ function setupGameInterface() {
         exploreBtn.style.display = 'block';
         exploreBtn.disabled = false;
         exploreBtn.onclick = () => {
-            import('./rooms.js').then(roomsModule => {
-                roomsModule.iniciarExploracao();
-            });
+            window.dispatchEvent(new CustomEvent('startExploration'));
         };
     }
     
@@ -137,21 +122,21 @@ function setupGameInterface() {
 
 // Finalização do jogo
 export function finalizarJogo(motivo) {
+    if (gameState.gameEnded) return; // Previne múltiplas chamadas
+    
     gameState.gameEnded = true;
     gameState.inCombat = false;
     
-    import('./player.js').then(playerModule => {
-        addToHistory(motivo);
-        addToHistory(`🏆 Pontuação final: ${playerModule.player.pontos}`);
-        addToHistory(`📊 Andar alcançado: ${playerModule.player.andar}`);
-        addToHistory('🔄 Recarregue para jogar novamente.');
-        
-        // Desabilitar controles
-        const exploreBtn = document.getElementById('explore-button');
-        if (exploreBtn) exploreBtn.disabled = true;
-        
-        resetarBotoesCombate();
-    });
+    addToHistory(motivo);
+    
+    // Notificar outros módulos sobre fim do jogo
+    window.dispatchEvent(new CustomEvent('gameEnd'));
+    
+    // Desabilitar controles
+    const exploreBtn = document.getElementById('explore-button');
+    if (exploreBtn) exploreBtn.disabled = true;
+    
+    resetarBotoesCombate();
 }
 
 function resetarBotoesCombate() {
@@ -179,7 +164,7 @@ export function isGameEnded() {
 }
 
 export function setInCombat(value) {
-    gameState.inCombat = value;
+    gameState.inCombat = Boolean(value);
 }
 
 // Tratamento de erros
@@ -208,13 +193,14 @@ function removeAllEventListeners() {
     }
     
     if (exploreBtn) {
-        exploreBtn.removeEventListener('click', () => {});
+        exploreBtn.onclick = null;
     }
 }
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
     try {
+        validateDOMElements();
         addInitEventListeners();
         addToHistory('🏰 Torre da Redenção carregada!');
         addToHistory('👆 Clique em "Iniciar" para começar.');
