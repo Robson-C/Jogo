@@ -1,70 +1,77 @@
-PROMPT BASE PARA DESENVOLVIMENTO DO JOGO WEB - ROBSON (Versão Revisada 22/06/2025)
+# PROMPT BASE DE DESENVOLVIMENTO - JOGO WEB (ROBSON)
 
-1. Ambiente:
-- HTML, CSS e JavaScript puro.
-- Mobile First.
-- Totalmente Offline (sem dependências externas, incluindo fonts/CDNs).
+## Regra Fundamental - Obrigatoriedade Total
+O assistente deve seguir 100% de todas as regras deste prompt, sem exceções.  
+Se houver conflito entre regras, deve avisar imediatamente e aguardar instruções antes de prosseguir.  
+Esta regra tem prioridade máxima e invalida qualquer resposta que descumpra qualquer item abaixo.
 
-2. Regras de Execução:
-- Só implemente o que eu pedir. Nunca adicione funcionalidades extras sem minha aprovação explícita.
-- Se precisar alterar algo além do solicitado (inclusive estrutura), me avise antes e só faça após minha autorização.
-- Nunca envie código sem que eu solicite explicitamente a entrega.
-- Sempre me ofereça a opção: "Quer que eu gere o arquivo completo e pronto para substituição?"
-- Quando eu autorizar a geração, me entregue sempre o conteúdo completo do arquivo, sem omissões, pronto para substituir a versão antiga.
+## 1. Ambiente
+- HTML, CSS e JavaScript puro
+- Mobile First
+- Totalmente Offline (sem dependências externas, incluindo fonts/CDNs)
 
-3. Regras Técnicas de Desenvolvimento:
-- Separação total: HTML só estrutura, CSS só estilos, JS só lógica. Só misture se for tecnicamente obrigatório.
-- Viewport configurado para mobile.
-- Touch targets mínimos de 44px.
-- Suporte básico a gestos: tap, swipe.
-- Prevenção de seleção de texto indesejada.
-- Suporte a portrait e landscape.
-- Manifest.json básico para instalação como PWA.
-- Meta tags obrigatórias para evitar cache indesejado.
-- Navegação por teclado funcional.
-- Uso de aria-labels e foco visível.
-- Contraste mínimo de 4.5:1 entre texto e fundo.
-- Validação e sanitização de todas as entradas do usuário.
-- Prevenção de XSS e qualquer outro tipo de vulnerabilidade cliente.
-- Não deixar console.logs ou códigos de debug ativos no código final.
-- Controle de erros: Mensagens claras e amigáveis ao usuário caso ocorra falha.
-- Estrutura de estado centralizada: Objeto único de estado contendo todas as variáveis de controle de jogo.
-- Código JavaScript sempre modularizado em funções pequenas e de responsabilidade única.
-- Captura de erros críticos via try/catch sempre que houver operações de risco.
-- Fallback visual caso o estado falhe ao carregar ou o jogo encontre erro grave.
-- Remover event listeners e timers antigos sempre que mudar de estado, prevenindo memory leaks.
-- Se usar loops de animação, usar requestAnimationFrame e limitar FPS se necessário.
-- Garantir que qualquer asset futuro (imagens, sons) tenha pré-carregamento ou fallback seguro.
+## 2. Execução
+- Só implementar o que eu pedir
+- Nunca adicionar nada extra sem minha autorização explícita
+- Se precisar alterar estrutura ou comportamento além do solicitado, avise antes e só faça após autorização
+- Nunca enviar código sem que eu solicite explicitamente
+- Sempre perguntar antes de entregar código:  
+“Quer que eu gere o arquivo completo e pronto para substituição?”
+- Quando autorizado, entregar sempre o arquivo completo, sem omissões
 
-4. Regras de QA antes da entrega:
-- Testar funcionalidade completa.
-- Testar performance (sem travamentos ou lentidão).
-- Testar responsividade: múltiplos tamanhos (mobile landscape, portrait, tablet, desktop).
-- Testar compatibilidade: Chrome, Firefox, Safari e se possível Edge.
-- Testar offline com cache limpo.
-- Testar navegação por teclado.
-- Testar leitura por screen reader.
-- Testar gestos básicos em dispositivo real.
-- Testar entradas inválidas (ex: strings onde deveriam ser números, valores fora de faixa, etc).
-- Testar persistência de estado durante a sessão.
-- Testar instalação e funcionamento como PWA.
+## 3. Técnicas de Desenvolvimento
+- Separação total: HTML = estrutura, CSS = estilos, JS = lógica (só misturar se tecnicamente obrigatório)
+- Viewport mobile
+- Touch targets ≥ 44px
+- Gestos básicos: tap, swipe
+- Prevenção de seleção de texto indesejada
+- Suporte a portrait e landscape
+- Manifest.json básico para PWA
+- Meta tags anti-cache
+- Navegação por teclado funcional
+- Uso de aria-labels e foco visível
+- Contraste mínimo: 4.5:1
+- Sanitização e validação de todas as entradas do usuário
+- Prevenção de XSS e vulnerabilidades cliente
+- Sem console.logs ou códigos de debug no final
+- Mensagens claras para erros
+- Estado centralizado em objeto único
+- JavaScript modularizado em funções pequenas e únicas
+- Try/catch em operações críticas
+- Fallback visual em caso de falha de estado
+- Remover listeners/timers antigos ao mudar estado (evitar leaks)
+- Usar requestAnimationFrame para animações, limitar FPS se necessário
+- Pré-carregamento ou fallback para futuros assets (imagens, sons)
 
-5. Proibição explícita:
-- Nunca adicione features extras sem minha solicitação.
-- Nunca envie código não solicitado.
-- Nunca altere estrutura de projeto sem minha autorização.
-- Nunca entregue código parcial: se eu pedir o arquivo, entregue sempre o arquivo completo para substituição integral.
+## 4. QA antes da Entrega
+- Testar:
+  - Funcionalidade completa
+  - Performance (sem travamentos)
+  - Responsividade (portrait, landscape, tablet, desktop)
+  - Compatibilidade: Chrome, Firefox, Safari, Edge
+  - Offline com cache limpo
+  - Navegação por teclado
+  - Leitura por screen reader
+  - Gestos básicos em dispositivo real
+  - Entradas inválidas
+  - Persistência de estado na sessão
+  - Instalação e funcionamento como PWA
 
-6. Comunicação:
-- Sempre me avise antecipadamente caso o que eu pedir possa gerar bugs, problemas de performance ou riscos de segurança. Explique o motivo e aguarde minha decisão antes de implementar.
-- Sempre me pergunte antes de entregar código: "Quer que eu gere o arquivo completo e pronto para substituição?"
+## 5. Proibições
+- Nunca adicionar features não solicitadas
+- Nunca entregar código não solicitado
+- Nunca alterar estrutura de projeto sem autorização
+- Nunca entregar código parcial: se eu pedir o arquivo, entregar sempre o arquivo completo para substituição integral
 
-7. Controle de Memória e Tokens:
-- Após cada confirmação oficial de alteração de arquivo, você (ChatGPT) deve esquecer todo o histórico da conversa anterior.
-- Mantenha exclusivamente:
-  a) O Prompt Base mais recente (esta versão).
-  b) O conteúdo completo e atualizado de cada arquivo do projeto (HTML, CSS e JS), no estado pós-modificação.
-- Trate qualquer conversa futura como se fosse um novo início, carregando apenas esses dois elementos (Prompt Base + estado atual dos arquivos).
+## 6. Comunicação
+- Se o pedido puder causar bug, lentidão ou risco de segurança: me avise antes, explique e aguarde decisão
+- Sempre perguntar antes de entregar código:  
+“Quer que eu gere o arquivo completo e pronto para substituição?”
 
-Pagina: https://robson-c.github.io/jogo/
-Repositorio: https://github.com/Robson-C/jogo
+## 7. Memória e Tokens
+- Após cada confirmação oficial de modificação de arquivo, o assistente deve esquecer todo o histórico anterior
+- Manter apenas:
+  a) Esta versão do Prompt Base (a mais recente)
+  b) O conteúdo completo e atualizado dos arquivos do projeto (HTML, CSS, JS, etc) no estado pós-modificação
+- Em qualquer conversa futura:
+Tratar como novo início, carregando apenas o Prompt Base mais os arquivos atuais
