@@ -1,0 +1,54 @@
+
+https://gist.github.com/Robson-C/c3e1f8811a75173cdcae3354e33cc40d/ea71352ed302f3465ce177c227c9d22f53b45f34
+
+
+# PROMPT PARA CRIAÇÃO DE JOGO WEB
+
+Me ajude a desenvolver um jogo web usando apenas HTML, CSS e JavaScript puro(Codigo atual esta no gist/link acima, acesse para pegar o codigo). O jogo deve ser totalmente offline e responsivo com foco mobile first.
+
+## REGRAS DE DESENVOLVIMENTO:
+
+1. **Implementação:** Implemente APENAS as funcionalidades que eu especificar
+2. **Aprovação:** Não adicione recursos extras sem minha aprovação  
+3. **Comunicação:** Se precisar alterar algo além do solicitado, pergunte antes e aguarde confirmação
+4. **Documentação:** Use comentários explicativos no código para facilitar modificações futuras
+5. **Controles:** Use eventos de teclado/touch básicos - sem controles complexos
+6. **Animações:** Mantenha animações simples usando CSS transitions ou JavaScript básico
+7. **Estados:** Inclua apenas os estados essenciais: menu inicial, jogo ativo, game over
+8. **Alertas:** Me informe antecipadamente se o que foi pedido pode gerar bugs, conflitos no jogo ou problemas de performance, explicando o motivo e sugerindo alternativas
+9. **Especificações Móveis:**
+   - Viewport configurado adequadamente
+   - Touch targets de pelo menos 44px
+   - Suporte a gestos básicos (tap, swipe)
+   - Prevenção de seleção de texto indesejada
+   - Suporte a orientação portrait e landscape
+   - Manifest.json básico para instalação PWA
+   - Meta tags para prevenção de cache indesejado
+10. **Acessibilidade:**
+    - Navegação funcional por teclado
+    - Suporte básico a leitores de tela com aria-labels
+    - Contraste mínimo de 4.5:1 entre texto e fundo
+    - Foco visível em elementos interativos
+11. **Segurança:**
+    - Validação e sanitização de todas as entradas do usuário
+    - Prevenção de XSS em elementos dinâmicos
+    - Dados sensíveis nunca expostos no código cliente
+12. **Gerenciamento de Estado:**
+    - Estado do jogo mantido em memória durante a sessão
+    - Prevenção de perda de dados por recarga acidental
+    - Estrutura clara para dados temporários vs permanentes
+13. **Código apenas quando solicitado:** Só forneço código quando você pedir explicitamente. Caso forneça, será sempre em blocos de código no chat para fácil cópia, nunca em artefatos sem pedido direto.
+
+14. **Revisão:** Antes de entregar, revise o código verificando:
+    - **Funcionalidade:** Todas as funcionalidades solicitadas funcionam corretamente
+    - **Performance:** Código otimizado sem loops desnecessários ou vazamentos de memória
+    - **Responsividade:** Interface funciona em desktop e mobile
+    - **Compatibilidade:** Testa em navegadores principais (Chrome, Firefox, Safari)
+    - **Código:** Estrutura limpa, variáveis bem nomeadas, funções organizadas
+    - **Offline:** Confirmação de que não há dependências externas
+    - **Usabilidade:** Controles intuitivos e feedback visual adequado
+    - **Acessibilidade:** Testa com navegação por teclado e leitor de tela
+    - **Touch:** Verifica gestos e targets em dispositivos reais
+    - **Segurança:** Verifica validação de entrada e sanitização
+    - **Dados:** Confirma persistência adequada do estado do jogo
+    - **PWA:** Testa instalabilidade e funcionalidade offline

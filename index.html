@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torre da Redenção</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#FFD700">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Torre da Redenção">
+    <meta name="msapplication-TileColor" content="#222222">
+    <meta name="msapplication-TileImage" content="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQ0IiBoZWlnaHQ9IjE0NCIgdmlld0JveD0iMCAwIDE0NCAxNDQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNDQiIGhlaWdodD0iMTQ0IiBmaWxsPSIjMjIyMjIyIi8+Cjx0ZXh0IHg9IjcyIiB5PSI4MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjQ1IiBmaWxsPSIjRkZENzAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn4+wPC90ZXh0Pgo8L3N2Zz4=">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="./manifest.json">
+    
+    <!-- Prevenção de cache indesejado -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+</head>
+<body>
+    <div id="game-container">
+        <div id="game-title">Torre da Redenção</div>
+        <div id="history-panel"></div>
+        <div class="status-panel">
+            <div id="xp-bar" class="bar-container">
+                <div class="bar-fill"></div>
+            </div>
+            <div id="level">Level: 1</div>
+            <div id="health-bar" class="bar-container">
+                <div class="bar-fill"></div>
+            </div>
+            <div id="mana-bar" class="bar-container">
+                <div class="bar-fill"></div>
+            </div>
+            <div id="energy-bar" class="bar-container">
+                <div class="bar-fill"></div>
+            </div>
+            <div id="sanity-bar" class="bar-container">
+                <div class="bar-fill"></div>
+            </div>
+            <div class="secondary-stats">
+                <div>⚔️ Ataque</div>
+                <div>🛡️ Defesa</div>
+                <div>🎯 Precisão</div>
+                <div>💨 Agilidade</div>
+            </div>
+        </div>
+        <div id="enemy-panel">
+            <div id="enemy-hp-bar" class="bar-container">
+                <div class="bar-fill"></div>
+            </div>
+            <div id="enemy-secondary-stats"></div>
+        </div>
+        <div id="options-panel">
+            <button>-</button>
+            <button>-</button>
+            <button id="explore-button">🔎 Explorar</button>
+        </div>
+    </div>
+    <script type="module" src="game.js"></script>
+</body>
+</html>
