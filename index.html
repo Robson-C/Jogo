@@ -2,65 +2,27 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Torre da Redenção</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#FFD700">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Torre da Redenção">
-    <meta name="msapplication-TileColor" content="#222222">
-    <meta name="msapplication-TileImage" content="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQ0IiBoZWlnaHQ9IjE0NCIgdmlld0JveD0iMCAwIDE0NCAxNDQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNDQiIGhlaWdodD0iMTQ0IiBmaWxsPSIjMjIyMjIyIi8+Cjx0ZXh0IHg9IjcyIiB5PSI4MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjQ1IiBmaWxsPSIjRkZENzAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn4+wPC90ZXh0Pgo8L3N2Zz4=">
-    
-    <!-- Manifest -->
-    <link rel="manifest" href="./manifest.json">
-    
-    <!-- Prevenção de cache indesejado -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <meta name="theme-color" content="#222222">
+    <title>Torre da Redenção</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="game-container">
-        <div id="game-title">Torre da Redenção</div>
-        <div id="history-panel"></div>
-        <div class="status-panel">
-            <div id="xp-bar" class="bar-container">
-                <div class="bar-fill"></div>
-            </div>
-            <div id="level">Level: 1</div>
-            <div id="health-bar" class="bar-container">
-                <div class="bar-fill"></div>
-            </div>
-            <div id="mana-bar" class="bar-container">
-                <div class="bar-fill"></div>
-            </div>
-            <div id="energy-bar" class="bar-container">
-                <div class="bar-fill"></div>
-            </div>
-            <div id="sanity-bar" class="bar-container">
-                <div class="bar-fill"></div>
-            </div>
-            <div class="secondary-stats">
-                <div>⚔️ Ataque</div>
-                <div>🛡️ Defesa</div>
-                <div>🎯 Precisão</div>
-                <div>💨 Agilidade</div>
-            </div>
-        </div>
-        <div id="enemy-panel">
-            <div id="enemy-hp-bar" class="bar-container">
-                <div class="bar-fill"></div>
-            </div>
-            <div id="enemy-secondary-stats"></div>
-        </div>
-        <div id="options-panel">
-            <button>-</button>
-            <button>-</button>
-            <button id="explore-button">🔎 Explorar</button>
-        </div>
-    </div>
-    <script type="module" src="game.js"></script>
+    <main>
+        <section id="gameHistory" aria-live="polite" aria-atomic="true"></section>
+
+        <section id="playerStats" aria-label="Status do Jogador"></section>
+
+        <nav id="gameControls">
+            <button id="startButton" aria-label="Iniciar Jogo">Iniciar</button>
+            <button id="actionButton" aria-label="Executar Próxima Ação">Ação</button>
+        </nav>
+    </main>
+
+    <script src="game.js" defer></script>
 </body>
 </html>

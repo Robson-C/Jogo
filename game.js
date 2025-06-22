@@ -1,71 +1,102 @@
-import { iniciarExploracao } from './rooms.js';
-import { updateUIStatus } from './ui.js';
-import { resetPlayer } from './player.js';
+// Objeto de estado centralizado
+const gameState = {
+    playerName: '',
+    currentRoom: '',
+    historyLog: [],
+    playerStats: {
+        xp: 0,
+        level: 1,
+        vida: 100,
+        mana: 50,
+        energia: 100,
+        sanidade: 100
+    }
+};
 
-const exploreButton = document.getElementById('explore-button');
-
-function iniciarJogo() {
-    resetPlayer();
-    updateUIStatus();
-    exploreButton.textContent = '🔎 Explorar';
-    exploreButton.onclick = iniciarExploracao;
+// Atualiza o histórico de mensagens
+function updateHistory(message) {
+    gameState.historyLog.push(message);
+    const historyDiv = document.getElementById('gameHistory');
+    historyDiv.innerHTML = gameState.historyLog.join('<br>');
 }
 
-export function finalizarJogo(mensagem) {
-    addToHistory(mensagem);
-    forcarGameOver();
+// Atualiza o status do jogador
+function updateStats() {
+    const statsDiv = document.getElementById('playerStats');
+    const stats = gameState.playerStats;
+    statsDiv.innerHTML = `
+        XP: ${stats.xp} | Nível: ${stats.level} | Vida: ${stats.vida} | Mana: ${stats.mana} | Energia: ${stats.energia} | Sanidade: ${stats.sanidade}
+    `;
 }
 
-function forcarGameOver() {
-    const optionButtons = document.querySelectorAll('#options-panel button');
-    optionButtons.forEach(btn => {
-        btn.disabled = true;
-        btn.onclick = null;
-    });
-    
-    exploreButton.textContent = '🔁 Jogar Novamente';
-    exploreButton.disabled = false;
-    exploreButton.onclick = () => {
-        location.reload();
-    };
+// Lógica de entrada na sala inicial
+function enterRoom(roomName) {
+    gameState.currentRoom = roomName;
+    updateHistory(`Você entrou na sala: ${roomName}`);
+    updateStats();
 }
 
-export function addToHistory(text) {
-    const historyPanel = document.getElementById('history-panel');
-    const newParagraph = document.createElement('p');
-    newParagraph.textContent = text;
-    historyPanel.appendChild(newParagraph);
-    historyPanel.scrollTop = historyPanel.scrollHeight;
+// Validação básica do nome do jogador
+function validatePlayerName(name) {
+    return typeof name === 'string' && name.trim().length > 0 && name.length <= 20;
 }
 
-iniciarJogo();
-// Registra o service worker para PWA
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js')
-      .then(registration => {
-        console.log('SW registrado com sucesso:', registration.scope);
-        
-        // Verifica atualizações a cada 60 segundos
-        setInterval(() => {
-          registration.update();
-        }, 60000);
-      })
-      .catch(error => {
-        console.log('Falha no registro do SW:', error);
-      });
-  });
+// Sanitização de entrada para evitar XSS
+function sanitizeInput(input) {
+    const tempDiv = document.createElement('div');
+    tempDiv.textContent = input;
+    return tempDiv.innerHTML;
 }
-// Adiciona botão para forçar atualização
-navigator.serviceWorker.ready.then(registration => {
-  registration.addEventListener('updatefound', () => {
-    const newWorker = registration.installing;
-    newWorker.addEventListener('statechange', () => {
-      if (newWorker.state === 'installed') {
-        if (confirm('Nova versão disponível! Atualizar agora?')) {
-          window.location.reload();
-        }
-      }
-    });
-  });
+
+// Inicializa o jogo
+function startGame() {
+    removeEventListeners();
+    const playerName = prompt('Digite seu nome:');
+    if (validatePlayerName(playerName)) {
+        gameState.playerName = sanitizeInput(playerName);
+        updateHistory(`Bem-vindo, ${gameState.playerName}!`);
+        enterRoom('Sala Inicial');
+    } else {
+        updateHistory('Nome inválido. Por favor, tente novamente.');
+        addEventListeners(); // Permite tentar novamente
+    }
+}
+
+// Exemplo de ação futura (placeholder)
+function nextAction() {
+    try {
+        updateHistory('Você realizou uma ação.');
+    } catch (error) {
+        handleCriticalError(error);
+    }
+}
+
+// Tratamento de erros críticos
+function handleCriticalError(error) {
+    console.error('Erro crítico:', error);
+    const historyDiv = document.getElementById('gameHistory');
+    historyDiv.innerHTML = `<p style="color: red;">Ocorreu um erro crítico. Recarregue a página.</p>`;
+}
+
+// Adiciona event listeners
+function addEventListeners() {
+    const startBtn = document.getElementById('startButton');
+    const actionBtn = document.getElementById('actionButton');
+
+    if (startBtn) startBtn.addEventListener('click', startGame);
+    if (actionBtn) actionBtn.addEventListener('click', nextAction);
+}
+
+// Remove event listeners
+function removeEventListeners() {
+    const startBtn = document.getElementById('startButton');
+    const actionBtn = document.getElementById('actionButton');
+
+    if (startBtn) startBtn.removeEventListener('click', startGame);
+    if (actionBtn) actionBtn.removeEventListener('click', nextAction);
+}
+
+// Inicialização ao carregar a página
+document.addEventListener('DOMContentLoaded', () => {
+    addEventListeners();
 });
