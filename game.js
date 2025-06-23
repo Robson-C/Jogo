@@ -8,6 +8,23 @@
  * - Gerenciamento de eventos principais
  * - Coordenação entre módulos
  */
+ 
+ //Instalar PWA
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installButton').style.display = 'block';
+});
+document.getElementById('installButton').addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`Usuário escolheu: ${outcome}`);
+    deferredPrompt = null;
+  }
+});
 
 // Estado global do jogo
 const gameState = {
