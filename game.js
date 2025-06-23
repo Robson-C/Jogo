@@ -1,3 +1,5 @@
+// game.js — Contém os tipos e dados centrais do jogo: definição dos inimigos, salas, pools, boss de cada andar, inicialização/reset do estado do jogo, eventos de menu e carregamento principal.
+
 // ===== FRASES DE FIM DE CAPÍTULO (Expansível por capítulo) =====
 const FRASES_FIM_CAPITULO = {
     1: [
@@ -199,12 +201,27 @@ function getRandomRoomsToNextFloor() {
 function initGame() {
     esconderTodosMenus();
     mostrarJogo();
+
+    // --- INÍCIO DO AJUSTE PARA O HISTÓRICO ---
+    // Garante que o histórico já aparece na altura correta, SEM animação, ao iniciar o jogo.
+    DOM_ELEMENTS.fullHistory.classList.add('notransition');
+    DOM_ELEMENTS.fullHistory.style.height =
+        (window.matchMedia("(max-width: 600px)").matches
+            ? MAX_HISTORY_HEIGHT_MOBILE
+            : MAX_HISTORY_HEIGHT_DESKTOP
+        ) + "px";
+    setTimeout(() => {
+        DOM_ELEMENTS.fullHistory.classList.remove('notransition');
+    }, 100);
+    // --- FIM DO AJUSTE ---
+
     resetGameState();
     limparHistoricoMensagens();
     mensagemInicioJogo();
     updateStatus();
     presentOptions();
 }
+
 
 function mostrarJogo() {
     if (DOM_ELEMENTS.gameContainer) {
@@ -326,7 +343,7 @@ window.addEventListener('DOMContentLoaded', function() {
     // Escuta mudança de rotação/tamanho
     window.addEventListener("orientationchange", checkOrientation, { passive: true });
     window.addEventListener("resize", checkOrientation, { passive: true });
+
     document.addEventListener("DOMContentLoaded", checkOrientation, { passive: true });
-    // Rodar na inicialização também
     setTimeout(checkOrientation, 100);
 })();

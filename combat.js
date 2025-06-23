@@ -1,3 +1,35 @@
+// combat.js — Responsável pela lógica principal de combate: alternância de turnos, ações do jogador e inimigo, vitórias/derrotas, buffs/debuffs, rounds e cálculo de dano.
+
+function calculateDamage(attacker, defender) {
+    try {
+        // Força e defesa sempre positivas
+        const forca = typeof attacker.forca === 'number' ? attacker.forca : 0;
+        const defesa = typeof defender.defesa === 'number' ? defender.defesa : 0;
+        const precisao = typeof attacker.precisao === 'number' ? attacker.precisao : 0;
+        const agilidade = typeof defender.agilidade === 'number' ? defender.agilidade : 0;
+
+        // Checa se o ataque acerta: chance = precisao atacante - agilidade defensor (mínimo 5%)
+        const acertoChance = Math.max(5, Math.min(95, precisao - agilidade));
+        if (Math.random() * 100 >= acertoChance) {
+            return { damage: 0, message: "O ataque errou seu alvo!" };
+        }
+
+        // Dano básico
+        let dano = Math.max(1, forca - defesa);
+
+        // Crítico simples (5% chance, dobra dano)
+        if (Math.random() < 0.05) {
+            dano *= 2;
+            return { damage: dano, message: "Acerto crítico!" };
+        }
+        return { damage: dano, message: "" };
+    } catch (e) {
+        // Em caso de erro, retorna zero dano e mensagem clara
+        return { damage: 0, message: "Falha ao calcular dano." };
+    }
+}
+window.calculateDamage = calculateDamage;
+
 // ===== MOTOR DE COMBATE: AVANÇO DE TURNOS =====
 function advanceCombatTurn() {
     if (!gameState.inCombat || gameState.gameOver || !gameState.currentEnemy || gameState.hp <= 0) return;
@@ -69,7 +101,8 @@ function playerAttack() {
     if (result.damage > 0) {
         gameState.currentEnemy.hp -= result.damage;
         addMessage(
-            `Você atacou! ${gameState.currentEnemy.name} sofreu ${result.damage} de dano.`,
+            `Você atacou! ${gameState.currentEnemy.name} sofreu ${result.damage} de dano.` +
+            (result.message ? ` (${result.message})` : ""),
             false, false, "attack"
         );
     } else {

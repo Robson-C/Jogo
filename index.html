@@ -2,80 +2,100 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#42351c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
     <title>Torre da Redenção</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon.png">
     <link rel="stylesheet" href="style.css">
+    <script>
+      // Registro do service worker PWA
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('service-worker.js')
+            .catch(() => {}); // Silencia erro se offline
+        });
+      }
+    </script>
 </head>
+
 <body>
     <!-- MENU INICIAL -->
-    <div id="menuInicial" class="menu-inicial">
-        <h1 class="titulo-jogo-menu">Torre da Redenção</h1>
+    <div id="menuInicial" class="menu-inicial" role="main" aria-label="Menu Inicial do Jogo" tabindex="-1">
+        <h1 class="titulo-jogo-menu" id="mainTitle">Torre da Redenção</h1>
         <div class="menu-botoes">
-            <button id="btnIniciarJogo">Iniciar Jogo</button>
-            <button id="btnTitulos">Títulos</button>
-            <button id="btnConquistas">Conquistas</button>
-            <button id="btnLore">História</button>
+            <button id="btnIniciarJogo" aria-label="Iniciar Jogo" tabindex="0">Iniciar Jogo</button>
+            <button id="btnTitulos" aria-label="Títulos desbloqueados" tabindex="0">Títulos</button>
+            <button id="btnConquistas" aria-label="Conquistas" tabindex="0">Conquistas</button>
+            <button id="btnLore" aria-label="História do jogo" tabindex="0">História</button>
         </div>
     </div>
     <!-- PAINEL: TÍTULOS -->
-    <div id="painelTitulos" class="menu-painel" style="display:none;">
+    <div id="painelTitulos" class="menu-painel" style="display:none;" role="dialog" aria-label="Painel de Títulos" tabindex="-1">
         <h2 class="titulo-jogo-painel">Torre da Redenção</h2>
         <h3 class="painel-section-title">Títulos</h3>
         <div class="painel-conteudo">
             <!-- Espaço para títulos desbloqueáveis -->
         </div>
-        <button class="btn-voltar-menu">Voltar</button>
+        <button class="btn-voltar-menu" aria-label="Voltar ao Menu Inicial" tabindex="0">Voltar</button>
     </div>
     <!-- PAINEL: CONQUISTAS -->
-    <div id="painelConquistas" class="menu-painel" style="display:none;">
+    <div id="painelConquistas" class="menu-painel" style="display:none;" role="dialog" aria-label="Painel de Conquistas" tabindex="-1">
         <h2 class="titulo-jogo-painel">Torre da Redenção</h2>
         <h3 class="painel-section-title">Conquistas</h3>
         <div class="painel-conteudo">
             <!-- Espaço para conquistas -->
         </div>
-        <button class="btn-voltar-menu">Voltar</button>
+        <button class="btn-voltar-menu" aria-label="Voltar ao Menu Inicial" tabindex="0">Voltar</button>
     </div>
     <!-- PAINEL: LORE / HISTÓRIA -->
-    <div id="painelLore" class="menu-painel" style="display:none;">
+    <div id="painelLore" class="menu-painel" style="display:none;" role="dialog" aria-label="Painel de História do Jogo" tabindex="-1">
         <h2 class="titulo-jogo-painel">Torre da Redenção</h2>
         <h3 class="painel-section-title">História</h3>
         <div class="painel-conteudo">
             <!-- Espaço para lore/introdução do jogo -->
         </div>
-        <button class="btn-voltar-menu">Voltar</button>
+        <button class="btn-voltar-menu" aria-label="Voltar ao Menu Inicial" tabindex="0">Voltar</button>
     </div>
     <!-- CONTAINER DO JOGO -->
-    <div class="game-container" style="display:none;">
+    <div class="game-container" style="display:none;" role="main" aria-label="Área principal do Jogo" tabindex="-1">
         <h1>Torre da Redenção</h1>
-        <div id="fullHistory" class="full-history">
+        <div id="fullHistory" class="full-history" aria-live="polite" aria-atomic="false" aria-label="Histórico de Mensagens do Jogo" tabindex="0">
             <!-- Mensagens serão adicionadas aqui -->
         </div>
-        <div id="status" class="status-box">
+        <div id="status" class="status-box" aria-label="Painel de Status do Jogador" tabindex="0">
             <!-- Status será atualizado aqui -->
         </div>
-        <div id="enemyPanel" class="enemy-status-wrapper">
+        <div id="enemyPanel" class="enemy-status-wrapper" aria-label="Painel de Status do Inimigo" tabindex="0">
             <!-- Status do monstro será atualizado aqui -->
         </div>
-        <div id="options" class="options-box">
+        <div id="options" class="options-box" aria-label="Opções do Jogador" tabindex="0">
             <!-- Opções serão geradas aqui -->
         </div>
     </div>
+
+
+    <!-- MODAL DE ORIENTAÇÃO -->
+    <div id="orientationLockModal" style="display:none;" role="alertdialog" aria-modal="true" aria-label="Modo Retrato Obrigatório" tabindex="-1">
+        <div class="orientation-modal-inner">
+            <span style="font-size:3em;display:block;" aria-hidden="true">🔄</span>
+            <div class="orientation-text">Por favor, gire o aparelho para o modo retrato<br><span style="font-size:0.85em;">(Portrait mode)</span></div>
+        </div>
+    </div>
+
 
     <script src="game.js"></script>
     <script src="buffUtils.js"></script>
     <script src="status.js"></script>
     <script src="exploration.js"></script>
     <script src="enemyBehaviors.js"></script>
-    <script src="combat.js"></script>
     <script src="ui.js"></script>
-
-    <!-- MODAL DE ORIENTAÇÃO -->
-    <div id="orientationLockModal" style="display:none;">
-        <div class="orientation-modal-inner">
-            <span style="font-size:3em;display:block;">🔄</span>
-            <div class="orientation-text">Por favor, gire o aparelho para o modo retrato<br><span style="font-size:0.85em;">(Portrait mode)</span></div>
-        </div>
-    </div>
-
+    <script src="combat.js"></script>
 </body>
 </html>

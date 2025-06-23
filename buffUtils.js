@@ -1,3 +1,5 @@
+// buffUtils.js — Centraliza a definição, aplicação, atualização e remoção de buffs/debuffs para jogador e inimigo. Inclui funções auxiliares para cálculo de stats ajustados e informações de efeito.
+
 // ===== DICIONÁRIO CENTRAL DE BUFFS/DEBUFFS =====
 const BUFFS_INFO = {
     // Buffs compostos

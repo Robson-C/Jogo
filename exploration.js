@@ -1,3 +1,5 @@
+// enemyBehaviors.js — Define o comportamento especial de cada inimigo durante o combate (habilidades únicas, ataques especiais, buffs/debuffs aplicados), integrado ao motor de combate.
+
 // ===== EXPLORAÇÃO DE SALAS =====
 function exploreRoom() {
     if (gameState.gameOver) return;

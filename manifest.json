@@ -1,0 +1,13 @@
+{
+  "name": "Torre da Redenção",
+  "short_name": "Torre",
+  "description": "Jogo de texto roguelike 100% offline — avance andares, lute e sobreviva.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#39342b",
+  "theme_color": "#42351c",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icon.png", "sizes": "192x192", "type": "image/png" }
+  ]
+}

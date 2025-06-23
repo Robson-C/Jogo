@@ -158,7 +158,6 @@ body {
     flex-direction: column;
     gap: 10px;
     min-height: 480px;
-    background-image: url('background_game.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -196,6 +195,9 @@ body {
     gap: 4px;
     font-size: 0.93em;
     transition: height 1s;
+}
+.full-history.notransition {
+    transition: none !important;
 }
 .message {
     padding: 5px 8px;
@@ -347,7 +349,7 @@ body {
     grid-column: span 2;
     overflow: hidden;
     max-height: 0;
-    transition: max-height 1s;
+    transition: max-height 1s cubic-bezier(.53,.22,.45,1.26);
     pointer-events: none;
 }
 .enemy-status-wrapper.visible {
@@ -545,7 +547,7 @@ button:disabled {
 
 
 
-/* =====================[ TRECHO 8: UTILIDADES E RESPONSIVIDADE GLOBAL ]===================== */
+/* =====================[ TRECHO 8: UTILIDADES, RESPONSIVIDADE GLOBAL E ACESSIBILIDADE ]===================== */
 /* ===== AJUSTES PARA RESPONSIVIDADE (Mobile) ===== */
 @media (max-width: 600px) {
     .menu-inicial,
@@ -579,3 +581,19 @@ button, .btn-voltar-menu, #menuInicial .menu-botoes button {
     background: #555 url('botao.png') no-repeat center center;
     background-size: 100% 100%;
 }
+
+
+/* ===== FOCO VISÍVEL ACESSÍVEL: botões e menus ===== */
+#menuInicial .menu-botoes button:focus-visible,
+.btn-voltar-menu:focus-visible,
+.options-box button:focus-visible,
+.game-container button:focus-visible,
+button:focus-visible {
+    outline: 3px solid #17a4fa !important; /* Azul de contraste */
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 3px #95e8ff66 !important;
+    z-index: 10;
+}
+
+
+/* =====================[ FIM TRECHO 8 ]===================== */

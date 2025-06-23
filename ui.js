@@ -1,3 +1,5 @@
+// ui.js — Controla a interface do usuário: exibição de mensagens, opções de ação, processamento de escolhas, fim de jogo, histórico, renderização dos botões, navegação por teclado/touch.
+
 const messageCount = 20;
 
 // ===== SISTEMA DE MENSAGENS =====
@@ -103,7 +105,7 @@ function presentOptions() {
         renderOptions([
             { text: '-', action: null },
             { text: '-', action: null },
-            { text: '🔍 Continuar Explorando', action: 'explore' }
+            { text: '🔍 Continuar Explorando', action: 'explore', ariaLabel: "Continuar explorando a sala" }
         ]);
         return;
     }
@@ -130,7 +132,7 @@ function presentOptions() {
 function renderGameOverOptions() {
     const score = calculateScore();
     const scoreMessage = `
-        <div class="message damage">
+        <div class="message damage" aria-live="assertive">
             🏆 <b>Pontuação Final:</b> ${score.total}<br>
             🗓️ Dias: +${score.daysPoints}<br>
             🚪 Salas: +${score.roomsPoints}<br>
@@ -138,19 +140,22 @@ function renderGameOverOptions() {
             🏢 Andares: +${score.floorsPoints}
         </div>
     `;
-    DOM_ELEMENTS.options.innerHTML = scoreMessage + '<button onclick="initGame()">Jogar Novamente</button>';
+    DOM_ELEMENTS.options.innerHTML = scoreMessage + '<button onclick="initGame()" aria-label="Jogar Novamente">Jogar Novamente</button>';
+    // Foco automático ao botão de reiniciar
+    const btn = DOM_ELEMENTS.options.querySelector('button');
+    if (btn) btn.focus();
 }
 
 function getCombatActions() {
     const actions = [];
     if (gameState.stamina >= 5) {
-        actions.push({ text: '⚔️ Atacar (-5 ⚡)', action: 'attack' });
+        actions.push({ text: '⚔️ Atacar (-5 ⚡)', action: 'attack', ariaLabel: 'Atacar gastando 5 de stamina' });
     }
     if (gameState.mp >= 15) {
-        actions.push({ text: '✨ Cura Mágica (-15 🔮)', action: 'healSpell' });
+        actions.push({ text: '✨ Cura Mágica (-15 🔮)', action: 'healSpell', ariaLabel: 'Cura Mágica, gasta 15 de MP e restaura HP' });
     }
     const fleeChance = 40 + gameState.agilidade;
-    actions.push({ text: `🏃 Fugir (${fleeChance}% 💨)`, action: 'flee' });
+    actions.push({ text: `🏃 Fugir (${fleeChance}% 💨)`, action: 'flee', ariaLabel: `Tentar fugir, chance de sucesso: ${fleeChance}%` });
     return actions;
 }
 
@@ -162,7 +167,8 @@ function getExplorationActions() {
         actions.push({
             text: '🧘 Meditar (Recupera todo o 🔮 MP)',
             action: gameState.meditouNaSala ? null : 'meditate',
-            disabled: !!gameState.meditouNaSala
+            disabled: !!gameState.meditouNaSala,
+            ariaLabel: gameState.meditouNaSala ? 'Já meditou nesta sala, opção indisponível' : 'Meditar e recuperar todo o MP'
         });
     }
 
@@ -185,18 +191,23 @@ function getExplorationActions() {
         actions.push({
             text: `🛌 Descansar (+${hpRec} ❤️, +${staminaRec} ⚡, +${sanityRec} 🌌)`,
             action: gameState.descansouNaSala ? null : 'rest',
-            disabled: !!gameState.descansouNaSala
+            disabled: !!gameState.descansouNaSala,
+            ariaLabel: gameState.descansouNaSala ? 'Já descansou nesta sala, opção indisponível' : `Descansar e recuperar ${hpRec} HP, ${staminaRec} Stamina e ${sanityRec} Sanidade`
         });
     }
 
-    actions.push({ text: '🔍 Continuar Explorando', action: 'explore' });
+    actions.push({ text: '🔍 Continuar Explorando', action: 'explore', ariaLabel: 'Continuar explorando a torre' });
     return actions;
 }
 
 function renderOptions(actions) {
-    actions.forEach(slot => {
+    actions.forEach((slot, idx) => {
         const button = document.createElement('button');
         button.textContent = slot.text;
+
+        // Acessibilidade: descrição
+        if (slot.ariaLabel) button.setAttribute('aria-label', slot.ariaLabel);
+        else button.setAttribute('aria-label', slot.text.replace(/[^a-zA-ZÀ-ÿ0-9 ]/g, '').trim());
 
         if (slot.action) {
             button.onclick = () => chooseOption(slot.action);
@@ -213,6 +224,9 @@ function renderOptions(actions) {
 
         DOM_ELEMENTS.options.appendChild(button);
     });
+    // Foco automático ao primeiro botão disponível
+    const focusBtn = DOM_ELEMENTS.options.querySelector('button:not(:disabled)');
+    if (focusBtn) focusBtn.focus();
 }
 
 function processarFimDeAcao() {
@@ -338,11 +352,14 @@ function chooseOption(option) {
 function renderPlayerStunPanel() {
     // Desabilita todas as opções e exibe um painel de stun com ícone e mensagem
     DOM_ELEMENTS.options.innerHTML = `
-        <div style="text-align:center;padding:16px 0;">
-            <span style="font-size:2.5rem;display:block;">🌀</span>
+        <div style="text-align:center;padding:16px 0;" tabindex="0" aria-live="assertive" aria-label="Você está atordoado, aguarde um instante">
+            <span style="font-size:2.5rem;display:block;" aria-hidden="true">🌀</span>
             <span style="font-size:1.2rem;display:block;margin:8px 0;">Você está atordoado!<br>Espere um instante...</span>
         </div>
     `;
+    // Foco automático no painel de stun
+    const stunDiv = DOM_ELEMENTS.options.querySelector('div[tabindex]');
+    if (stunDiv) stunDiv.focus();
 }
 function clearPlayerStunPanel() {
     // Após o stun, basta chamar presentOptions() para restaurar o painel normalmente
