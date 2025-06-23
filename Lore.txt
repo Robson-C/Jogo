@@ -1,0 +1,185 @@
+Player: Paciente em coma, preso em sua própria mente após um trauma grave.
+    Precisa reconstruir suas memórias e enfrentar seu trauma para despertar.
+
+Trauma: 
+    - Alex acredita (consciente ou inconscientemente) que causou o acidente de carro devido a uma distração (discutir ao volante com sua esposa) .
+
+    - No acidente, Alex perdeu uma pessoa querida (esposa). A culpa dessa perda o aprisiona emocionalmente.
+
+
+Torre:
+    -Projeção mental criada pelo subconsciente do player como mecanismo de defesa, que materializa  seus medos, traumas e culpa.
+    - Ao subir a torre os monstros vao ficando mais humanoides, até os ultimos andares como fantasmas e zumbis, o chefe poderia ser uma sombra do player
+
+Objetivo Final: Enfrentar seu trauma diretamente no topo da torre para acordar do coma. O fracasso o mantém preso em estado vegetativo ou reinicia a luta interna.
+
+História
+    Capítulo 1: "O Despertar do Vazio"
+        -Objetivo: Transmitir sensação de vazio, negação e início da luta interior. Apenas nas mensagens e atmosfera.
+        -Atmosfera: 
+        -Pistas/Mensagens
+            01: "O silêncio é esmagador, mas não incomoda… por quê?"
+            02: "Você sente que deveria lembrar de algo, mas não consegue."
+            03: "Tudo aqui parece artificial, como um sonho esquecido."
+            04: "Há uma ausência reconfortante no vazio, como se algo ruim estivesse longe demais para te alcançar."
+            05: "Memórias borradas deslizam por entre seus dedos."
+            06: "Nada é real, exceto o vazio à sua volta."
+            07: "Você não sente medo, mas não sabe se isso é bom ou ruim."
+            08: "Os corredores mudam de lugar, como se não quisessem ser encontrados."
+            09: "Você busca uma saída, mas não se lembra do que deixou para trás."
+            10: "Ecos de gritos distantes invadem a névoa. Algo dentro de você resiste em escutar."
+            10: "Imagens desfocadas de um volante, uma voz familiar… tudo some antes que você alcance."
+        -Monstros: Rato Gigante, Slime Sombrio, Morcego das Sombras
+        -Mini-bosses: Rato-Rei, Slime Gigante, Morcego Alfa, ..., Gosma Reluzente, ..., Slime Abissal, Morcego Vampiro e Aranha Rainha
+        -Boss: Coruja Anciã
+        -Boss Falas: "Ainda não é hora de lembrar."/"Volte para o vazio, aqui não há dor."/"Você não pertence à verdade.""O esquecimento é seu abrigo."/"Não desperte o que está adormecido."/"O vazio é mais seguro do que a verdade."/"Por que insistir em lembrar?"
+        -Situação do Player: Total negação, recusa-se a acreditar ou lembrar do acidente. O boss representa o bloqueio mental.
+    
+    Capítulo 2: "Fragmentos de Um Passado Quebrado"
+        -Pistas/Mensagens
+            01: 
+            02: 
+            03: 
+            04: 
+            05: 
+            06: 
+            07: 
+            08: 
+            09: 
+            10: 
+            10: 
+        
+        -Boss: 
+        
+        -Boss Falas: 
+    
+        -Situação do Player: 
+    
+    Capítulo 3: "Caminhando Entre Ruínas"
+        -Pistas/Mensagens
+            01: 
+            02: 
+            03: 
+            04: 
+            05: 
+            06: 
+            07: 
+            08: 
+            09: 
+            10: 
+            10: 
+        
+        -Boss: 
+        
+        -Boss Falas: 
+    
+        -Situação do Player: 
+    
+    
+    Capítulo 4: "Enfrentando o Abismo"
+        -Pistas/Mensagens
+            01: 
+            02: 
+            03: 
+            04: 
+            05: 
+            06: 
+            07: 
+            08: 
+            09: 
+            10: 
+            10: 
+        
+        -Boss: 
+        
+        -Boss Falas: 
+    
+        -Situação do Player: 
+    
+    
+    Capítulo 5: "Despertar ou Esquecer"
+        -Pistas/Mensagens
+            01: 
+            02: 
+            03: 
+            04: 
+            05: 
+            06: 
+            07: 
+            08: 
+            09: 
+            10: 
+            10: 
+        
+        -Boss: 
+        
+        -Boss Falas: 
+    
+        -Situação do Player: 
+
+
+Andar 1
+Rato Gigante: 50%
+Slime Sombrio: 35%
+Morcego das Sombras: 15%
+Mini-Boss: Rato-Rei
+
+Andar 2
+Rato Gigante: 35%
+Slime Sombrio: 35%
+Morcego das Sombras: 20%
+Aranha Cinzenta: 10%
+Mini-Boss: Slime Gigante
+
+Andar 3
+Rato Gigante: 25%
+Slime Sombrio: 25%
+Morcego das Sombras: 25%
+Aranha Cinzenta: 15%
+Slime Luminoso: 10% (raro)
+Mini-Boss: Morcego Alfa
+
+Andar 4
+Rato Gigante: 15%
+Slime Sombrio: 25%
+Morcego das Sombras: 25%
+Aranha Cinzenta: 25%
+Slime Luminoso: 10%
+Mini-Boss: Aranha Rainha
+
+Andar 5
+Slime Sombrio: 20%
+Morcego das Sombras: 20%
+Aranha Cinzenta: 35%
+Slime Luminoso: 15%
+Rato Gigante: 10%
+Mini-Boss: Gosma Reluzente
+
+Andar 6
+Morcego das Sombras: 25%
+Aranha Cinzenta: 35%
+Slime Luminoso: 15%
+Slime Sombrio: 15%
+Rato Gigante: 10%
+Mini-Boss: Horda de Ratos
+
+Andar 7
+Aranha Cinzenta: 35%
+Morcego das Sombras: 30%
+Slime Luminoso: 20%
+Slime Sombrio: 15%
+Mini-Boss: Slime Abissal
+
+Andar 8
+Aranha Cinzenta: 30%
+Morcego das Sombras: 30%
+Slime Luminoso: 25%
+Slime Sombrio: 15%
+Mini-Boss: Morcego Vampiro
+
+Andar 9
+Aranha Cinzenta: 25%
+Slime Luminoso: 30%
+Morcego das Sombras: 30%
+Slime Sombrio: 15%
+Mini-Boss: Aracnídeo Sombrio

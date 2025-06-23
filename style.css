@@ -1,139 +1,581 @@
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #222;
-    color: #eee;
-}
-
-#game-container {
+/* =====================[ TRECHO 1: MENUS E PAINÉIS GLOBAIS ]===================== */
+/* ===== MENUS INICIAIS E PAINÉIS ===== */
+.menu-inicial,
+.menu-painel {
+    max-width: 600px;
     width: 100%;
-    height: 90vh;
+    margin: 0 auto;
+    padding: 32px 10px 32px 10px;
+    background: linear-gradient(135deg, #39342b 0%, #42351c 100%);
+    border-radius: 16px;
+    box-shadow: 0 0 24px 2px rgba(80, 60, 10, 0.18), 0 0 0 2px #493613;
     display: flex;
     flex-direction: column;
-    margin: 0 auto;
-    padding: 5px;
-    box-sizing: border-box;
-}
-
-#game-title {
-    text-align: center;
-    font-size: 1.5em;
-    margin-bottom: 5px;
-    color: #FFD700;
-}
-
-#history-panel {
-    flex: 1;
-    overflow-y: auto;
-    background-color: #333;
-    border: 1px solid #555;
-    padding: 5px;
-    font-size: 0.9em;
-    margin-bottom: 5px;
-}
-
-.status-panel, #enemy-panel {
-    border: 1px solid #555;
-    background-color: #2d2d2d;
-    padding: 8px;
-    margin-bottom: 5px;
-    font-size: 0.9em;
-    border-radius: 6px;
-}
-
-#enemy-panel {
-    display: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.bar-container {
-    background-color: #555;
-    width: 100%;
-    height: 16px;
-    border-radius: 4px;
+    gap: 18px;
+    align-items: center;
+    min-height: 700px;
+    animation: fadeInMenu 0.8s;
+    position: relative;
     overflow: hidden;
+    justify-content: center;
+}
+@keyframes fadeInMenu {
+    from { opacity: 0; transform: scale(0.98); }
+    to   { opacity: 1; transform: scale(1); }
+}
+.menu-inicial {
+    background-image: url('background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 1;
+}
+
+/* ===== TÍTULO DO JOGO (MENU E PAINÉIS) ===== */
+.titulo-jogo-menu,
+.titulo-jogo-painel {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 2em;
+    color: #ffffff;
+    letter-spacing: 1.5px;
+    text-shadow: 0 2px 12px #000, 0 1px 0 #7c5600;
+    text-align: center;
     margin-bottom: 4px;
+    margin-top: 0;
+    padding-bottom: 8px;
+}
+.titulo-jogo-menu { margin-bottom: 10px; }
+.titulo-jogo-painel {
+    font-size: 1.6em;
+    margin-bottom: 0;
+    padding-bottom: 6px;
+}
+.painel-section-title {
+    color: #ffd480;
+    margin: 12px 0 0 0;
+    text-align: center;
+    letter-spacing: 1px;
+    font-size: 1.05em;
+    font-weight: 600;
 }
 
-.bar-fill {
-    height: 100%;
-    transition: width 0.3s ease;
+/* ===== BOTÕES DO MENU INICIAL CUSTOMIZADOS ===== */
+#menuInicial .menu-botoes {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8vw;
+    width: 100%;
+}
+#menuInicial .menu-botoes button {
+    width: 90vw;
+    max-width: 330px;
+    min-width: 0;
+    height: 48px;
+    font-family: 'Roboto Condensed', 'Arial Narrow', Arial, sans-serif;
+    font-weight: 800;
+    font-size: 1.1em;
+    color: #463a22;
+    background: url('botao.png') no-repeat center center;
+    background-size: 100% 100%;
+    outline: none;
+    transition: filter 0.12s, transform 0.09s, box-shadow 0.13s;
+    text-shadow: 0 2px 6px #e7d8b6, 0 1px 0 #f6e3b7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 1.2px;
+    margin: 0;
+    cursor: pointer;
+    padding: 0;
+}
+#menuInicial .menu-botoes button:hover,
+#menuInicial .menu-botoes button:focus {
+    filter: brightness(1.08) drop-shadow(0 2px 12px #dfc18160);
+    transform: translateY(-2px) scale(1.025);
+    box-shadow: 0 6px 24px 0 rgba(200,180,70,0.14);
+    color: #2f2311;
 }
 
-#xp-bar .bar-fill { background-color: #4caf50; }
-#health-bar .bar-fill { background-color: #f44336; }
-#mana-bar .bar-fill { background-color: #673ab7; }
-#energy-bar .bar-fill { background-color: #ff9800; }
-#sanity-bar .bar-fill { background-color: #00bcd4; }
+/* ===== VOLTAR BOTAO MENU ===== */
+.btn-voltar-menu {
+    width: 98vw;
+    max-width: 330px;
+    height: 48px;
+    font-size: 1em;
+    border-radius: 10px;
+    font-family: 'Roboto Condensed', 'Arial Narrow', Arial, sans-serif;
+    font-weight: 800;
+    background: url('botao.png') no-repeat center center;
+    background-size: 100% 100%;
+    border: none;
+    outline: none;
+    transition: filter 0.12s, transform 0.09s, box-shadow 0.13s;
+    text-shadow: 0 2px 6px #e7d8b6, 0 1px 0 #f6e3b7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 1.2px;
+    margin: 0;
+    cursor: pointer;
+    padding: 0;
+}
+.btn-voltar-menu:hover,
+.btn-voltar-menu:focus {
+    filter: brightness(1.08) drop-shadow(0 2px 12px #dfc18160);
+    transform: translateY(-2px) scale(1.025);
+    box-shadow: 0 6px 24px 0 rgba(200,180,70,0.14);
+    color: #2f2311;
+}
 
-.secondary-stats, #enemy-secondary-stats {
+/* =====================[ FIM TRECHO 1 ]===================== */
+
+
+
+/* =====================[ TRECHO 2: ESTRUTURA DO JOGO ]===================== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #222;
+    color: #eee;
+    margin: 0;
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    line-height: 1.5;
+}
+.game-container {
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 10px;
+    border-radius: 16px;
+    box-shadow: 0 0 24px 2px rgba(80, 60, 10, 0.18), 0 0 0 2px #493613;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 480px;
+    background-image: url('background_game.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #333;
+}
+.game-container > h1 {
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 2em;
+    color: #ffffff;
+    letter-spacing: 1.5px;
+    text-shadow: 0 2px 12px #000, 0 1px 0 #7c5600;
+    text-align: center;
+    margin-top: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* =====================[ FIM TRECHO 2 ]===================== */
+
+
+
+/* =====================[ TRECHO 3: HISTÓRICO E MENSAGENS ]===================== */
+.full-history {
+    height: 120px;
+    line-height: 1.2;
+    overflow-y: auto;
+    background-color: #413825;
+    padding: 7px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.93em;
+    transition: height 1s;
+}
+.message {
+    padding: 5px 8px;
+    background-color: #252525;
+    border-left: 3px solid #555;
+    border-radius: 3px;
+    word-break: break-word;
+}
+.message.damage {
+    border-left-color: #ff6b6b;
+    background-color: rgba(51, 34, 34, 0.8);
+    color: #ffbdbd;
+}
+.message.levelup {
+    border-left-color: #59dd70;
+    background-color: rgba(34, 51, 34, 0.8);
+    color: #b4ffc6;
+}
+.message.attack {
+    border-left-color: #339cff;
+    background-color: rgba(34, 42, 51, 0.8);
+    color: #b4dbff;
+}
+.message.memory {
+    border-left: 4px solid #ffd700;
+    background: linear-gradient(90deg, #f7e9b4 20%, #ffeeba 70%, #fff5d1 100%);
+    color: #543d15;
+    font-weight: bold;
+    font-size: 1.15em;
+    box-shadow: 0 2px 16px rgba(255, 215, 0, 0.15);
+    animation: highlightFade 1.2s;
+}
+@keyframes highlightFade {
+    from { background: #ffeeba; }
+    to   { background: linear-gradient(90deg, #f7e9b4 20%, #ffeeba 70%, #fff5d1 100%); }
+}
+
+/* ===== SCROLLBAR ===== */
+.full-history::-webkit-scrollbar {
+    width: 6px;
+}
+.full-history::-webkit-scrollbar-track {
+    background: #222;
+}
+.full-history::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 4px;
+}
+/* =====================[ FIM TRECHO 3 ]===================== */
+
+
+
+/* =====================[ TRECHO 4: STATUS DO JOGADOR ]===================== */
+.status-box {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 3px;
-    margin-top: 5px;
+    gap: 7px;
+    background: #413825;
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 0.98em;
 }
-
-.secondary-stats div, #enemy-secondary-stats div {
-    background-color: #444;
-    padding: 2px 4px;
-    border-radius: 3px;
-    text-align: center;
-    font-size: 0.8em;
-}
-
-#options-panel {
-    display: grid;
-    grid-template-rows: repeat(3, 40px);
-    gap: 4px;
-    margin-top: 5px;
-}
-
-#options-panel button, #explore-button {
-    background-color: #444;
-    color: #eee;
-    border: 1px solid #666;
+.status-item.xp-bar { grid-column: span 2; margin-bottom: 5px; }
+.status-item span { font-size: 0.98em; }
+.status-bar {
+    position: relative;
+    height: 6px;
+    background-color: #222;
     border-radius: 4px;
-    font-size: 0.9em;
-    transition: background-color 0.2s, transform 0.1s;
+    margin-top: 3px;
+    overflow: hidden;
+}
+.bar-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    height: 100%;
+    width: 0;
+    border-radius: 4px;
+    transition: width 0.22s cubic-bezier(.53,.22,.45,1.26);
+}
+.bar-fill.xp {
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
+    z-index: 1;
+}
+.hp .bar-fill { background-color: #e74c3c; }
+.mp .bar-fill { background-color: #3498db; }
+.stamina .bar-fill { background-color: #f39c12; }
+.sanity .bar-fill { background-color: #9b59b6; }
+
+/* STATUS SECUNDÁRIOS - DESKTOP: 1 LINHA, MOBILE: 2X2 */
+.secondary-stats {
+    box-sizing: border-box;
+    margin-top: 7px;
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 7px;
+    width: 100%;
+    grid-column: span 2;
+}
+.secondary-stats span {
+    background: #333;
+    padding: 7px 2px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.92em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    min-width: 0;
 }
 
-#options-panel button:disabled {
-    background-color: #333;
-    color: #777;
-    border: 1px solid #444;
+/* MOBILE: mantém como estava */
+@media (max-width: 600px) {
+    .secondary-stats {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 5px !important;
+        padding: 5px !important;
+        border-radius: 7px !important;
+    }
+    .secondary-stats span {
+        flex: 1 1 46% !important;
+        min-width: 95px !important;
+        padding: 4px 2px !important;
+        font-size: 0.90em !important;
+        border-radius: 6px !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 7px !important;
+        justify-content: flex-start !important;
+    }
+    .secondary-stats span b {
+        font-weight: 600;
+        margin-right: 2px;
+    }
 }
 
-#options-panel button:hover:enabled, #explore-button:hover:enabled {
-    background-color: #555;
-    cursor: pointer;
-}
+/* =====================[ FIM TRECHO 4 ]===================== */
 
-#options-panel button:active:enabled, #explore-button:active:enabled {
-    transform: scale(0.98);
-}
 
-button:focus, a:focus, input:focus, textarea:focus {
-  outline: 3px solid #FFD700; /* Amarelo ouro para bom contraste */
-  outline-offset: 2px;
-}
-body, button, div, span {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #222;
-  color: #fff;
-}
 
-#gameContainer {
-  padding: 20px;
+/* =====================[ TRECHO 5: PAINEL DO INIMIGO ]===================== */
+.enemy-status-wrapper {
+    grid-column: span 2;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 1s;
+    pointer-events: none;
 }
+.enemy-status-wrapper.visible {
+    max-height: 320px;
+    pointer-events: auto;
+}
+.enemy-status {
+    margin-top: 3px;
+    padding: 8px 10px 7px 10px;
+    background: #2c2323;
+    border-radius: 8px;
+    font-size: 1em;
+    color: #ffd7d7;
+    box-shadow: 0 1px 6px rgba(40,30,30,0.10);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.enemy-secondary-stats {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 7px;
+    border-radius: 8px;
+}
+@media (min-width: 601px) {
+    .enemy-secondary-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 7px;
+    }
+    .enemy-secondary-stats span {
+        background: #333;
+        padding: 7px 2px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.92em;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        min-width: 0;
+    }
+}
+@media (max-width: 600px) {
+    .enemy-secondary-stats {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 5px !important;
+        padding: 5px !important;
+        border-radius: 7px !important;
+    }
+    .enemy-secondary-stats span {
+        flex: 1 1 46% !important;
+        min-width: 95px !important;
+        padding: 4px 2px !important;
+        font-size: 0.90em !important;
+        border-radius: 6px !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 7px !important;
+        justify-content: flex-start !important;
+    }
+    .enemy-secondary-stats span b {
+        font-weight: 600;
+        margin-right: 2px;
+    }
+}
+.enemy-hp .bar-fill {
+    background: linear-gradient(90deg, #e74c3c, #bd2828);
+}
+/* =====================[ FIM TRECHO 5 ]===================== */
 
+
+
+/* =====================[ TRECHO 6: OPÇÕES E BOTÕES DO JOGO ]===================== */
+.options-box {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
 button {
-  margin-top: 10px;
+    background-color: #555;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.3s;
+    text-align: center;
+    background: url('botao.png') no-repeat center center;
+    background-size: 100% 100%;
+}
+button:hover {
+    background-color: #666;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+button:disabled {
+    background-color: #333;
+    color: #aaa;
+    cursor: not-allowed;
+    transform: none;
+}
+/* =====================[ FIM TRECHO 6 ]===================== */
+
+
+
+/* =====================[ TRECHO 7: BUFFS, DEBUFFS E TOOLTIPS ]===================== */
+.player-buffs, .enemy-buffs {
+    display: inline-flex;
+    gap: 4px;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+.buff-icon {
+    font-size: 1.2em;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    transition: transform 0.1s;
+    line-height: 1;
+    margin-right: 2px;
+    margin-left: 2px;
+}
+.buff-icon:active {
+    transform: scale(0.97);
+}
+.buff-tooltip {
+    position: absolute;
+    z-index: 9999;
+    min-width: 160px;
+    max-width: 270px;
+    background: #332d18;
+    color: #f7e8b4;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px 2px #222014e0, 0 0 0 2px #ffebba88;
+    padding: 10px 14px 10px 14px;
+    font-size: 1em;
+    pointer-events: auto;
+    animation: fadeInBuffTip 0.2s;
+}
+@keyframes fadeInBuffTip {
+    from { opacity: 0; transform: translateY(10px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.buff-tooltip-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+}
+.buff-tooltip-title {
+    font-weight: bold;
+    color: #ffe390;
+    font-size: 1.07em;
+    margin-bottom: 3px;
+    letter-spacing: 0.5px;
+}
+.buff-tooltip-desc {
+    font-size: 0.98em;
+    color: #ffe9bb;
+    margin-bottom: 2px;
+    line-height: 1.35;
+}
+.buff-tooltip-effects {
+    font-size: 1.03em;
+    color: #b4eaff;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 1px;
+}
+@media (max-width: 600px) {
+    .buff-tooltip {
+        min-width: 130px;
+        max-width: 92vw;
+        font-size: 0.98em;
+        padding: 10px 7px;
+    }
+    .buff-tooltip-inner {
+        gap: 2px;
+    }
+    .buff-tooltip-title {
+        font-size: 1em;
+    }
+    .buff-tooltip-effects {
+        font-size: 1em;
+    }
+}
+/* =====================[ FIM TRECHO 7 ]===================== */
+
+
+
+/* =====================[ TRECHO 8: UTILIDADES E RESPONSIVIDADE GLOBAL ]===================== */
+/* ===== AJUSTES PARA RESPONSIVIDADE (Mobile) ===== */
+@media (max-width: 600px) {
+    .menu-inicial,
+    .menu-painel {
+        min-height: 94vh;
+        padding-top: 32px;
+        padding-bottom: 32px;
+    }
+    .game-container > h1 {
+        font-size: 1.3em !important;
+        line-height: 1.15 !important;
+        padding-bottom: 6px;
+        margin-bottom: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .full-history { font-size: 0.89em; }
+    .status-box { padding: 6px !important; gap: 6px !important; grid-template-columns: 1fr 1fr !important; }
+    .status-box .hp, .status-box .mp, .status-box .stamina, .status-box .sanity { font-size: 0.8em !important; }
+    button { padding: 10px; font-size: 14px; }
+}
+/* ===== Fallbacks e ajustes globais ===== */
+.menu-inicial, .menu-painel {
+    background: #39342b url('background.png') no-repeat center center;
+}
+.game-container {
+    background: #333 url('background_game.png') no-repeat center center;
+}
+button, .btn-voltar-menu, #menuInicial .menu-botoes button {
+    background: #555 url('botao.png') no-repeat center center;
+    background-size: 100% 100%;
 }

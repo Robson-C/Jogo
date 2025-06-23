@@ -1,124 +1,81 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Torre da Redenção - RPG text-based de exploração e combate">
-    <meta name="theme-color" content="#FFD700">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    
     <title>Torre da Redenção</title>
-    
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="/jogo/manifest.json">
-    
-    <!-- PWA Icons -->
-    <link rel="icon" type="image/png" sizes="192x192" href="/jogo/icons/icon-192.png">
-    <link rel="apple-touch-icon" sizes="512x512" href="/jogo/icons/icon-512.png">
-    </head>
+</head>
 <body>
-    <div id="game-container">
-        <!-- Título do Jogo -->
-        <h1 id="game-title">🏰 Torre da Redenção</h1>
-        
-        <!-- Painel de Histórico -->
-        <div id="history-panel" role="log" aria-live="polite" aria-label="Histórico do jogo">
-            <!-- Histórico será preenchido pelo JavaScript -->
+    <!-- MENU INICIAL -->
+    <div id="menuInicial" class="menu-inicial">
+        <h1 class="titulo-jogo-menu">Torre da Redenção</h1>
+        <div class="menu-botoes">
+            <button id="btnIniciarJogo">Iniciar Jogo</button>
+            <button id="btnTitulos">Títulos</button>
+            <button id="btnConquistas">Conquistas</button>
+            <button id="btnLore">História</button>
         </div>
-        
-        <!-- Painel de Status do Jogador -->
-        <div class="status-panel" aria-label="Status do jogador">
-            <!-- Barra de XP -->
-            <div id="xp-bar" aria-label="Experiência">
-                <div class="bar-container">
-                    <div class="bar-fill" style="width: 0%; background-color: #4caf50;"></div>
-                </div>
-                XP: 0/100
-            </div>
-            
-            <!-- Level -->
-            <div id="level">Level: 1</div>
-            
-            <!-- Barras de Status Principais -->
-            <div id="health-bar" aria-label="Pontos de Vida">
-                <div class="bar-container">
-                    <div class="bar-fill" style="width: 100%; background-color: #f44336;"></div>
-                </div>
-                ❤️ HP: 50/50
-            </div>
-            
-            <div id="mana-bar" aria-label="Pontos de Mana">
-                <div class="bar-container">
-                    <div class="bar-fill" style="width: 100%; background-color: #673ab7;"></div>
-                </div>
-                🟣 MP: 30/30
-            </div>
-            
-            <div id="energy-bar" aria-label="Energia">
-                <div class="bar-container">
-                    <div class="bar-fill" style="width: 100%; background-color: #ff9800;"></div>
-                </div>
-                ⚡ Energia: 80/80
-            </div>
-            
-            <div id="sanity-bar" aria-label="Sanidade">
-                <div class="bar-container">
-                    <div class="bar-fill" style="width: 100%; background-color: #00bcd4;"></div>
-                </div>
-                🌌 Sanidade: 50/50
-            </div>
-            
-            <!-- Stats Secundários -->
-            <div class="secondary-stats">
-                <div>⚔️ Ataque: 8</div>
-                <div>🛡️ Defesa: 4</div>
-                <div>🎯 Precisão: 85%</div>
-                <div>💨 Agilidade: 15</div>
-            </div>
+    </div>
+    <!-- PAINEL: TÍTULOS -->
+    <div id="painelTitulos" class="menu-painel" style="display:none;">
+        <h2 class="titulo-jogo-painel">Torre da Redenção</h2>
+        <h3 class="painel-section-title">Títulos</h3>
+        <div class="painel-conteudo">
+            <!-- Espaço para títulos desbloqueáveis -->
         </div>
-        
-        <!-- Painel do Inimigo (oculto inicialmente) -->
-        <div id="enemy-panel" style="display: none; opacity: 0;" aria-label="Status do inimigo">
-            <h3>👹 Inimigo</h3>
-            <div id="enemy-hp-bar" aria-label="Vida do inimigo">
-                <!-- Preenchido pelo JavaScript -->
-            </div>
-            <div id="enemy-secondary-stats">
-                <!-- Preenchido pelo JavaScript -->
-            </div>
+        <button class="btn-voltar-menu">Voltar</button>
+    </div>
+    <!-- PAINEL: CONQUISTAS -->
+    <div id="painelConquistas" class="menu-painel" style="display:none;">
+        <h2 class="titulo-jogo-painel">Torre da Redenção</h2>
+        <h3 class="painel-section-title">Conquistas</h3>
+        <div class="painel-conteudo">
+            <!-- Espaço para conquistas -->
         </div>
-        
-        <!-- Painel de Opções -->
-        <div id="options-panel" role="group" aria-label="Opções de ação">
-            <button type="button" disabled aria-label="Primeira opção">-</button>
-            <button type="button" disabled aria-label="Segunda opção">-</button>
-            <button type="button" disabled aria-label="Terceira opção">-</button>
+        <button class="btn-voltar-menu">Voltar</button>
+    </div>
+    <!-- PAINEL: LORE / HISTÓRIA -->
+    <div id="painelLore" class="menu-painel" style="display:none;">
+        <h2 class="titulo-jogo-painel">Torre da Redenção</h2>
+        <h3 class="painel-section-title">História</h3>
+        <div class="painel-conteudo">
+            <!-- Espaço para lore/introdução do jogo -->
         </div>
-        
-        <!-- Botões Principais -->
-        <button id="start-button" type="button" aria-label="Iniciar jogo">🎮 Iniciar</button>
-        <button id="explore-button" type="button" style="display: none;" aria-label="Explorar">🔍 Explorar</button>
-        <button id="installButton" style="display: none;">Instalar o Jogo</button>
+        <button class="btn-voltar-menu">Voltar</button>
+    </div>
+    <!-- CONTAINER DO JOGO -->
+    <div class="game-container" style="display:none;">
+        <h1>Torre da Redenção</h1>
+        <div id="fullHistory" class="full-history">
+            <!-- Mensagens serão adicionadas aqui -->
+        </div>
+        <div id="status" class="status-box">
+            <!-- Status será atualizado aqui -->
+        </div>
+        <div id="enemyPanel" class="enemy-status-wrapper">
+            <!-- Status do monstro será atualizado aqui -->
+        </div>
+        <div id="options" class="options-box">
+            <!-- Opções serão geradas aqui -->
+        </div>
     </div>
 
-    <!-- Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js')
-                    .then(registration => {
-                        console.log('SW registrado com sucesso:', registration.scope);
-                    })
-                    .catch(registrationError => {
-                        console.log('SW falhou ao registrar:', registrationError);
-                    });
-            });
-        }
-    </script>
+    <script src="game.js"></script>
+    <script src="buffUtils.js"></script>
+    <script src="status.js"></script>
+    <script src="exploration.js"></script>
+    <script src="enemyBehaviors.js"></script>
+    <script src="combat.js"></script>
+    <script src="ui.js"></script>
 
-    <!-- Carregamento dos Módulos JavaScript -->
-    <script type="module" src="game.js"></script>
+    <!-- MODAL DE ORIENTAÇÃO -->
+    <div id="orientationLockModal" style="display:none;">
+        <div class="orientation-modal-inner">
+            <span style="font-size:3em;display:block;">🔄</span>
+            <div class="orientation-text">Por favor, gire o aparelho para o modo retrato<br><span style="font-size:0.85em;">(Portrait mode)</span></div>
+        </div>
+    </div>
+
 </body>
 </html>
