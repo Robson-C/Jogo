@@ -194,7 +194,7 @@ body {
     flex-direction: column;
     gap: 4px;
     font-size: 0.93em;
-    transition: height 1s;
+    transition: height 1s linear;
 }
 .full-history.notransition {
     transition: none !important;
@@ -349,7 +349,7 @@ body {
     grid-column: span 2;
     overflow: hidden;
     max-height: 0;
-    transition: max-height 1s cubic-bezier(.53,.22,.45,1.26);
+    transition: max-height 1s linear;
     pointer-events: none;
 }
 .enemy-status-wrapper.visible {
@@ -573,9 +573,6 @@ button:disabled {
 /* ===== Fallbacks e ajustes globais ===== */
 .menu-inicial, .menu-painel {
     background: #39342b url('background.png') no-repeat center center;
-}
-.game-container {
-    background: #333 url('background_game.png') no-repeat center center;
 }
 button, .btn-voltar-menu, #menuInicial .menu-botoes button {
     background: #555 url('botao.png') no-repeat center center;

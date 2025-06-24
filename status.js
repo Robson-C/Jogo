@@ -2,106 +2,87 @@
 // mostrando atributos, buffs/debuffs ativos, barras de vida/energia e tooltips de acessibilidade.
 // Inclui agora transição fluida sincronizada entre painel do inimigo e histórico de mensagens.
 
+/* =====================[ TRECHO 1: CONSTANTES E ANIMAÇÃO DO PAINEL ]===================== */
+
 const MAX_HISTORY_HEIGHT_DESKTOP = 250; // px (sem inimigo)
 const MAX_HISTORY_HEIGHT_MOBILE = 250;  // px (sem inimigo)
-const MIN_HISTORY_HEIGHT_COMBAT = 120;  // px (com inimigo aberto totalmente)
+const MIN_HISTORY_HEIGHT_COMBAT = 100;  // px (com inimigo aberto totalmente)
 const ENEMY_PANEL_ANIMATION_DURATION = 1000; // ms, mesma duração do CSS .enemy-status-wrapper
 
-// Estado para controlar animação sincronizada
 let enemyPanelAnimationFrame = null;
 
-/**
- * Anima sincronizadamente o painel do inimigo e ajusta a altura do histórico de mensagens.
- * @param {boolean} abrir true = abrir painel do inimigo, false = fechar
- * @param {number} [startTime] (não definir manualmente)
- */
 function animateEnemyPanelAndHistory(abrir, startTime) {
     const panel = document.getElementById('enemyPanel');
     const fullHistory = DOM_ELEMENTS.fullHistory;
-
     if (!panel || !fullHistory) return;
 
-    // Cancela animação anterior (se houver)
     if (enemyPanelAnimationFrame !== null) {
         cancelAnimationFrame(enemyPanelAnimationFrame);
         enemyPanelAnimationFrame = null;
     }
 
-    // Alturas alvo para animação
     const isMobile = window.matchMedia("(max-width: 600px)").matches;
     const maxHistoryHeight = isMobile ? MAX_HISTORY_HEIGHT_MOBILE : MAX_HISTORY_HEIGHT_DESKTOP;
 
-    // Calcula altura final do painel inimigo ao abrir (renderiza "inner" de antemão)
-    let finalEnemyPanelHeight = 0;
+    let panelInitialHeight = panel.offsetHeight;
+    let panelTargetHeight = 0;
+    let historyInitialHeight = fullHistory.offsetHeight;
+    let historyTargetHeight = 0;
+
     if (abrir) {
+        panel.style.display = "";
         panel.classList.add('visible');
-        panel.style.maxHeight = ""; // Remove limite para medir o natural
-        // Renderiza conteúdo (garante elemento existe)
         const inner = panel.querySelector('.enemy-status');
-        if (inner) {
-            inner.style.position = 'absolute'; // Evita afetar layout durante medição
-            inner.style.visibility = 'hidden';
-            finalEnemyPanelHeight = inner.scrollHeight;
-            inner.style.position = '';
-            inner.style.visibility = '';
-        } else {
-            finalEnemyPanelHeight = 110; // fallback razoável
-        }
-        // Reseta maxHeight
+        let enemyPanelHeight = inner ? inner.scrollHeight : 110;
+        enemyPanelHeight += 7;
+        panelInitialHeight = 0;
+        panelTargetHeight = enemyPanelHeight;
+        historyInitialHeight = maxHistoryHeight;
+        historyTargetHeight = maxHistoryHeight - enemyPanelHeight;
         panel.style.maxHeight = "0px";
     } else {
-        // Ao fechar, pega altura atual
-        finalEnemyPanelHeight = panel.scrollHeight;
+        let currentPanelHeight = panel.scrollHeight;
+        panelInitialHeight = currentPanelHeight;
+        panelTargetHeight = 0;
+        historyInitialHeight = maxHistoryHeight - currentPanelHeight;
+        historyTargetHeight = maxHistoryHeight;
     }
 
-    const initialPanelHeight = abrir ? 0 : finalEnemyPanelHeight;
-    const targetPanelHeight = abrir ? finalEnemyPanelHeight : 0;
-    const initialHistoryHeight = maxHistoryHeight - initialPanelHeight;
-    const targetHistoryHeight = maxHistoryHeight - targetPanelHeight;
-
-    // Protege para não setar valores negativos
-    const clamp = v => Math.max(40, v);
+    function clamp(v) { return Math.max(40, v); }
 
     function step(now) {
         if (!startTime) startTime = now;
         const elapsed = now - startTime;
-        const progress = Math.min(1, elapsed / ENEMY_PANEL_ANIMATION_DURATION);
+        let progress = elapsed / ENEMY_PANEL_ANIMATION_DURATION;
+        if (progress > 1) progress = 1;
 
-        // EaseInOutCubic
-        const ease = progress < 0.5
-            ? 4 * progress * progress * progress
-            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        const currPanelHeight = Math.round(panelInitialHeight + (panelTargetHeight - panelInitialHeight) * progress);
+        const currHistoryHeight = clamp(Math.round(historyInitialHeight + (historyTargetHeight - historyInitialHeight) * progress));
 
-        // Interpola alturas
-        const currPanelHeight = Math.round(initialPanelHeight + (targetPanelHeight - initialPanelHeight) * ease);
-        const currHistoryHeight = clamp(Math.round(initialHistoryHeight + (targetHistoryHeight - initialHistoryHeight) * ease));
-
-        // Aplica ao DOM
         panel.style.maxHeight = currPanelHeight + "px";
         fullHistory.style.height = currHistoryHeight + "px";
 
         if (progress < 1) {
             enemyPanelAnimationFrame = requestAnimationFrame(step);
         } else {
-            // Ajusta finais
-            panel.style.maxHeight = targetPanelHeight + "px";
-            fullHistory.style.height = clamp(targetHistoryHeight) + "px";
+            panel.style.maxHeight = panelTargetHeight + "px";
+            fullHistory.style.height = clamp(historyTargetHeight) + "px";
             enemyPanelAnimationFrame = null;
-            // Se fechou, esconde o painel
             if (!abrir) {
                 panel.classList.remove('visible');
+                // Aguarda o próximo ciclo de repaint para limpar o conteúdo e ocultar
                 setTimeout(() => {
                     panel.innerHTML = `<div class="enemy-status"></div>`;
-                }, 80); // Pequeno delay para transição CSS terminar
+                    panel.style.display = "none";
+                }, 0);
             }
         }
     }
-
-    // Inicia animação
     requestAnimationFrame(step);
 }
 
-// ===== ATUALIZAÇÃO DO STATUS VISUAL (PLAYER) =====
+/* =====================[ TRECHO 2: STATUS DO JOGADOR E BARRAS ]===================== */
+
 function updateStatus() {
     // ===== Buffs/Debuffs do Player na linha do Nível (ícone único + tooltip) =====
     let playerBuffsHTML = '';
@@ -122,7 +103,6 @@ function updateStatus() {
                     value = Math.abs(value);
                     return `${statIcon} ${sign}${value}`;
                 }).join(", ");
-                // Acessibilidade: aria-label detalhado
                 buffsArr.push(`
                     <span class="buff-icon" data-buff='${compKey}' data-turns='${turns}' data-desc='${info.descricao}' data-efeitos='${efeitosLinha}'
                         tabindex="0"
@@ -141,7 +121,6 @@ function updateStatus() {
             let value = gameState.debuffs[type].value !== undefined ? gameState.debuffs[type].value : "";
             let efeitoLinha = "";
             let descLinha = info ? info.descricao : "";
-            // Correção específica para precisão/ofuscamento
             if (type === "precisao") {
                 const totalRed = Math.min(15, 5 * turns);
                 efeitoLinha = `🎯 -${totalRed}% precisão`;
@@ -154,7 +133,6 @@ function updateStatus() {
                     return `${icon} ${sign}${value}`;
                 }).join(", ") : "";
             }
-            // Acessibilidade: aria-label detalhado
             buffsArr.push(`
                 <span class="buff-icon" data-buff='${type}' data-turns='${turns}' data-desc='${descLinha}' data-efeitos='${efeitoLinha}'
                     tabindex="0"
@@ -176,7 +154,6 @@ function updateStatus() {
         ? Math.max(0, Math.min(100, (gameState.xp / gameState.nextLevel) * 100))
         : 0;
 
-    // Status secundários do personagem
     const statusSecundarios = `
         <div class="secondary-stats" tabindex="0" aria-label="Atributos secundários: Ataque ${forcaAtual}, Defesa ${defesaAtual}, Precisão ${precisaoAtual}%, Agilidade ${agilidadeAtual}%">
             <span><b>🗡 Ataque:</b> ${forcaAtual}</span>
@@ -186,10 +163,6 @@ function updateStatus() {
         </div>
     `;
 
-    // Garante smooth scroll ao trocar altura
-    const fullHistory = DOM_ELEMENTS.fullHistory;
-
-    // Monta o HTML de status do jogador, com acessibilidade
     DOM_ELEMENTS.status.innerHTML = `
         <div class="status-item xp-bar" style="position:relative;"
             role="progressbar"
@@ -250,23 +223,21 @@ function updateStatus() {
     initBuffTooltipHandlers();
 }
 
-// ===== ATUALIZAÇÃO DO PAINEL DO MONSTRO =====
+/* =====================[ TRECHO 3: ATUALIZAÇÃO DO PAINEL DO INIMIGO ]===================== */
+
 function updateEnemyPanel() {
     const panel = document.getElementById('enemyPanel');
     if (!panel) return;
 
-    // Salva se já está visível
     const shouldShow = gameState.inCombat && gameState.currentEnemy;
     const isCurrentlyVisible = panel.classList.contains('visible');
 
-    // Conteúdo do painel
     let innerHTML = `<div class="enemy-status"></div>`;
     if (shouldShow) {
         let enemyBuffs = '';
         let buffsArr = [];
         const handledBuffs = new Set();
 
-        // Buffs compostos do inimigo
         Object.keys(COMPOSITE_BUFFS).forEach(compKey => {
             const stats = COMPOSITE_BUFFS[compKey];
             const buffsObj = gameState.currentEnemy.buffs || {};
@@ -281,7 +252,6 @@ function updateEnemyPanel() {
                     value = Math.abs(value);
                     return `${statIcon} ${sign}${value}`;
                 }).join(", ");
-                // Acessibilidade: aria-label detalhado
                 buffsArr.push(`
                     <span class="buff-icon" data-buff='${compKey}' data-turns='${turns}' data-desc='${info.descricao}' data-efeitos='${efeitosLinha}'
                         tabindex="0"
@@ -291,7 +261,6 @@ function updateEnemyPanel() {
                 stats.forEach(stat => handledBuffs.add(stat));
             }
         });
-        // Buffs simples do inimigo
         const buffsObj = gameState.currentEnemy.buffs || {};
         Object.keys(buffsObj).forEach(type => {
             if (handledBuffs.has(type)) return;
@@ -305,7 +274,6 @@ function updateEnemyPanel() {
                 let icon = stat === "forca" ? "🗡️" : stat === "defesa" ? "🛡️" : stat === "agilidade" ? "💨" : stat;
                 return `${icon} ${sign}${value}`;
             }).join(", ") : "";
-            // Acessibilidade: aria-label detalhado
             buffsArr.push(`
                 <span class="buff-icon" data-buff='${type}' data-turns='${turns}' data-desc='${info ? info.descricao : ""}' data-efeitos='${efeitoLinha}'
                     tabindex="0"
@@ -337,33 +305,30 @@ function updateEnemyPanel() {
         `;
     }
 
-
     if (!shouldShow && isCurrentlyVisible) {
-        // FECHA: anima para fechar
+        // FECHA: anima para fechar, só limpa o conteúdo DEPOIS da animação terminar!
         DOM_ELEMENTS.fullHistory.style.height =
             (window.matchMedia("(max-width: 600px)").matches
                 ? MAX_HISTORY_HEIGHT_MOBILE
                 : MAX_HISTORY_HEIGHT_DESKTOP
             ) + "px";
         animateEnemyPanelAndHistory(false);
-        setTimeout(() => {
-            panel.innerHTML = `<div class="enemy-status"></div>`;
-        }, ENEMY_PANEL_ANIMATION_DURATION + 80);
+        // Remover o conteúdo APÓS o término da animação (callback no animateEnemyPanelAndHistory)
+        // (a chamada já existe no setTimeout dentro do animateEnemyPanelAndHistory)
     } else if (shouldShow && !isCurrentlyVisible) {
         // ABRE: anima para abrir
         panel.innerHTML = innerHTML;
         initBuffTooltipHandlers();
-        // chama animação de ABERTURA
         animateEnemyPanelAndHistory(true);
     } else {
         // Apenas atualiza o conteúdo, se já está aberto
         panel.innerHTML = innerHTML;
         initBuffTooltipHandlers();
     }
-
 }
 
-// ===== Utilitário: mostra stat do inimigo já com buff se houver =====
+/* =====================[ TRECHO 4: UTILS DE STATUS E TOOLTIP ]===================== */
+
 function getEnemyStat(stat, enemy) {
     let value = enemy[stat];
     if (enemy.buffs && enemy.buffs[stat]) {
@@ -372,14 +337,10 @@ function getEnemyStat(stat, enemy) {
     return value;
 }
 
-// ===== TOOLTIP DOS BUFFS/DEBUFFS (DESKTOP E MOBILE) =====
 function initBuffTooltipHandlers() {
-    // Remove tooltips existentes
     document.querySelectorAll('.buff-tooltip').forEach(tip => tip.remove());
 
-    // Lógica para tooltip
     document.querySelectorAll('.buff-icon').forEach(el => {
-        // Tooltip HTML
         function buildTooltipHtml() {
             const nome = getBuffInfo(el.dataset.buff)?.nome || "";
             const turns = el.dataset.turns || "";
@@ -393,8 +354,6 @@ function initBuffTooltipHandlers() {
                 </div>
             `;
         }
-
-        // Desktop: hover
         el.onmouseenter = e => {
             if (window.matchMedia("(hover: hover)").matches) {
                 const tip = document.createElement('div');
@@ -409,8 +368,6 @@ function initBuffTooltipHandlers() {
         el.onmouseleave = e => {
             document.querySelectorAll('.buff-tooltip').forEach(tip => tip.remove());
         };
-
-        // Mobile e teclado: clique ou foco por tab
         el.onclick = e => {
             if (!window.matchMedia("(hover: hover)").matches) {
                 document.querySelectorAll('.buff-tooltip').forEach(tip => tip.remove());

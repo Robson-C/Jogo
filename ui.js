@@ -1,8 +1,51 @@
 // ui.js — Controla a interface do usuário: exibição de mensagens, opções de ação, processamento de escolhas, fim de jogo, histórico, renderização dos botões, navegação por teclado/touch.
 
+/* =====================[ TRECHO 1: BLOQUEIO/DESBLOQUEIO DAS OPÇÕES ]===================== */
+
+/**
+ * Bloqueia todas as opções do jogador (ex: durante animações de combate)
+ * Garante acessibilidade (aria-live), previne clique/teclado e mostra visualmente
+ */
+function bloquearOpcoesJogador(msg = "Aguarde...") {
+    const optionsBox = DOM_ELEMENTS.options;
+    if (!optionsBox) return;
+    optionsBox.classList.add("options-bloqueadas");
+    Array.from(optionsBox.querySelectorAll("button")).forEach(btn => {
+        btn.disabled = true;
+        btn.setAttribute("aria-disabled", "true");
+        btn.style.cursor = "not-allowed";
+        btn.tabIndex = -1;
+    });
+    // Mensagem de espera acessível (apenas se não já existe)
+    if (!optionsBox.querySelector(".bloqueio-msg")) {
+        const div = document.createElement("div");
+        div.className = "bloqueio-msg";
+        div.setAttribute("aria-live", "polite");
+        div.style.padding = "8px 0";
+        div.style.textAlign = "center";
+        div.style.opacity = "0.85";
+        div.innerText = msg;
+        optionsBox.appendChild(div);
+    }
+}
+function desbloquearOpcoesJogador() {
+    const optionsBox = DOM_ELEMENTS.options;
+    if (!optionsBox) return;
+    optionsBox.classList.remove("options-bloqueadas");
+    Array.from(optionsBox.querySelectorAll("button")).forEach(btn => {
+        btn.disabled = btn.getAttribute("data-original-disabled") === "true" ? true : false;
+        btn.removeAttribute("aria-disabled");
+        btn.style.cursor = "";
+        btn.tabIndex = 0;
+        btn.removeAttribute("data-original-disabled");
+    });
+    Array.from(optionsBox.querySelectorAll(".bloqueio-msg")).forEach(el => el.remove());
+}
+
+/* =====================[ TRECHO 2: SISTEMA DE MENSAGENS ]===================== */
+
 const messageCount = 20;
 
-// ===== SISTEMA DE MENSAGENS =====
 function addMessage(text, isCritical = false, isHighlighted = false, customClass = '') {
     const roomName = getRoomName();
     const timestamp = `Dia ${gameState.day}, Andar ${gameState.currentFloor} (${roomName})`;
@@ -53,7 +96,8 @@ function getRoomName() {
     }
 }
 
-// ===== CÁLCULO DE PONTUAÇÃO FINAL =====
+/* =====================[ TRECHO 3: CÁLCULO DE PONTUAÇÃO FINAL ]===================== */
+
 function calculateScore() {
     const daysPoints = gameState.day * 10;
     const roomsPoints = gameState.visitedRooms.length * 3;
@@ -63,7 +107,8 @@ function calculateScore() {
     return { daysPoints, roomsPoints, monsterPoints, floorsPoints, total };
 }
 
-// ===== CHECAGEM DE FIM DE JOGO POR LOUCURA =====
+/* =====================[ TRECHO 4: CHECAGEM DE FIM DE JOGO POR LOUCURA ]===================== */
+
 function checkExaustaoOuLoucura() {
     if (gameState.sanity <= 0) {
         gameState.sanity = 0;
@@ -79,9 +124,40 @@ function processarGameOverEspecial(msgFinal) {
     presentOptions();
 }
 
-// ===== EXIBIÇÃO DE OPÇÕES DO JOGADOR =====
+/* =====================[ TRECHO 5: EXIBIÇÃO DE OPÇÕES DO JOGADOR ]===================== */
+
+/**
+ * Função utilitária: Detecta se o painel do inimigo está animando
+ * (checando presença do requestAnimationFrame ativo ou classe visível durante transição)
+ */
+function painelInimigoAnimando() {
+    const panel = document.getElementById('enemyPanel');
+    // Importa ENEMY_PANEL_ANIMATION_DURATION do status.js
+    if (!panel) return false;
+    return panel.classList.contains('animando') || (typeof window.enemyPanelAnimationFrame !== "undefined" && window.enemyPanelAnimationFrame !== null);
+}
+
+/**
+ * Versão modificada para bloquear/desbloquear opções durante animação do painel do inimigo.
+ * Só renderiza opções quando seguro interagir!
+ */
 function presentOptions() {
     DOM_ELEMENTS.options.innerHTML = '';
+
+    // Se o painel do inimigo está animando, bloqueia opções e espera animação terminar
+    if (painelInimigoAnimando()) {
+        bloquearOpcoesJogador("Aguardando o inimigo...");
+        // Aguarda animação terminar para renderizar as opções
+        setTimeout(() => {
+            if (!painelInimigoAnimando()) {
+                desbloquearOpcoesJogador();
+                presentOptions();
+            }
+        }, ENEMY_PANEL_ANIMATION_DURATION + 50);
+        return;
+    } else {
+        desbloquearOpcoesJogador();
+    }
 
     if (gameState.gameOver) {
         renderGameOverOptions();
@@ -129,6 +205,8 @@ function presentOptions() {
     renderOptions(actions);
 }
 
+/* =====================[ TRECHO 6: GAME OVER E OPÇÕES DE COMBATE ]===================== */
+
 function renderGameOverOptions() {
     const score = calculateScore();
     const scoreMessage = `
@@ -146,16 +224,58 @@ function renderGameOverOptions() {
     if (btn) btn.focus();
 }
 
+/**
+ * Garante que as três opções de combate SEMPRE aparecem no mesmo lugar:
+ * 1. Atacar (pode ser desabilitado por falta de stamina)
+ * 2. Cura Mágica (pode ser desabilitado por falta de MP)
+ * 3. Fugir (sempre aparece, mas pode ser desabilitado em edge cases)
+ */
 function getCombatActions() {
     const actions = [];
+
+    // 1. Atacar
     if (gameState.stamina >= 5) {
-        actions.push({ text: '⚔️ Atacar (-5 ⚡)', action: 'attack', ariaLabel: 'Atacar gastando 5 de stamina' });
+        actions.push({
+            text: '⚔️ Atacar (-5 ⚡)',
+            action: 'attack',
+            ariaLabel: 'Atacar gastando 5 de stamina',
+            disabled: false
+        });
+    } else {
+        actions.push({
+            text: '⚔️ Atacar (Sem Stamina)',
+            action: null,
+            ariaLabel: 'Atacar indisponível: sem stamina suficiente',
+            disabled: true
+        });
     }
+
+    // 2. Cura Mágica
     if (gameState.mp >= 15) {
-        actions.push({ text: '✨ Cura Mágica (-15 🔮)', action: 'healSpell', ariaLabel: 'Cura Mágica, gasta 15 de MP e restaura HP' });
+        actions.push({
+            text: '✨ Cura Mágica (-15 🔮)',
+            action: 'healSpell',
+            ariaLabel: 'Cura Mágica, gasta 15 de MP e restaura HP',
+            disabled: false
+        });
+    } else {
+        actions.push({
+            text: '✨ Cura Mágica (Sem MP)',
+            action: null,
+            ariaLabel: 'Cura Mágica indisponível: sem MP suficiente',
+            disabled: true
+        });
     }
+
+    // 3. Fugir (sempre disponível, mas aqui para manter padrão)
     const fleeChance = 40 + gameState.agilidade;
-    actions.push({ text: `🏃 Fugir (${fleeChance}% 💨)`, action: 'flee', ariaLabel: `Tentar fugir, chance de sucesso: ${fleeChance}%` });
+    actions.push({
+        text: `🏃 Fugir (${fleeChance}% 💨)`,
+        action: 'flee',
+        ariaLabel: `Tentar fugir, chance de sucesso: ${fleeChance}%`,
+        disabled: false
+    });
+
     return actions;
 }
 
@@ -200,6 +320,9 @@ function getExplorationActions() {
     return actions;
 }
 
+
+/* =====================[ TRECHO 7: RENDERIZAÇÃO DOS BOTÕES DE OPÇÃO ]===================== */
+
 function renderOptions(actions) {
     actions.forEach((slot, idx) => {
         const button = document.createElement('button');
@@ -217,9 +340,13 @@ function renderOptions(actions) {
             button.disabled = true;
         }
 
+        // Aplicar disabled caso seja explicitamente desabilitado
         if (slot.disabled) {
             button.disabled = true;
             button.style.opacity = 0.6;
+            button.setAttribute("data-original-disabled", "true");
+        } else {
+            button.setAttribute("data-original-disabled", "false");
         }
 
         DOM_ELEMENTS.options.appendChild(button);
@@ -229,12 +356,14 @@ function renderOptions(actions) {
     if (focusBtn) focusBtn.focus();
 }
 
+
+/* =====================[ TRECHO 8: FLUXO DE AÇÕES DE EXPLORAÇÃO ]===================== */
+
 function processarFimDeAcao() {
     updateStatus();
     presentOptions();
 }
 
-// ===== AÇÕES DE EXPLORAÇÃO (agora limitadas a 1 uso por sala) =====
 function restAction() {
     if (gameState.descansouNaSala) {
         addMessage("Você já descansou nessa sala. Só é possível descansar uma vez por sala.", true);
@@ -310,7 +439,8 @@ function exploreAction() {
     processarFimDeAcao();
 }
 
-// ===== ESCOLHA DO JOGADOR =====
+/* =====================[ TRECHO 9: ESCOLHA DO JOGADOR ]===================== */
+
 function chooseOption(option) {
     if (gameState.gameOver) return;
     if (gameState.stunnedTurns > 0 || (gameState.inCombat && (gameState.hp <= 0 || (gameState.currentEnemy && gameState.currentEnemy.hp <= 0)))) {
@@ -348,7 +478,8 @@ function chooseOption(option) {
     }
 }
 
-// ======= PAINEL DE STUN =======
+/* =====================[ TRECHO 10: PAINEL DE STUN ]===================== */
+
 function renderPlayerStunPanel() {
     // Desabilita todas as opções e exibe um painel de stun com ícone e mensagem
     DOM_ELEMENTS.options.innerHTML = `
@@ -366,9 +497,14 @@ function clearPlayerStunPanel() {
     presentOptions();
 }
 
-// ======= CHECAGEM DE LOUCURA EM COMBATE =======
+/* =====================[ TRECHO 11: CHECAGEM DE LOUCURA EM COMBATE E EXPORTS ]===================== */
+
+// Expor funções para outros módulos
 window.checkExaustaoOuLoucura = checkExaustaoOuLoucura;
-// Expor painel de stun para o combate
 window.renderPlayerStunPanel = renderPlayerStunPanel;
 window.clearPlayerStunPanel = clearPlayerStunPanel;
 window.processarFimDeAcao = processarFimDeAcao;
+// Novos exports de bloqueio para integração direta pelo motor/status.js
+window.bloquearOpcoesJogador = bloquearOpcoesJogador;
+window.desbloquearOpcoesJogador = desbloquearOpcoesJogador;
+

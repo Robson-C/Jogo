@@ -16,7 +16,7 @@ Esta regra tem prioridade máxima e invalida qualquer resposta que descumpra qua
 - Só implementar o que eu pedir
 - Nunca adicionar nada extra sem minha autorização explícita
 - Se precisar alterar estrutura ou comportamento além do solicitado, avise antes e só faça após autorização
-- Nunca enviar código sem que eu solicite explicitamente
+- Nunca enviar código sem que eu solicite explicitamente, se for de exemple fale sem mostrar o codigo
 - Sempre perguntar antes de entregar código:  
 “Quer que eu gere o arquivo completo e pronto para substituição?”
 - Quando autorizado, entregar sempre o arquivo completo, sem omissões
@@ -83,7 +83,7 @@ Tratar como novo início, carregando apenas o Prompt Base mais os arquivos atuai
 - Explicitar na resposta que está se baseando no trecho real do código (exemplo: “Conferi no arquivo X, função Y, linha Z...” ou “No trecho de [função], valor é...”), mesmo que de modo sucinto.
 - Se o pedido for sobre valores, cálculos, penalidades, status, efeitos ou condições do jogo, sempre citar o valor/fórmula/fluxo conforme consta no código real e não segundo padrão, convenção ou dedução.
 - Em caso de dúvida, sempre pedir esclarecimento ou indicar exatamente onde está analisando.
-- Se não seguir esta regra em uma resposta, deve imediatamente reconhecer a falha, pedir desculpas e refazer a análise conforme a regra acima, sem rodeios.
+- Se não seguir esta regra em uma resposta, deve imediatamente reconhecer a falha, pedir desculpas e refazer a análise conforme a regra acima, sem rodeios. Caso não consiga explique o motivo.
 Esta conduta é obrigatória para todas as respostas dentro deste projeto, sem exceção.
 
 ## 9. Revisão / QA Completa (cobertura máxima):
