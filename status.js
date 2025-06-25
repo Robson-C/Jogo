@@ -46,6 +46,7 @@ function animateEnemyPanelAndHistory(abrir, startTime) {
         panelTargetHeight = 0;
         historyInitialHeight = maxHistoryHeight - currentPanelHeight;
         historyTargetHeight = maxHistoryHeight;
+        panel.style.display = ""; // Mantém o painel ocupando espaço até a animação acabar!
     }
 
     function clamp(v) { return Math.max(40, v); }
@@ -65,16 +66,18 @@ function animateEnemyPanelAndHistory(abrir, startTime) {
         if (progress < 1) {
             enemyPanelAnimationFrame = requestAnimationFrame(step);
         } else {
+            // Valores finais exatos:
             panel.style.maxHeight = panelTargetHeight + "px";
             fullHistory.style.height = clamp(historyTargetHeight) + "px";
             enemyPanelAnimationFrame = null;
+
             if (!abrir) {
                 panel.classList.remove('visible');
-                // Aguarda o próximo ciclo de repaint para limpar o conteúdo e ocultar
-                setTimeout(() => {
+                // Corrigido: só limpa e esconde DEPOIS de mais um repaint/frame do histórico!
+                requestAnimationFrame(() => {
                     panel.innerHTML = `<div class="enemy-status"></div>`;
                     panel.style.display = "none";
-                }, 0);
+                });
             }
         }
     }
@@ -177,10 +180,10 @@ function updateStatus() {
         </div>
         <div class="status-item hp"
             role="progressbar"
-            aria-valuenow="${gameState.hp}" aria-valuemax="${gameState.maxHp}" aria-label="HP: ${gameState.hp} de ${gameState.maxHp}"
+            aria-valuenow="${gameState.hp}" aria-valuemax="${gameState.maxHp}" aria-label="Vida: ${gameState.hp} de ${gameState.maxHp}"
             tabindex="0"
         >
-            <span>❤️ HP: ${gameState.hp}/${gameState.maxHp}</span>
+            <span>❤️ Vida: ${gameState.hp}/${gameState.maxHp}</span>
             <div class="status-bar">
                 <div class="bar-fill" style="width: ${(gameState.hp/gameState.maxHp)*100}%"></div>
             </div>
@@ -224,6 +227,8 @@ function updateStatus() {
 }
 
 /* =====================[ TRECHO 3: ATUALIZAÇÃO DO PAINEL DO INIMIGO ]===================== */
+
+let enemyPanelCloseToken = 0; // Novo: token para garantir que só a última animação pode limpar/esconder
 
 function updateEnemyPanel() {
     const panel = document.getElementById('enemyPanel');
@@ -305,16 +310,29 @@ function updateEnemyPanel() {
         `;
     }
 
+    // === CORREÇÃO: Bloqueio de múltiplos fechamentos concorrentes ===
     if (!shouldShow && isCurrentlyVisible) {
-        // FECHA: anima para fechar, só limpa o conteúdo DEPOIS da animação terminar!
+        // Novo token a cada fechamento
+        enemyPanelCloseToken++;
+        const thisToken = enemyPanelCloseToken;
+
         DOM_ELEMENTS.fullHistory.style.height =
             (window.matchMedia("(max-width: 600px)").matches
                 ? MAX_HISTORY_HEIGHT_MOBILE
                 : MAX_HISTORY_HEIGHT_DESKTOP
             ) + "px";
+
         animateEnemyPanelAndHistory(false);
-        // Remover o conteúdo APÓS o término da animação (callback no animateEnemyPanelAndHistory)
-        // (a chamada já existe no setTimeout dentro do animateEnemyPanelAndHistory)
+
+        // Limpeza do DOM do painel agora só ocorre se este fechamento foi o último disparado:
+        setTimeout(() => {
+            // Se outro open/close disparou depois, não faz nada!
+            if (enemyPanelCloseToken === thisToken) {
+                panel.innerHTML = `<div class="enemy-status"></div>`;
+                panel.style.display = "none";
+            }
+        }, ENEMY_PANEL_ANIMATION_DURATION + 32); // Garante que tudo já animou/renderizou
+        // --- FIM PROTEÇÃO ---
     } else if (shouldShow && !isCurrentlyVisible) {
         // ABRE: anima para abrir
         panel.innerHTML = innerHTML;
@@ -326,6 +344,7 @@ function updateEnemyPanel() {
         initBuffTooltipHandlers();
     }
 }
+
 
 /* =====================[ TRECHO 4: UTILS DE STATUS E TOOLTIP ]===================== */
 
