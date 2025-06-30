@@ -1,6 +1,7 @@
 // game.js — Contém os tipos e dados centrais do jogo: definição dos inimigos, salas, pools, boss de cada andar, inicialização/reset do estado do jogo, eventos de menu e carregamento principal.
 
-// ===== FRASES DE FIM DE CAPÍTULO (Expansível por capítulo) =====
+/* =====================[ TRECHO 1: FRASES DE FIM DE CAPÍTULO ]===================== */
+
 const FRASES_FIM_CAPITULO = {
     1: [
         "Ainda não é hora de lembrar.",
@@ -12,17 +13,17 @@ const FRASES_FIM_CAPITULO = {
         "Por que insistir em lembrar?"
     ],
     2: [
-        // Exemplo: frases do capítulo 2 (andares 11–20)
         "O silêncio ecoa ainda mais profundo...",
         "O tempo parece se curvar neste lugar.",
         "Você sente olhos invisíveis te observando.",
         "Aqui, as memórias se desfazem como poeira."
-    ],
+    ]
     // Acrescente capítulos conforme desejar...
 };
 window.FRASES_FIM_CAPITULO = FRASES_FIM_CAPITULO;
 
-// ===== Tipos e dados do Jogo =====
+/* =====================[ TRECHO 2: TIPOS E DADOS DO JOGO ]===================== */
+
 const ROOM_TYPES = {
     EMPTY: 'vazia',
     WATER: 'com fonte de água',
@@ -32,27 +33,24 @@ const ROOM_TYPES = {
 };
 
 const ENEMIES = [
-    // ======== Monstros comuns (ajustados) ========
-    { name: "Rato Gigante", hp: 18, maxHp: 18, forca: 5, defesa: 1, precisao: 68, agilidade: 10 },
-    { name: "Slime Sombrio", hp: 22, maxHp: 22, forca: 4, defesa: 2, precisao: 62, agilidade: 8 },
-    { name: "Aranha Cinzenta", hp: 20, maxHp: 20, forca: 6, defesa: 2, precisao: 70, agilidade: 10 },
-    { name: "Slime Luminoso", hp: 20, maxHp: 20, forca: 5, defesa: 2, precisao: 67, agilidade: 10 },
-    { name: "Morcego das Sombras", hp: 14, maxHp: 14, forca: 4, defesa: 1, precisao: 74, agilidade: 14 },
+    { name: "Rato Gigante", vida: 18, maxVida: 18, forca: 5, defesa: 1, precisao: 68, agilidade: 10 },
+    { name: "Slime Sombrio", vida: 22, maxVida: 22, forca: 4, defesa: 2, precisao: 62, agilidade: 8 },
+    { name: "Aranha Cinzenta", vida: 20, maxVida: 20, forca: 6, defesa: 2, precisao: 70, agilidade: 10 },
+    { name: "Slime Luminoso", vida: 20, maxVida: 20, forca: 5, defesa: 2, precisao: 67, agilidade: 10 },
+    { name: "Morcego das Sombras", vida: 14, maxVida: 14, forca: 4, defesa: 1, precisao: 74, agilidade: 14 },
 
-    // ===== Mini-bosses/chefes (ordem e status reescalonados) =====
-    { name: "Rato-Rei",           hp: 40,  maxHp: 40,  forca: 8,  defesa: 2,  precisao: 70, agilidade: 10 },
-    { name: "Gosma Reluzente",    hp: 55,  maxHp: 55,  forca: 10, defesa: 4,  precisao: 72, agilidade: 10 },
-    { name: "Aranha Rainha",      hp: 62,  maxHp: 62,  forca: 11, defesa: 5,  precisao: 74, agilidade: 12 },
-    { name: "Morcego Alfa",       hp: 56,  maxHp: 56,  forca: 11, defesa: 5,  precisao: 75, agilidade: 14 },
-    { name: "Horda de Ratos",     hp: 65,  maxHp: 65,  forca: 12, defesa: 6,  precisao: 77, agilidade: 13 },
-    { name: "Slime Gigante",      hp: 75,  maxHp: 75,  forca: 13, defesa: 7,  precisao: 78, agilidade: 11 },
-    { name: "Slime Abissal",      hp: 85,  maxHp: 85,  forca: 14, defesa: 8,  precisao: 80, agilidade: 12 },
-    { name: "Morcego Vampiro",    hp: 90,  maxHp: 90,  forca: 15, defesa: 8,  precisao: 82, agilidade: 18 },
-    { name: "Aracnídeo Sombrio",  hp: 100, maxHp: 100, forca: 16, defesa: 9,  precisao: 84, agilidade: 15 },
-    { name: "Coruja Anciã",       hp: 110, maxHp: 110, forca: 17, defesa: 10, precisao: 88, agilidade: 18 }
+    { name: "Rato-Rei",           vida: 40,  maxVida: 40,  forca: 8,  defesa: 2,  precisao: 70, agilidade: 10 },
+    { name: "Gosma Reluzente",    vida: 55,  maxVida: 55,  forca: 10, defesa: 4,  precisao: 72, agilidade: 10 },
+    { name: "Aranha Rainha",      vida: 62,  maxVida: 62,  forca: 11, defesa: 5,  precisao: 74, agilidade: 12 },
+    { name: "Morcego Alfa",       vida: 56,  maxVida: 56,  forca: 11, defesa: 5,  precisao: 75, agilidade: 14 },
+    { name: "Horda de Ratos",     vida: 65,  maxVida: 65,  forca: 12, defesa: 6,  precisao: 77, agilidade: 13 },
+    { name: "Slime Gigante",      vida: 75,  maxVida: 75,  forca: 13, defesa: 7,  precisao: 78, agilidade: 11 },
+    { name: "Slime Abissal",      vida: 85,  maxVida: 85,  forca: 14, defesa: 8,  precisao: 80, agilidade: 12 },
+    { name: "Morcego Vampiro",    vida: 90,  maxVida: 90,  forca: 15, defesa: 8,  precisao: 82, agilidade: 18 },
+    { name: "Aracnídeo Sombrio",  vida: 100, maxVida: 100, forca: 16, defesa: 9,  precisao: 84, agilidade: 15 },
+    { name: "Coruja Anciã",       vida: 110, maxVida: 110, forca: 17, defesa: 10, precisao: 88, agilidade: 18 }
 ];
 
-// ===== Pool de inimigos por andar =====
 const ENEMY_POOLS = {
     1: [
         { enemy: "Rato Gigante", chance: 60 },
@@ -118,7 +116,10 @@ const MINI_BOSSES_BY_FLOOR = {
     10: "Coruja Anciã"
 };
 
-// ===== Mensagens Especiais por Andar (salas vazias) =====
+/* =====================[ FIM TRECHO 2 ]===================== */
+
+/* =====================[ TRECHO 3: MEMÓRIAS POR ANDAR (EMPTY ROOMS) ]===================== */
+
 const memories = {
     1: "O silêncio é esmagador, mas não incomoda… por quê?",
     2: "Você sente que deveria lembrar de algo, mas não consegue.",
@@ -132,7 +133,8 @@ const memories = {
     10: "Imagens desfocadas de um volante, uma voz familiar… tudo some antes que você alcance."
 };
 
-// ===== Elementos DOM =====
+/* =====================[ TRECHO 4: ELEMENTOS DOM ]===================== */
+
 const DOM_ELEMENTS = {
     status: document.getElementById('status'),
     options: document.getElementById('options'),
@@ -149,7 +151,8 @@ const DOM_ELEMENTS = {
     btnsVoltarMenu: document.getElementsByClassName('btn-voltar-menu')
 };
 
-// ===== Estado inicial centralizado =====
+/* =====================[ TRECHO 5: ESTADO CENTRALIZADO DO JOGO ]===================== */
+
 const INITIAL_GAME_STATE = {
     name: 'Você',
     currentFloor: 1,
@@ -162,12 +165,12 @@ const INITIAL_GAME_STATE = {
     xp: 0,
     nextLevel: 100,
     level: 1,
-    hp: 50,
-    maxHp: 50,
-    mp: 30,
-    maxMp: 30,
-    stamina: 80,
-    maxStamina: 80,
+    vida: 50,
+    maxVida: 50,
+    mana: 30,
+    maxMana: 30,
+    energia: 80,
+    maxEnergia: 80,
     sanity: 50,
     maxSanity: 50,
     forca: 8,
@@ -178,7 +181,7 @@ const INITIAL_GAME_STATE = {
     currentEnemy: null,
     gameOver: false,
     inCombat: false,
-    skipStaminaCost: false,
+    skipEnergiaCost: false,
     skipSanityCost: false,
     messageHistory: [],
     isGainingDayPoints: true,
@@ -188,33 +191,23 @@ const INITIAL_GAME_STATE = {
     meditouNaSala: false,
 };
 
-// ===== Estado principal do jogo (mutável) =====
 const gameState = { ...INITIAL_GAME_STATE };
 
-// ===== Utilitário: Quantas salas para o próximo andar =====
+/* =====================[ FIM TRECHO 5 ]===================== */
+
+/* =====================[ TRECHO 6: UTILITÁRIOS DE PROGRESSÃO ]===================== */
+
 function getRandomRoomsToNextFloor() {
     return Math.floor(Math.random() * (45 - 30 + 1)) + 30;
 }
 
-// ======= Fluxo de inicialização refatorado =======
+/* =====================[ TRECHO 7: FLUXO DE INICIALIZAÇÃO ]===================== */
 
 function initGame() {
     esconderTodosMenus();
     mostrarJogo();
 
-    // --- INÍCIO DO AJUSTE PARA O HISTÓRICO ---
-    // Garante que o histórico já aparece na altura correta, SEM animação, ao iniciar o jogo.
-    DOM_ELEMENTS.fullHistory.classList.add('notransition');
-    DOM_ELEMENTS.fullHistory.style.height =
-        (window.matchMedia("(max-width: 600px)").matches
-            ? MAX_HISTORY_HEIGHT_MOBILE
-            : MAX_HISTORY_HEIGHT_DESKTOP
-        ) + "px";
-    setTimeout(() => {
-        DOM_ELEMENTS.fullHistory.classList.remove('notransition');
-    }, 100);
-    // --- FIM DO AJUSTE ---
-
+    // -- INÍCIO DO JOGO --
     resetGameState();
     limparHistoricoMensagens();
     mensagemInicioJogo();
@@ -222,6 +215,7 @@ function initGame() {
     presentOptions();
 }
 
+/* =====================[ TRECHO 8: CONTROLE DE VISIBILIDADE DO JOGO/MENUS ]===================== */
 
 function mostrarJogo() {
     if (DOM_ELEMENTS.gameContainer) {
@@ -230,7 +224,6 @@ function mostrarJogo() {
 }
 
 function resetGameState() {
-    // Usa JSON para garantir que não compartilha referência de arrays/objetos internos
     Object.assign(gameState, JSON.parse(JSON.stringify(INITIAL_GAME_STATE)), {
         roomsToNextFloor: getRandomRoomsToNextFloor()
     });
@@ -244,7 +237,6 @@ function mensagemInicioJogo() {
     addMessage('Você acorda no início da torre, uma sala vazia e silenciosa...');
 }
 
-// ======== MENU: Exibir/Esconder ========
 function esconderTodosMenus() {
     if (DOM_ELEMENTS.menuInicial) DOM_ELEMENTS.menuInicial.style.display = "none";
     if (DOM_ELEMENTS.painelTitulos) DOM_ELEMENTS.painelTitulos.style.display = "none";
@@ -263,7 +255,8 @@ function mostrarPainel(painel) {
     if (painel) painel.style.display = "";
 }
 
-// ===== Modularização dos eventos dos botões do menu =====
+/* =====================[ TRECHO 9: EVENTOS DOS BOTÕES DE MENU ]===================== */
+
 function configurarBotaoIniciarJogo() {
     if (DOM_ELEMENTS.btnIniciarJogo) {
         DOM_ELEMENTS.btnIniciarJogo.onclick = function() {
@@ -309,20 +302,21 @@ function configurarBotoesMenus() {
     configurarBotoesVoltarMenu();
 }
 
-// ===== Evento de carregamento e controle do menu =====
+/* =====================[ TRECHO 10: EVENTO DE CARREGAMENTO E CONTROLE DE MENU ]===================== */
+
 window.addEventListener('DOMContentLoaded', function() {
     mostrarMenuPrincipal();
     configurarBotoesMenus();
 });
-// === BLOQUEIO DE ORIENTAÇÃO MOBILE ===
+
+/* =====================[ TRECHO 11: BLOQUEIO DE ORIENTAÇÃO MOBILE ]===================== */
+
 (function() {
-    // Só em telas pequenas (mobile/tablet)
     function isMobilePortraitNeeded() {
         return window.matchMedia("(max-width: 800px)").matches;
     }
     const modal = document.getElementById('orientationLockModal');
     function checkOrientation() {
-        // 'window.orientation' é depreciado, use width/height e screen.orientation
         let landscape;
         if (window.screen && window.screen.orientation) {
             landscape = window.screen.orientation.type.startsWith("landscape");
@@ -332,7 +326,6 @@ window.addEventListener('DOMContentLoaded', function() {
         if (isMobilePortraitNeeded() && landscape) {
             modal.classList.add("visible");
             modal.style.display = "flex";
-            // Evita scrollar, clicar, etc
             document.body.style.overflow = "hidden";
         } else {
             modal.classList.remove("visible");
@@ -340,10 +333,10 @@ window.addEventListener('DOMContentLoaded', function() {
             document.body.style.overflow = "";
         }
     }
-    // Escuta mudança de rotação/tamanho
     window.addEventListener("orientationchange", checkOrientation, { passive: true });
     window.addEventListener("resize", checkOrientation, { passive: true });
-
     document.addEventListener("DOMContentLoaded", checkOrientation, { passive: true });
     setTimeout(checkOrientation, 100);
 })();
+
+/* =====================[ FIM DO ARQUIVO game.js ]===================== */

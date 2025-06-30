@@ -1,5 +1,6 @@
 // combat.js — Responsável pela lógica principal de combate: alternância de turnos, ações do jogador e inimigo, vitórias/derrotas, buffs/debuffs, rounds e cálculo de dano.
 
+/* =====================[ TRECHO 1: CÁLCULO DE DANO ]===================== */
 function calculateDamage(attacker, defender) {
     try {
         // Força e defesa sempre positivas
@@ -30,11 +31,11 @@ function calculateDamage(attacker, defender) {
 }
 window.calculateDamage = calculateDamage;
 
-// ===== MOTOR DE COMBATE: AVANÇO DE TURNOS =====
+/* =====================[ TRECHO 2: MOTOR DE COMBATE — AVANÇO DE TURNOS ]===================== */
 function advanceCombatTurn() {
-    if (!gameState.inCombat || gameState.gameOver || !gameState.currentEnemy || gameState.hp <= 0) return;
+    if (!gameState.inCombat || gameState.gameOver || !gameState.currentEnemy || gameState.vida <= 0) return;
 
-    if (gameState.currentEnemy.hp <= 0 || gameState.hp <= 0) return;
+    if (gameState.currentEnemy.vida <= 0 || gameState.vida <= 0) return;
 
     if (gameState.stunnedTurns && gameState.stunnedTurns > 0) {
         renderPlayerStunPanel();
@@ -50,7 +51,7 @@ function advanceCombatTurn() {
     playerTurn();
 }
 
-// ===== INÍCIO DE COMBATE =====
+/* =====================[ TRECHO 3: INÍCIO DE COMBATE ]===================== */
 function startCombat(isBoss = false) {
     gameState.inCombat = true;
 
@@ -70,22 +71,22 @@ function startCombat(isBoss = false) {
     }, 600);
 }
 
-// ===== PLAYER TURN: SÓ CHAMA UI =====
+/* =====================[ TRECHO 4: TURNO DO JOGADOR ]===================== */
 function playerTurn() {
     updateStatus();
     presentOptions();
 }
 
-// ===== AÇÕES DO PLAYER =====
+/* =====================[ TRECHO 5: AÇÕES DO JOGADOR ]===================== */
 function playerAttack() {
     if (!gameState.inCombat) return;
 
-    if (gameState.stamina < 5) {
+    if (gameState.energia < 5) {
         processarDerrotaPorExaustao();
         return;
     }
 
-    gameState.stamina -= 5;
+    gameState.energia -= 5;
     if (typeof checkExaustaoOuLoucura === "function" && checkExaustaoOuLoucura()) return;
 
     const attacker = {
@@ -99,7 +100,7 @@ function playerAttack() {
     const result = calculateDamage(attacker, gameState.currentEnemy);
 
     if (result.damage > 0) {
-        gameState.currentEnemy.hp -= result.damage;
+        gameState.currentEnemy.vida -= result.damage;
         addMessage(
             `Você atacou! ${gameState.currentEnemy.name} sofreu ${result.damage} de dano.` +
             (result.message ? ` (${result.message})` : ""),
@@ -109,7 +110,7 @@ function playerAttack() {
         addMessage(result.message, false, false, "attack");
     }
 
-    if (gameState.stamina <= 0) {
+    if (gameState.energia <= 0) {
         processarDerrotaPorExaustao();
         return;
     }
@@ -118,7 +119,7 @@ function playerAttack() {
 }
 
 function processarDerrotaPorExaustao() {
-    gameState.hp = 0;
+    gameState.vida = 0;
     addMessage('Você caiu de exaustão durante o combate. Seu corpo não aguenta mais lutar...', true);
     if (gameState.debuffs) gameState.debuffs = {};
     if (gameState.currentEnemy && gameState.currentEnemy.buffs) gameState.currentEnemy.buffs = {};
@@ -129,11 +130,11 @@ function processarDerrotaPorExaustao() {
 }
 
 function playerHealSpell() {
-    if (!gameState.inCombat || gameState.mp < 15) return;
-    gameState.mp -= 15;
+    if (!gameState.inCombat || gameState.mana < 15) return;
+    gameState.mana -= 15;
     const healAmount = 25 + gameState.level * 2;
-    gameState.hp = Math.min(gameState.maxHp, gameState.hp + healAmount);
-    addMessage(`Você se curou em ${healAmount} ❤️ HP!`);
+    gameState.vida = Math.min(gameState.maxVida, gameState.vida + healAmount);
+    addMessage(`Você se curou em ${healAmount} ❤️ de Vida!`);
     checkCombatEndOrNextTurn();
 }
 
@@ -161,9 +162,9 @@ function playerFlee() {
     }
 }
 
-// ===== LÓGICA DO INIMIGO ESCALÁVEL =====
+/* =====================[ TRECHO 6: LÓGICA DO INIMIGO E TURNO ]===================== */
 function enemyTurn() {
-    if (!gameState.inCombat || gameState.hp <= 0 || !gameState.currentEnemy) return;
+    if (!gameState.inCombat || gameState.vida <= 0 || !gameState.currentEnemy) return;
 
     tickPlayerDebuffs();
     tickEnemyBuffs();
@@ -185,22 +186,22 @@ function ataqueInimigoBasico(enemy, buffado = false) {
     let defesa = buffado ? getEnemyDefesaAtual() : enemy.defesa;
     const result = calculateDamage({ ...enemy, forca, defesa }, gameState);
     if (result.damage > 0) {
-        gameState.hp = Math.max(0, gameState.hp - result.damage);
+        gameState.vida = Math.max(0, gameState.vida - result.damage);
         addMessage(`${enemy.name} atacou! Você sofreu ${result.damage} de dano.`, true);
     } else {
         addMessage(`O ataque do inimigo falhou, você esquivou!`, true);
     }
 }
 
-// ===== Alternância de turnos após o inimigo agir =====
+/* =====================[ TRECHO 7: CHECAGEM DE FIM DE COMBATE ]===================== */
 function checkCombatEndOrNextTurnAfterEnemy() {
     if (!gameState.inCombat || !gameState.currentEnemy) return;
 
-    if (gameState.currentEnemy.hp <= 0) {
+    if (gameState.currentEnemy.vida <= 0) {
         processarVitoria();
         return;
     }
-    if (gameState.hp <= 0) {
+    if (gameState.vida <= 0) {
         processarDerrota();
         return;
     }
@@ -208,15 +209,14 @@ function checkCombatEndOrNextTurnAfterEnemy() {
     advanceCombatTurn();
 }
 
-// ===== Alternância após o player agir =====
 function checkCombatEndOrNextTurn() {
     if (!gameState.inCombat || !gameState.currentEnemy) return;
 
-    if (gameState.currentEnemy.hp <= 0) {
+    if (gameState.currentEnemy.vida <= 0) {
         processarVitoria();
         return;
     }
-    if (gameState.hp <= 0) {
+    if (gameState.vida <= 0) {
         processarDerrota();
         return;
     }
@@ -224,9 +224,9 @@ function checkCombatEndOrNextTurn() {
     enemyTurn();
 }
 
-// ===== VITÓRIA, DERROTA, LEVEL UP, ETC =====
+/* =====================[ TRECHO 8: VITÓRIA, DERROTA, LEVEL UP ]===================== */
 function processarVitoria() {
-    const xpGained = Math.floor(gameState.currentEnemy.maxHp * 0.5 + 10);
+    const xpGained = Math.floor(gameState.currentEnemy.maxVida * 0.5 + 10);
     gameState.xp += xpGained;
     gameState.monstersDefeated++;
 
@@ -255,7 +255,7 @@ function processarVitoria() {
 }
 
 function processarDerrota() {
-    gameState.hp = 0;
+    gameState.vida = 0;
     addMessage('Você foi derrotado em combate!', true);
     if (gameState.debuffs) gameState.debuffs = {};
     if (gameState.currentEnemy && gameState.currentEnemy.buffs) gameState.currentEnemy.buffs = {};
@@ -263,18 +263,19 @@ function processarDerrota() {
     gameState.gameOver = true;
 }
 
+/* =====================[ TRECHO 9: LEVEL UP E ANDARES ]===================== */
 function checkLevelUp() {
     if (gameState.xp >= gameState.nextLevel) {
         gameState.level++;
         gameState.xp -= gameState.nextLevel;
         gameState.nextLevel = Math.floor(gameState.nextLevel * 1.5);
 
-        gameState.maxHp += 10;
-        gameState.hp = gameState.maxHp;
-        gameState.maxMp += 5;
-        gameState.mp = gameState.maxMp;
-        gameState.maxStamina += 5;
-        gameState.stamina = gameState.maxStamina;
+        gameState.maxVida += 10;
+        gameState.vida = gameState.maxVida;
+        gameState.maxMana += 5;
+        gameState.mana = gameState.maxMana;
+        gameState.maxEnergia += 5;
+        gameState.energia = gameState.maxEnergia;
         gameState.maxSanity += 5;
         gameState.sanity = gameState.maxSanity;
 
@@ -314,7 +315,7 @@ function advanceToNextFloor() {
     presentOptions();
 }
 
-// ===== CÁLCULO DE DANO E ESCOLHA DE INIMIGO =====
+/* =====================[ TRECHO 10: INIMIGOS DINÂMICOS E ESCOLHA DE INIMIGO ]===================== */
 
 // ====== NOVO: inimigos comuns escalam com o andar ======
 function getEnemyForCurrentFloor() {
@@ -345,8 +346,8 @@ function getEnemyForCurrentFloor() {
     if (!isBossEnemy(enemy.name)) {
         enemy.forca += upgrades * 4;
         enemy.defesa += upgrades * 1;
-        enemy.hp += upgrades * 3;
-        enemy.maxHp += upgrades * 3;
+        enemy.vida += upgrades * 3;
+        enemy.maxVida += upgrades * 3;
     }
     return enemy;
 }
@@ -365,9 +366,11 @@ function getBossForCurrentFloor() {
     return ENEMIES.find(e => e.name === bossName) || ENEMIES[0];
 }
 
-// ===== Expor funções globalmente para integração =====
+/* =====================[ TRECHO 11: EXPORTAÇÃO GLOBAL ]===================== */
 window.playerAttack = playerAttack;
 window.playerHealSpell = playerHealSpell;
 window.playerFlee = playerFlee;
 window.renderPlayerStunPanel = renderPlayerStunPanel;
 window.clearPlayerStunPanel = clearPlayerStunPanel;
+
+/* =====================[ FIM DO ARQUIVO combat.js ]===================== */

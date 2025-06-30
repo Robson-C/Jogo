@@ -1,0 +1,530 @@
+```css
+/* Container principal do jogo - afeta o layout geral */
+.game-container {
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 10px;
+    border-radius: 16px;
+    box-shadow: 0 0 24px 2px rgba(80, 60, 10, 0.18), 0 0 0 2px #493613;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 480px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #333;
+}
+.enemy-status-wrapper {
+    grid-column: span 2;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 1s linear;
+    pointer-events: none;
+}
+.enemy-status-wrapper.visible {
+    max-height: 999px;
+    pointer-events: auto;
+}
+.enemy-status {
+    margin-top: 3px;
+    padding: 8px 10px 7px 10px;
+    background: #2c2323;
+    border-radius: 8px;
+    font-size: 1em;
+    color: #ffd7d7;
+    box-shadow: 0 1px 6px rgba(40,30,30,0.10);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.status-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+    background: #413825;
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 0.98em;
+}
+.status-bar {
+    position: relative;
+    height: 6px;
+    background-color: #222;
+    border-radius: 4px;
+    margin-top: 3px;
+    overflow: hidden;
+}
+.bar-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    height: 100%;
+    width: 0;
+    border-radius: 4px;
+    transition: width 0.22s cubic-bezier(.53,.22,.45,1.26);
+}
+/* Barra específica do inimigo */
+.enemy-hp .bar-fill {
+    background: linear-gradient(90deg, #e74c3c, #bd2828);
+}
+.enemy-secondary-stats {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 7px;
+    border-radius: 8px;
+}
+@media (min-width: 601px) {
+    .enemy-secondary-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 7px;
+    }
+    .enemy-secondary-stats span {
+        background: #333;
+        padding: 7px 2px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.92em;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        min-width: 0;
+    }
+}
+@media (max-width: 600px) {
+    .enemy-secondary-stats {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 5px !important;
+        padding: 5px !important;
+        border-radius: 7px !important;
+    }
+    .enemy-secondary-stats span {
+        flex: 1 1 46% !important;
+        min-width: 95px !important;
+        padding: 4px 2px !important;
+        font-size: 0.90em !important;
+        border-radius: 6px !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 7px !important;
+        justify-content: flex-start !important;
+    }
+    .enemy-secondary-stats span b {
+        font-weight: 600;
+        margin-right: 2px;
+    }
+}
+.full-history {
+    height: 120px;
+    line-height: 1.2;
+    overflow-y: auto;
+    background-color: #413825;
+    padding: 7px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.93em;
+    transition: height 1s linear;
+}
+.full-history.notransition {
+    transition: none !important;
+}
+/* Scrollbar do histórico */
+.full-history::-webkit-scrollbar {
+    width: 6px;
+}
+.full-history::-webkit-scrollbar-track {
+    background: #222;
+}
+.full-history::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 4px;
+}
+.player-buffs, .enemy-buffs {
+    display: inline-flex;
+    gap: 4px;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+.buff-icon {
+    font-size: 1.2em;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    transition: transform 0.1s;
+    line-height: 1;
+    margin-right: 2px;
+    margin-left: 2px;
+}
+.buff-icon:active {
+    transform: scale(0.97);
+}
+.buff-tooltip {
+    position: absolute;
+    z-index: 9999;
+    min-width: 160px;
+    max-width: 270px;
+    background: #332d18;
+    color: #f7e8b4;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px 2px #222014e0, 0 0 0 2px #ffebba88;
+    padding: 10px 14px 10px 14px;
+    font-size: 1em;
+    pointer-events: auto;
+    animation: fadeInBuffTip 0.2s;
+}
+@keyframes fadeInBuffTip {
+    from { opacity: 0; transform: translateY(10px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.buff-tooltip-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+}
+.buff-tooltip-title {
+    font-weight: bold;
+    color: #ffe390;
+    font-size: 1.07em;
+    margin-bottom: 3px;
+    letter-spacing: 0.5px;
+}
+.buff-tooltip-desc {
+    font-size: 0.98em;
+    color: #ffe9bb;
+    margin-bottom: 2px;
+    line-height: 1.35;
+}
+.buff-tooltip-effects {
+    font-size: 1.03em;
+    color: #b4eaff;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 1px;
+}
+/* Tooltips mobile */
+@media (max-width: 600px) {
+    .buff-tooltip {
+        min-width: 130px;
+        max-width: 92vw;
+        font-size: 0.98em;
+        padding: 10px 7px;
+    }
+    .buff-tooltip-inner {
+        gap: 2px;
+    }
+    .buff-tooltip-title {
+        font-size: 1em;
+    }
+    .buff-tooltip-effects {
+        font-size: 1em;
+    }
+}
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #222;
+    color: #eee;
+    margin: 0;
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    line-height: 1.5;
+}
+@media (max-width: 600px) {
+    .status-box { 
+        padding: 6px !important; 
+        gap: 6px !important; 
+        grid-template-columns: 1fr 1fr !important; 
+    }
+    .game-container > h1 {
+        font-size: 1.3em !important;
+        line-height: 1.15 !important;
+        padding-bottom: 6px;
+        margin-bottom: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .full-history { 
+        font-size: 0.89em; 
+    }
+}
+#menuInicial .menu-botoes button:focus-visible,
+.btn-voltar-menu:focus-visible,
+.options-box button:focus-visible,
+.game-container button:focus-visible,
+button:focus-visible {
+    outline: 3px solid #17a4fa !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 3px #95e8ff66 !important;
+    z-index: 10;
+}
+
+```html
+<div id="enemyPanel" class="enemy-status-wrapper" aria-label="Painel de Status do Inimigo" tabindex="0">
+    <!-- Status do monstro será atualizado aqui -->
+</div>
+
+
+```javascript
+const MAX_HISTORY_HEIGHT_DESKTOP = 250; // px (sem inimigo)
+const MAX_HISTORY_HEIGHT_MOBILE = 250;  // px (sem inimigo)
+const MIN_HISTORY_HEIGHT_COMBAT = 100;  // px (com inimigo aberto totalmente)
+const ENEMY_PANEL_ANIMATION_DURATION = 1000; // ms, mesma duração do CSS .enemy-status-wrapper
+
+let enemyPanelAnimationFrame = null;
+
+function animateEnemyPanelAndHistory(abrir, startTime) {
+    const panel = document.getElementById('enemyPanel');
+    const fullHistory = DOM_ELEMENTS.fullHistory;
+    if (!panel || !fullHistory) return;
+
+    if (enemyPanelAnimationFrame !== null) {
+        cancelAnimationFrame(enemyPanelAnimationFrame);
+        enemyPanelAnimationFrame = null;
+    }
+
+    const isMobile = window.matchMedia("(max-width: 600px)").matches;
+    const maxHistoryHeight = isMobile ? MAX_HISTORY_HEIGHT_MOBILE : MAX_HISTORY_HEIGHT_DESKTOP;
+
+    let panelInitialHeight = panel.offsetHeight;
+    let panelTargetHeight = 0;
+    let historyInitialHeight = fullHistory.offsetHeight;
+    let historyTargetHeight = 0;
+
+    if (abrir) {
+        panel.style.display = "";
+        panel.classList.add('visible');
+        const inner = panel.querySelector('.enemy-status');
+        let enemyPanelHeight = inner ? inner.scrollHeight : 110;
+        enemyPanelHeight += 7;
+        panelInitialHeight = 0;
+        panelTargetHeight = enemyPanelHeight;
+        historyInitialHeight = maxHistoryHeight;
+        historyTargetHeight = maxHistoryHeight - enemyPanelHeight;
+        panel.style.maxHeight = "0px";
+    } else {
+        let currentPanelHeight = panel.scrollHeight;
+        panelInitialHeight = currentPanelHeight;
+        panelTargetHeight = 0;
+        historyInitialHeight = maxHistoryHeight - currentPanelHeight;
+        historyTargetHeight = maxHistoryHeight;
+        panel.style.display = ""; // Mantém o painel ocupando espaço até a animação acabar!
+    }
+
+    function clamp(v) { return Math.max(40, v); }
+
+    function step(now) {
+        if (!startTime) startTime = now;
+        const elapsed = now - startTime;
+        let progress = elapsed / ENEMY_PANEL_ANIMATION_DURATION;
+        if (progress > 1) progress = 1;
+
+        const currPanelHeight = Math.round(panelInitialHeight + (panelTargetHeight - panelInitialHeight) * progress);
+        const currHistoryHeight = clamp(Math.round(historyInitialHeight + (historyTargetHeight - historyInitialHeight) * progress));
+
+        panel.style.maxHeight = currPanelHeight + "px";
+        fullHistory.style.height = currHistoryHeight + "px";
+
+        if (progress < 1) {
+            enemyPanelAnimationFrame = requestAnimationFrame(step);
+        } else {
+            // Valores finais exatos:
+            panel.style.maxHeight = panelTargetHeight + "px";
+            fullHistory.style.height = clamp(historyTargetHeight) + "px";
+            enemyPanelAnimationFrame = null;
+
+            if (!abrir) {
+                panel.classList.remove('visible');
+                // Corrigido: só limpa e esconde DEPOIS de mais um repaint/frame do histórico!
+                requestAnimationFrame(() => {
+                    panel.innerHTML = `<div class="enemy-status"></div>`;
+                    panel.style.display = "none";
+                });
+            }
+        }
+    }
+    requestAnimationFrame(step);
+}
+
+let enemyPanelCloseToken = 0; // Token para garantir que só a última animação pode limpar/esconder
+
+function updateEnemyPanel() {
+    const panel = document.getElementById('enemyPanel');
+    if (!panel) return;
+
+    const shouldShow = gameState.inCombat && gameState.currentEnemy;
+    const isCurrentlyVisible = panel.classList.contains('visible');
+
+    let innerHTML = `<div class="enemy-status"></div>`;
+    if (shouldShow) {
+        let enemyBuffs = '';
+        let buffsArr = [];
+        const handledBuffs = new Set();
+
+        Object.keys(COMPOSITE_BUFFS).forEach(compKey => {
+            const stats = COMPOSITE_BUFFS[compKey];
+            const buffsObj = gameState.currentEnemy.buffs || {};
+            const active = stats.every(stat => buffsObj[stat]);
+            if (active && !stats.some(stat => handledBuffs.has(stat))) {
+                const info = getBuffInfo(compKey);
+                const turns = Math.max(...stats.map(stat => buffsObj[stat].turns));
+                let efeitosLinha = stats.map(stat => {
+                    let statIcon = stat === "forca" ? "🗡️" : stat === "defesa" ? "🛡️" : stat === "agilidade" ? "💨" : stat;
+                    let value = buffsObj[stat].value;
+                    let sign = value > 0 ? "+" : "-";
+                    value = Math.abs(value);
+                    return `${statIcon} ${sign}${value}`;
+                }).join(", ");
+                buffsArr.push(`
+                    <span class="buff-icon" data-buff='${compKey}' data-turns='${turns}' data-desc='${info.descricao}' data-efeitos='${efeitosLinha}'
+                        tabindex="0"
+                        aria-label="${info.nome}: ${info.descricao}. Efeitos: ${efeitosLinha}. Duração: ${turns} turno(s)."
+                    >${info.icone}</span>
+                `);
+                stats.forEach(stat => handledBuffs.add(stat));
+            }
+        });
+        const buffsObj = gameState.currentEnemy.buffs || {};
+        Object.keys(buffsObj).forEach(type => {
+            if (handledBuffs.has(type)) return;
+            const info = getBuffInfo(type);
+            const turns = buffsObj[type].turns;
+            let statIcon = info && info.icone ? info.icone : "❓";
+            let value = buffsObj[type].value !== undefined ? buffsObj[type].value : "";
+            let sign = value > 0 ? "+" : "-";
+            value = Math.abs(value);
+            let efeitoLinha = info && info.efeitos ? Object.keys(info.efeitos).map(stat => {
+                let icon = stat === "forca" ? "🗡️" : stat === "defesa" ? "🛡️" : stat === "agilidade" ? "💨" : stat;
+                return `${icon} ${sign}${value}`;
+            }).join(", ") : "";
+            buffsArr.push(`
+                <span class="buff-icon" data-buff='${type}' data-turns='${turns}' data-desc='${info ? info.descricao : ""}' data-efeitos='${efeitoLinha}'
+                    tabindex="0"
+                    aria-label="${info && info.nome ? info.nome : type}: ${info && info.descricao ? info.descricao : ""}. Efeitos: ${efeitoLinha}. Duração: ${turns} turno(s)."
+                >${statIcon}</span>
+            `);
+        });
+
+        if (buffsArr.length > 0) {
+            enemyBuffs = `<span class="enemy-buffs">${buffsArr.join(' ')}</span>`;
+        }
+
+        innerHTML = `
+            <div class="enemy-status" tabindex="0" aria-label="Status do inimigo: ${gameState.currentEnemy.name}, HP ${gameState.currentEnemy.hp} de ${gameState.currentEnemy.maxHp}">
+                <span>
+                    👹 ${gameState.currentEnemy.name}: HP ${gameState.currentEnemy.hp}/${gameState.currentEnemy.maxHp}
+                    ${enemyBuffs}
+                </span>
+                <div class="status-bar enemy-hp" role="progressbar" aria-label="HP do inimigo: ${gameState.currentEnemy.hp} de ${gameState.currentEnemy.maxHp}">
+                    <div class="bar-fill" style="width: ${(gameState.currentEnemy.hp/gameState.currentEnemy.maxHp)*100}%"></div>
+                </div>
+                <div class="enemy-secondary-stats" tabindex="0" aria-label="Atributos do inimigo: Ataque ${getEnemyStat("forca", gameState.currentEnemy)}, Defesa ${getEnemyStat("defesa", gameState.currentEnemy)}, Precisão ${gameState.currentEnemy.precisao}%, Agilidade ${gameState.currentEnemy.agilidade}%">
+                    <span><b>🗡 Ataque:</b> ${getEnemyStat("forca", gameState.currentEnemy)}</span>
+                    <span><b>🛡 Defesa:</b> ${getEnemyStat("defesa", gameState.currentEnemy)}</span>
+                    <span><b>🎯 Precisão:</b> ${gameState.currentEnemy.precisao}%</span>
+                    <span><b>💨 Agilidade:</b> ${gameState.currentEnemy.agilidade}%</span>
+                </div>
+            </div>
+        `;
+    }
+
+    // === CORREÇÃO: Bloqueio de múltiplos fechamentos concorrentes ===
+    if (!shouldShow && isCurrentlyVisible) {
+        // Novo token a cada fechamento
+        enemyPanelCloseToken++;
+        const thisToken = enemyPanelCloseToken;
+
+        DOM_ELEMENTS.fullHistory.style.height =
+            (window.matchMedia("(max-width: 600px)").matches
+                ? MAX_HISTORY_HEIGHT_MOBILE
+                : MAX_HISTORY_HEIGHT_DESKTOP
+            ) + "px";
+
+        animateEnemyPanelAndHistory(false);
+
+        // Limpeza do DOM do painel agora só ocorre se este fechamento foi o último disparado:
+        setTimeout(() => {
+            // Se outro open/close disparou depois, não faz nada!
+            if (enemyPanelCloseToken === thisToken) {
+                panel.innerHTML = `<div class="enemy-status"></div>`;
+                panel.style.display = "none";
+            }
+        }, ENEMY_PANEL_ANIMATION_DURATION + 32); // Garante que tudo já animou/renderizou
+        // --- FIM PROTEÇÃO ---
+    } else if (shouldShow && !isCurrentlyVisible) {
+        // ABRE: anima para abrir
+        panel.innerHTML = innerHTML;
+        initBuffTooltipHandlers();
+        animateEnemyPanelAndHistory(true);
+    } else {
+        // Apenas atualiza o conteúdo, se já está aberto
+        panel.innerHTML = innerHTML;
+        initBuffTooltipHandlers();
+    }
+}
+
+### Função que Chama a Animação (updateStatus)
+```javascript
+function updateStatus() {
+    // ... código para atualizar status do jogador ...
+    
+    // Esta linha chama a função que controla a animação do painel do inimigo:
+    updateEnemyPanel();
+    
+    // ... resto do código ...
+    initBuffTooltipHandlers();
+}
+```
+
+function getEnemyStat(stat, enemy) {
+    let value = enemy[stat];
+    if (enemy.buffs && enemy.buffs[stat]) {
+        value += enemy.buffs[stat].value;
+    }
+    return value;
+}
+```
+
+## 4. Elementos que Afetam a Animação
+
+### Variáveis/Objetos Relacionados
+- `gameState.inCombat` - determina se deve mostrar o painel
+- `gameState.currentEnemy` - dados do inimigo atual
+- `DOM_ELEMENTS.fullHistory` - elemento do histórico que é redimensionado
+- `COMPOSITE_BUFFS` - objeto com buffs compostos
+- `getBuffInfo()` - função para informações de buffs
+- `initBuffTooltipHandlers()` - inicializa tooltips dos buffs
+
+### Media Queries que Afetam
+- `window.matchMedia("(max-width: 600px)")` - detecta se é mobile
+- CSS `@media (max-width: 600px)` - estilos mobile
+- CSS `@media (min-width: 601px)` - estilos desktop
+
+### Timings Críticos
+- `ENEMY_PANEL_ANIMATION_DURATION = 1000ms` - duração da animação
+- `transition: max-height 1s linear` - transição CSS
+- `transition: height 1s linear` - transição do histórico
+- `setTimeout(..., ENEMY_PANEL_ANIMATION_DURATION + 32)` - limpeza DOM
+
+## Resumo dos Componentes Interconectados
+
+A animação funciona através da coordenação entre:
+1. **CSS transitions** para suavidade visual
+2. **requestAnimationFrame** para controle preciso
+3. **Sistema de tokens** para evitar conflitos
+4. **Redimensionamento simultâneo** do painel e histórico
+5. **Media queries** para comportamento responsivo
+6. **Gestão de DOM** com limpeza após animação

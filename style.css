@@ -1,29 +1,44 @@
 /* =====================[ TRECHO 1: MENUS E PAINÉIS GLOBAIS ]===================== */
-/* ===== MENUS INICIAIS E PAINÉIS ===== */
+
+/* Jogo e menus principais ocupam sempre 90% da tela do dispositivo, centralizados */
+body {
+    min-height: 100dvh; /* Suporte real para altura da viewport em mobile moderno */
+    margin: 0;
+    padding: 0;
+    background: #222;
+    color: #eee;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    box-sizing: border-box;
+    line-height: 1.5;
+}
+.game-container,
 .menu-inicial,
 .menu-painel {
-    max-width: 600px;
-    width: 100%;
+    width: 90vw;
+    height: 90vh;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.menu-inicial,
+.menu-painel {
     padding: 32px 10px 32px 10px;
     background: linear-gradient(135deg, #39342b 0%, #42351c 100%);
     border-radius: 16px;
     box-shadow: 0 0 24px 2px rgba(80, 60, 10, 0.18), 0 0 0 2px #493613;
-    display: flex;
-    flex-direction: column;
     gap: 18px;
     align-items: center;
-    min-height: 700px;
-    animation: fadeInMenu 0.8s;
+    justify-content: center;
     position: relative;
     overflow: hidden;
-    justify-content: center;
-}
-@keyframes fadeInMenu {
-    from { opacity: 0; transform: scale(0.98); }
-    to   { opacity: 1; transform: scale(1); }
-}
-.menu-inicial {
+    animation: fadeInMenu 0.8s;
     background-image: url('background.png');
     background-size: cover;
     background-position: center;
@@ -31,143 +46,93 @@
     z-index: 1;
 }
 
-/* ===== TÍTULO DO JOGO (MENU E PAINÉIS) ===== */
-.titulo-jogo-menu,
-.titulo-jogo-painel {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 2em;
-    color: #ffffff;
-    letter-spacing: 1.5px;
-    text-shadow: 0 2px 12px #000, 0 1px 0 #7c5600;
-    text-align: center;
-    margin-bottom: 4px;
-    margin-top: 0;
-    padding-bottom: 8px;
-}
-.titulo-jogo-menu { margin-bottom: 10px; }
-.titulo-jogo-painel {
-    font-size: 1.6em;
-    margin-bottom: 0;
-    padding-bottom: 6px;
-}
-.painel-section-title {
-    color: #ffd480;
-    margin: 12px 0 0 0;
-    text-align: center;
-    letter-spacing: 1px;
-    font-size: 1.05em;
-    font-weight: 600;
+@keyframes fadeInMenu {
+    from { opacity: 0; transform: scale(0.98); }
+    to   { opacity: 1; transform: scale(1); }
 }
 
-/* ===== BOTÕES DO MENU INICIAL CUSTOMIZADOS ===== */
 #menuInicial .menu-botoes {
     display: flex;
     flex-direction: column;
-    gap: 14px;
     align-items: center;
     justify-content: center;
-    margin-top: 8vw;
     width: 100%;
+    height: 100%;
+    gap: 18px;
+    min-height: 62vw;
 }
+
 #menuInicial .menu-botoes button {
-    width: 90vw;
-    max-width: 330px;
-    min-width: 0;
-    height: 48px;
+    width: 93%;
+    min-width: 180px;
+    max-width: 100vw;
+    min-height: 48px;
+    height: auto;
     font-family: 'Roboto Condensed', 'Arial Narrow', Arial, sans-serif;
     font-weight: 800;
-    font-size: 1.1em;
+    font-size: 1.07em;
     color: #463a22;
-    background: url('botao.png') no-repeat center center;
-    background-size: 100% 100%;
+    background: url('botao.png') no-repeat center center, linear-gradient(180deg, #ffe2a0 0%, #f8c67c 100%);
+    background-size: 100% 100%, cover;
+    border-radius: 13px;
     outline: none;
-    transition: filter 0.12s, transform 0.09s, box-shadow 0.13s;
+    transition: filter 0.15s, transform 0.10s, box-shadow 0.14s;
     text-shadow: 0 2px 6px #e7d8b6, 0 1px 0 #f6e3b7;
     display: flex;
     align-items: center;
     justify-content: center;
     letter-spacing: 1.2px;
-    margin: 0;
-    cursor: pointer;
-    padding: 0;
-}
-#menuInicial .menu-botoes button:hover,
-#menuInicial .menu-botoes button:focus {
-    filter: brightness(1.08) drop-shadow(0 2px 12px #dfc18160);
-    transform: translateY(-2px) scale(1.025);
-    box-shadow: 0 6px 24px 0 rgba(200,180,70,0.14);
-    color: #2f2311;
-}
-
-/* ===== VOLTAR BOTAO MENU ===== */
-.btn-voltar-menu {
-    width: 98vw;
-    max-width: 330px;
-    height: 48px;
-    font-size: 1em;
-    border-radius: 10px;
-    font-family: 'Roboto Condensed', 'Arial Narrow', Arial, sans-serif;
-    font-weight: 800;
-    background: url('botao.png') no-repeat center center;
-    background-size: 100% 100%;
-    border: none;
-    outline: none;
-    transition: filter 0.12s, transform 0.09s, box-shadow 0.13s;
-    text-shadow: 0 2px 6px #e7d8b6, 0 1px 0 #f6e3b7;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    letter-spacing: 1.2px;
-    margin: 0;
-    cursor: pointer;
-    padding: 0;
-}
-.btn-voltar-menu:hover,
-.btn-voltar-menu:focus {
-    filter: brightness(1.08) drop-shadow(0 2px 12px #dfc18160);
-    transform: translateY(-2px) scale(1.025);
-    box-shadow: 0 6px 24px 0 rgba(200,180,70,0.14);
-    color: #2f2311;
-}
-
-/* =====================[ FIM TRECHO 1 ]===================== */
-
-
-
-/* =====================[ TRECHO 2: ESTRUTURA DO JOGO ]===================== */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #222;
-    color: #eee;
-    margin: 0;
-    padding: 16px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    line-height: 1.5;
-}
-.game-container {
-    max-width: 600px;
-    width: 100%;
     margin: 0 auto;
-    padding: 10px;
-    border-radius: 16px;
-    box-shadow: 0 0 24px 2px rgba(80, 60, 10, 0.18), 0 0 0 2px #493613;
+    cursor: pointer;
+    padding: 0 10px;
+    box-shadow: 0 4px 16px 0 rgba(200,180,70,0.12);
+    border: none;
+    touch-action: manipulation;
+    user-select: none;
+    position: relative;
+}
+
+#menuInicial .menu-botoes button:focus-visible,
+#menuInicial .menu-botoes button:focus {
+    outline: 3px solid #17a4fa !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 3px #95e8ff66, 0 4px 20px 0 rgba(33, 145, 255, 0.11);
+    z-index: 10;
+    filter: brightness(1.08);
+}
+
+#menuInicial .menu-botoes button:active {
+    filter: brightness(0.93);
+    transform: scale(0.98);
+}
+
+#menuInicial .menu-botoes button:hover:not(:disabled) {
+    filter: brightness(1.12);
+    box-shadow: 0 6px 28px 0 rgba(200,180,70,0.20);
+    color: #2f2311;
+}
+
+#menuInicial .menu-botoes button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.game-container {
+    padding: 10px 0 0 0;
+    background: #333;
+    gap: 10px;
+    position: relative;
+}
+.game-inner {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    min-height: 480px;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-color: #333;
+    height: 100%;
+    min-height: 0;
 }
 .game-container > h1 {
-    margin-bottom: 8px;
-    padding-bottom: 8px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 2em;
+    font-size: 1.3em;
     color: #ffffff;
     letter-spacing: 1.5px;
     text-shadow: 0 2px 12px #000, 0 1px 0 #7c5600;
@@ -176,14 +141,154 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 1.15;
 }
+h1 {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+/* =====================[ FIM TRECHO 1 ]===================== */
+
+/* =====================[ TRECHO 2: ESTRUTURA DO JOGO ]===================== */
+.game-container {
+    width: 90vw;
+    height: 90vh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: 32px 10px 32px 10px;
+    overflow: hidden;
+    gap: 18px;
+    background: #333;
+    position: relative;
+}
+
+.status-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    background: #413825;
+    padding: 6px;
+    border-radius: 8px;
+    font-size: 0.98em;
+    box-shadow: 0 2px 8px 0 rgba(40,30,10,0.13);
+    border: 1px solid #65533633;
+    backdrop-filter: blur(1.5px);
+}
+.status-item.xp-bar { grid-column: span 2; margin-bottom: 5px; font-weight: 700; }
+.status-item span { font-size: 0.98em; }
+.status-bar {
+    position: relative;
+    height: 6px;
+    background-color: #222;
+    border-radius: 4px;
+    margin-top: 3px;
+    overflow: hidden;
+    box-shadow: 0 1px 5px #0008 inset;
+    border: 1px solid #3b331d;
+}
+.bar-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    height: 100%;
+    width: 0;
+    border-radius: 4px;
+    transition: width 0.22s cubic-bezier(.53,.22,.45,1.26);
+    box-shadow: 0 1px 7px #fff0 inset;
+}
+.bar-fill.xp {
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
+    z-index: 1;
+    /* Removido: GLOW padrão — só ativa com .glow-xp */
+}
+.bar-fill.xp.glow-xp {
+    animation: barGlowXp 0.8s cubic-bezier(.66,.2,.47,1.1);
+}
+@keyframes barGlowXp {
+    0% { box-shadow: 0 0 14px 3px #5bff9caa, 0 0 0 #0000; }
+    70% { box-shadow: 0 0 12px 2px #45eb83cc; }
+    100% { box-shadow: 0 1px 7px #fff0 inset; }
+}
+.vida .bar-fill { 
+    background-color: #e74c3c;
+    background-image: linear-gradient(90deg, #e74c3c 60%, #ff9c8a 100%);
+    animation: barFlashRed 0.22s;
+}
+.mana .bar-fill { 
+    background-color: #3498db;
+    background-image: linear-gradient(90deg, #3498db 60%, #8ae1ff 100%);
+}
+.energia .bar-fill { 
+    background-color: #f39c12;
+    background-image: linear-gradient(90deg, #f39c12 70%, #ffe49e 100%);
+}
+.sanity .bar-fill { 
+    background-color: #9b59b6;
+    background-image: linear-gradient(90deg, #9b59b6 70%, #edcaf9 100%);
+}
+@keyframes barFlashRed {
+    from { box-shadow: 0 0 10px 3px #ff6b6b77, 0 0 0 #0000; }
+    to   { box-shadow: 0 1px 7px #fff0 inset; }
+}
+
+.secondary-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 10px;
+    padding: 0;
+    border-radius: 0;
+    margin-top: 7px;
+    width: 100%;
+    box-sizing: border-box;
+    grid-column: span 2;
+}
+.secondary-stats span {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background: rgba(38, 38, 38, 0.92);
+    border-radius: 9px;
+    box-shadow: 0 2px 10px 0 rgba(0,0,0,0.10);
+    padding: 7px 10px;
+    font-size: 1.04em;
+    font-weight: 600;
+    color: #edecec;
+    border: 1.5px solid #222;
+    position: relative;
+    transition: filter 0.13s, box-shadow 0.13s, background 0.17s;
+    letter-spacing: 0.01em;
+}
+.secondary-stats span:active,
+.secondary-stats span:focus {
+    filter: brightness(1.12) drop-shadow(0 1px 8px #ffe19455);
+    box-shadow: 0 2px 14px 0 #0003;
+    background: #35312b;
+    outline: 2px solid #ffc15a88;
+    z-index: 2;
+}
+.secondary-stats span b {
+    font-weight: 800;
+    font-size: 0.90em;
+    margin-right: 5px;
+    opacity: 0.9;
+    letter-spacing: 0.01em;
+}
+.secondary-stats span:nth-child(1) b { color: #ffb1a6; }
+.secondary-stats span:nth-child(2) b { color: #cbe6ff; }
+.secondary-stats span:nth-child(3) b { color: #ffd978; }
+.secondary-stats span:nth-child(4) b { color: #beeabb; }
 /* =====================[ FIM TRECHO 2 ]===================== */
 
+/* =====================[ TRECHO 3: HISTÓRICO DE MENSAGENS ]===================== */
 
-
-/* =====================[ TRECHO 3: HISTÓRICO E MENSAGENS ]===================== */
 .full-history {
-    height: 120px;
+    flex: 1 1 0;
+    min-height: 64px;
+    max-height: 100%;
     line-height: 1.2;
     overflow-y: auto;
     background-color: #413825;
@@ -193,19 +298,55 @@ body {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    font-size: 0.93em;
-    transition: height 1s linear;
+    font-size: 0.89em;
+    transition: height 0.92s cubic-bezier(.53,.22,.45,1.16);
+    will-change: height;
+    box-shadow: 0 1px 6px #291e086c;
+    backdrop-filter: blur(1.1px);
 }
-.full-history.notransition {
-    transition: none !important;
-}
+.full-history.notransition { transition: none !important; }
+
 .message {
     padding: 5px 8px;
     background-color: #252525;
     border-left: 3px solid #555;
     border-radius: 3px;
     word-break: break-word;
+    position: relative;
+    /* REMOVIDO: animation: fadeInMsg 0.27s; */
 }
+
+/* As animações agora só serão aplicadas via classe .animate-damage, .animate-attack, etc */
+.message.animate-damage {
+    animation: msgDamageFlash 0.19s;
+}
+.message.animate-levelup {
+    animation: msgLevelupFlash 0.21s;
+}
+.message.animate-attack {
+    animation: msgAttackFlash 0.19s;
+}
+.message.animate-memory {
+    animation: highlightFade 1.2s;
+}
+
+@keyframes msgDamageFlash {
+    from { background: #e41e1e; }
+    to   { background-color: rgba(51, 34, 34, 0.8);}
+}
+@keyframes msgLevelupFlash {
+    from { background: #95ffba;}
+    to   { background-color: rgba(34, 51, 34, 0.8);}
+}
+@keyframes msgAttackFlash {
+    from { background: #62adff; }
+    to   { background-color: rgba(34, 42, 51, 0.8);}
+}
+@keyframes highlightFade {
+    from { background: #ffeeba; }
+    to   { background: linear-gradient(90deg, #f7e9b4 20%, #ffeeba 70%, #fff5d1 100%); }
+}
+
 .message.damage {
     border-left-color: #ff6b6b;
     background-color: rgba(51, 34, 34, 0.8);
@@ -228,14 +369,8 @@ body {
     font-weight: bold;
     font-size: 1.15em;
     box-shadow: 0 2px 16px rgba(255, 215, 0, 0.15);
-    animation: highlightFade 1.2s;
-}
-@keyframes highlightFade {
-    from { background: #ffeeba; }
-    to   { background: linear-gradient(90deg, #f7e9b4 20%, #ffeeba 70%, #fff5d1 100%); }
 }
 
-/* ===== SCROLLBAR ===== */
 .full-history::-webkit-scrollbar {
     width: 6px;
 }
@@ -248,113 +383,22 @@ body {
 }
 /* =====================[ FIM TRECHO 3 ]===================== */
 
+/* =====================[ TRECHO 4: STATUS DO INIMIGO ]===================== */
 
-
-/* =====================[ TRECHO 4: STATUS DO JOGADOR ]===================== */
-.status-box {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 7px;
-    background: #413825;
-    padding: 8px;
-    border-radius: 8px;
-    font-size: 0.98em;
-}
-.status-item.xp-bar { grid-column: span 2; margin-bottom: 5px; }
-.status-item span { font-size: 0.98em; }
-.status-bar {
-    position: relative;
-    height: 6px;
-    background-color: #222;
-    border-radius: 4px;
-    margin-top: 3px;
-    overflow: hidden;
-}
-.bar-fill {
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    height: 100%;
-    width: 0;
-    border-radius: 4px;
-    transition: width 0.22s cubic-bezier(.53,.22,.45,1.26);
-}
-.bar-fill.xp {
-    background: linear-gradient(90deg, #2ecc71, #27ae60);
-    z-index: 1;
-}
-.hp .bar-fill { background-color: #e74c3c; }
-.mp .bar-fill { background-color: #3498db; }
-.stamina .bar-fill { background-color: #f39c12; }
-.sanity .bar-fill { background-color: #9b59b6; }
-
-/* STATUS SECUNDÁRIOS - DESKTOP: 1 LINHA, MOBILE: 2X2 */
-.secondary-stats {
-    box-sizing: border-box;
-    margin-top: 7px;
-    border-radius: 8px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 7px;
-    width: 100%;
-    grid-column: span 2;
-}
-.secondary-stats span {
-    background: #333;
-    padding: 7px 2px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.92em;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    min-width: 0;
-}
-
-/* MOBILE: mantém como estava */
-@media (max-width: 600px) {
-    .secondary-stats {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 5px !important;
-        padding: 5px !important;
-        border-radius: 7px !important;
-    }
-    .secondary-stats span {
-        flex: 1 1 46% !important;
-        min-width: 95px !important;
-        padding: 4px 2px !important;
-        font-size: 0.90em !important;
-        border-radius: 6px !important;
-        box-sizing: border-box !important;
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        gap: 7px !important;
-        justify-content: flex-start !important;
-    }
-    .secondary-stats span b {
-        font-weight: 600;
-        margin-right: 2px;
-    }
-}
-
-/* =====================[ FIM TRECHO 4 ]===================== */
-
-
-
-/* =====================[ TRECHO 5: PAINEL DO INIMIGO ]===================== */
 .enemy-status-wrapper {
-    grid-column: span 2;
-    overflow: hidden;
     max-height: 0;
-    transition: max-height 1s linear;
+    overflow: hidden;
+    min-height: 0;
+    transition: max-height 1s linear, opacity 0.8s linear;
     pointer-events: none;
+    opacity: 0;
+    display: flex;
+    flex: 0 0 auto;
 }
-.enemy-status-wrapper.visible {
-    max-height: 320px;
+.enemy-status-wrapper.expandido {
+    max-height: 170px;
     pointer-events: auto;
+    opacity: 1;
 }
 .enemy-status {
     margin-top: 3px;
@@ -367,67 +411,69 @@ body {
     display: flex;
     flex-direction: column;
     gap: 6px;
+    /* -- MELHORIA -- */
+    border: 1.1px solid #bcaea633;
+    animation: fadeInEnemyPanel 0.45s;
 }
+@keyframes fadeInEnemyPanel {
+    from { opacity: 0; transform: translateY(-15px) scale(0.99);}
+    to   { opacity: 1; transform: translateY(0) scale(1);}
+}
+
 .enemy-secondary-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 10px;
+    padding: 0;
+    border-radius: 0;
+    margin-top: 7px;
     width: 100%;
     box-sizing: border-box;
-    margin-top: 7px;
-    border-radius: 8px;
+    grid-column: span 2;
 }
-@media (min-width: 601px) {
-    .enemy-secondary-stats {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 7px;
-    }
-    .enemy-secondary-stats span {
-        background: #333;
-        padding: 7px 2px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 0.92em;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 3px;
-        min-width: 0;
-    }
+.enemy-secondary-stats span {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background: rgba(38, 38, 38, 0.92);
+    border-radius: 9px;
+    box-shadow: 0 2px 10px 0 rgba(0,0,0,0.10);
+    padding: 7px 10px;
+    font-size: 1.04em;
+    font-weight: 600;
+    color: #edecec;
+    border: 1.5px solid #222;
+    position: relative;
+    transition: filter 0.13s, box-shadow 0.13s, background 0.17s;
 }
-@media (max-width: 600px) {
-    .enemy-secondary-stats {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 5px !important;
-        padding: 5px !important;
-        border-radius: 7px !important;
-    }
-    .enemy-secondary-stats span {
-        flex: 1 1 46% !important;
-        min-width: 95px !important;
-        padding: 4px 2px !important;
-        font-size: 0.90em !important;
-        border-radius: 6px !important;
-        box-sizing: border-box !important;
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        gap: 7px !important;
-        justify-content: flex-start !important;
-    }
-    .enemy-secondary-stats span b {
-        font-weight: 600;
-        margin-right: 2px;
-    }
+.enemy-secondary-stats span:active,
+.enemy-secondary-stats span:focus {
+    filter: brightness(1.12) drop-shadow(0 1px 8px #ffe19455);
+    box-shadow: 0 2px 14px 0 #0003;
+    background: #35312b;
+    outline: 2px solid #ffc15a88;
+    z-index: 2;
 }
-.enemy-hp .bar-fill {
+.enemy-secondary-stats span b {
+    font-weight: 800;
+    font-size: 0.90em;
+    margin-right: 5px;
+    opacity: 0.9;
+    letter-spacing: 0.01em;
+}
+.enemy-secondary-stats span:nth-child(1) b { color: #ffb1a6; }
+.enemy-secondary-stats span:nth-child(2) b { color: #cbe6ff; }
+.enemy-secondary-stats span:nth-child(3) b { color: #ffd978; }
+.enemy-secondary-stats span:nth-child(4) b { color: #beeabb; }
+.enemy-vida .bar-fill {
     background: linear-gradient(90deg, #e74c3c, #bd2828);
+    animation: barFlashRed 0.18s;
 }
-/* =====================[ FIM TRECHO 5 ]===================== */
 
+/* =====================[ FIM TRECHO 4 ]===================== */
 
+/* =====================[ TRECHO 5: OPÇÕES DO JOGADOR ]===================== */
 
-/* =====================[ TRECHO 6: OPÇÕES E BOTÕES DO JOGO ]===================== */
 .options-box {
     display: flex;
     flex-direction: column;
@@ -437,31 +483,43 @@ button {
     background-color: #555;
     color: white;
     border: none;
-    padding: 12px;
+    padding: 10px;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 15px;
-    transition: all 0.3s;
+    font-size: 14px;
+    transition: all 0.13s;
     text-align: center;
     background: url('botao.png') no-repeat center center;
     background-size: 100% 100%;
+    /* -- VISUAL MELHORADO -- */
+    box-shadow: 0 1.5px 6px #2b241014;
+    outline: none;
+    user-select: none;
+    position: relative;
+    min-height: 44px;
 }
 button:hover {
     background-color: #666;
     transform: translateY(-1px);
     box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    color: #ffd978;
 }
 button:disabled {
     background-color: #333;
     color: #aaa;
     cursor: not-allowed;
     transform: none;
+    opacity: 0.5;
 }
-/* =====================[ FIM TRECHO 6 ]===================== */
+button:focus-visible {
+    outline: 3px solid #17a4fa !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 3px #95e8ff66 !important;
+    z-index: 10;
+}
 
+/* =====================[ TRECHO 6: BUFFS, DEBUFFS E TOOLTIPS ]===================== */
 
-
-/* =====================[ TRECHO 7: BUFFS, DEBUFFS E TOOLTIPS ]===================== */
 .player-buffs, .enemy-buffs {
     display: inline-flex;
     gap: 4px;
@@ -473,42 +531,58 @@ button:disabled {
     cursor: pointer;
     position: relative;
     user-select: none;
-    transition: transform 0.1s;
+    transition: transform 0.13s, box-shadow 0.14s, background 0.13s;
     line-height: 1;
     margin-right: 2px;
     margin-left: 2px;
+    /* -- MELHORIA -- */
+    border-radius: 4px;
+    background: rgba(52, 43, 27, 0.64);
+    box-shadow: 0 1px 5px #ffe39a33;
 }
-.buff-icon:active {
-    transform: scale(0.97);
+.buff-icon:active, .buff-icon:focus {
+    background: #ffeab033;
+    box-shadow: 0 2px 8px #ffeab088, 0 0 0 2px #ffefb288;
+    outline: 2px solid #ffefb277;
+    z-index: 5;
+    transform: scale(1.10);
 }
+@keyframes fadeInBuffIcon {
+    from { opacity: 0; transform: scale(0.66); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
 .buff-tooltip {
     position: absolute;
     z-index: 9999;
-    min-width: 160px;
-    max-width: 270px;
-    background: #332d18;
+    min-width: 130px;
+    max-width: 92vw;
+    background: rgba(45, 38, 21, 0.97);
     color: #f7e8b4;
     border-radius: 10px;
     box-shadow: 0 8px 32px 2px #222014e0, 0 0 0 2px #ffebba88;
-    padding: 10px 14px 10px 14px;
-    font-size: 1em;
+    padding: 10px 7px;
+    font-size: 0.98em;
     pointer-events: auto;
-    animation: fadeInBuffTip 0.2s;
+    animation: fadeInBuffTip 0.16s;
+    /* -- MELHORIA -- */
+    backdrop-filter: blur(2.3px);
+    border: 1.4px solid #f6e4b488;
 }
 @keyframes fadeInBuffTip {
-    from { opacity: 0; transform: translateY(10px) scale(0.95); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+    from { opacity: 0; transform: translateY(10px) scale(0.95);}
+    to   { opacity: 1; transform: translateY(0) scale(1);}
 }
 .buff-tooltip-inner {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
     align-items: flex-start;
 }
 .buff-tooltip-title {
     font-weight: bold;
     color: #ffe390;
-    font-size: 1.07em;
+    font-size: 1em;
     margin-bottom: 3px;
     letter-spacing: 0.5px;
 }
@@ -519,58 +593,16 @@ button:disabled {
     line-height: 1.35;
 }
 .buff-tooltip-effects {
-    font-size: 1.03em;
+    font-size: 1em;
     color: #b4eaff;
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
     margin-top: 1px;
 }
-@media (max-width: 600px) {
-    .buff-tooltip {
-        min-width: 130px;
-        max-width: 92vw;
-        font-size: 0.98em;
-        padding: 10px 7px;
-    }
-    .buff-tooltip-inner {
-        gap: 2px;
-    }
-    .buff-tooltip-title {
-        font-size: 1em;
-    }
-    .buff-tooltip-effects {
-        font-size: 1em;
-    }
-}
-/* =====================[ FIM TRECHO 7 ]===================== */
 
+/* =====================[ TRECHO 7: UTILIDADES E ACESSIBILIDADE ]===================== */
 
-
-/* =====================[ TRECHO 8: UTILIDADES, RESPONSIVIDADE GLOBAL E ACESSIBILIDADE ]===================== */
-/* ===== AJUSTES PARA RESPONSIVIDADE (Mobile) ===== */
-@media (max-width: 600px) {
-    .menu-inicial,
-    .menu-painel {
-        min-height: 94vh;
-        padding-top: 32px;
-        padding-bottom: 32px;
-    }
-    .game-container > h1 {
-        font-size: 1.3em !important;
-        line-height: 1.15 !important;
-        padding-bottom: 6px;
-        margin-bottom: 6px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    .full-history { font-size: 0.89em; }
-    .status-box { padding: 6px !important; gap: 6px !important; grid-template-columns: 1fr 1fr !important; }
-    .status-box .hp, .status-box .mp, .status-box .stamina, .status-box .sanity { font-size: 0.8em !important; }
-    button { padding: 10px; font-size: 14px; }
-}
-/* ===== Fallbacks e ajustes globais ===== */
 .menu-inicial, .menu-painel {
     background: #39342b url('background.png') no-repeat center center;
 }
@@ -578,19 +610,15 @@ button, .btn-voltar-menu, #menuInicial .menu-botoes button {
     background: #555 url('botao.png') no-repeat center center;
     background-size: 100% 100%;
 }
-
-
-/* ===== FOCO VISÍVEL ACESSÍVEL: botões e menus ===== */
 #menuInicial .menu-botoes button:focus-visible,
 .btn-voltar-menu:focus-visible,
 .options-box button:focus-visible,
 .game-container button:focus-visible,
 button:focus-visible {
-    outline: 3px solid #17a4fa !important; /* Azul de contraste */
+    outline: 3px solid #17a4fa !important;
     outline-offset: 2px !important;
     box-shadow: 0 0 0 3px #95e8ff66 !important;
     z-index: 10;
 }
 
-
-/* =====================[ FIM TRECHO 8 ]===================== */
+/* =====================[ FIM ]===================== */

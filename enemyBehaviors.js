@@ -1,6 +1,6 @@
 // enemyBehaviors.js — Define o comportamento especial de cada inimigo durante o combate (habilidades únicas, ataques especiais, buffs/debuffs aplicados), integrado ao motor de combate.
 
-// ===== HANDLERS DE COMPORTAMENTO DE INIMIGOS (SEPARADO) =====
+/* =====================[ TRECHO 1: HANDLERS DE COMPORTAMENTO DE INIMIGOS ]===================== */
 const ENEMY_BEHAVIORS = {
     "Rato Gigante": function(enemy) {
         const roll = Math.random() * 100;
@@ -13,7 +13,7 @@ const ENEMY_BEHAVIORS = {
             for (let i = 0; i < 2; i++) {
                 const result = calculateDamage({ ...enemy }, gameState);
                 if (result.damage > 0) {
-                    gameState.hp = Math.max(0, gameState.hp - result.damage);
+                    gameState.vida = Math.max(0, gameState.vida - result.damage);
                     totalDano += result.damage;
                 } else {
                     esquivas++;
@@ -34,7 +34,7 @@ const ENEMY_BEHAVIORS = {
         } else {
             const result = calculateDamage({ ...enemy }, gameState);
             if (result.damage > 0) {
-                gameState.hp = Math.max(0, gameState.hp - result.damage);
+                gameState.vida = Math.max(0, gameState.vida - result.damage);
                 applyPlayerDebuff("agilidade", Math.floor(gameState.agilidade * 0.2), 2);
                 addMessage("O slime sombrio lança uma gelatina paralisante, deixando seus movimentos lentos! Sua agilidade foi reduzida por 2 turnos.", true);
                 addMessage(`Você sofreu ${result.damage} de dano.`, true);
@@ -50,7 +50,7 @@ const ENEMY_BEHAVIORS = {
         } else {
             const result = calculateDamage({ ...enemy }, gameState);
             if (result.damage > 0) {
-                gameState.hp = Math.max(0, gameState.hp - result.damage);
+                gameState.vida = Math.max(0, gameState.vida - result.damage);
                 gameState.stunnedTurns = 1;
                 addMessage("O morcego das sombras emite um grito agudo — você fica atordoado! 🌀", true);
                 addMessage(`Você sofreu ${result.damage} de dano.`, true);
@@ -101,7 +101,7 @@ const ENEMY_BEHAVIORS = {
         } else {
             const danoBase = Math.floor(enemy.forca * 1.5);
             const dano = Math.max(1, danoBase - getPlayerDefesaAtual());
-            gameState.hp = Math.max(0, gameState.hp - dano);
+            gameState.vida = Math.max(0, gameState.vida - dano);
             gameState.stunnedTurns = 1;
             addMessage("O Slime Gigante desaba sobre você com um impacto esmagador! Você ficou atordoado! 🌀", true);
             addMessage(`Você sofreu ${dano} de dano.`, true);
@@ -117,7 +117,7 @@ const ENEMY_BEHAVIORS = {
             for (let i = 0; i < 3; i++) {
                 const result = calculateDamage({ ...enemy }, gameState);
                 if (result.damage > 0) {
-                    gameState.hp = Math.max(0, gameState.hp - result.damage);
+                    gameState.vida = Math.max(0, gameState.vida - result.damage);
                     totalDano += result.damage;
                 } else {
                     esquivas++;
@@ -133,7 +133,7 @@ const ENEMY_BEHAVIORS = {
         } else {
             const result = calculateDamage({ ...enemy }, gameState);
             if (result.damage > 0) {
-                gameState.hp = Math.max(0, gameState.hp - result.damage);
+                gameState.vida = Math.max(0, gameState.vida - result.damage);
                 applyPlayerDebuff("forca", 3, 2);
                 addMessage("A Aranha Rainha injeta veneno letárgico! Sua força foi reduzida por 2 turnos.", true);
                 addMessage(`Você sofreu ${result.damage} de dano.`, true);
@@ -147,10 +147,10 @@ const ENEMY_BEHAVIORS = {
         if (roll < 70) {
             ataqueInimigoBasico(enemy);
         } else {
-            if (enemy.hp < enemy.maxHp / 2) {
-                const cura = Math.floor((enemy.maxHp - enemy.hp) * 0.3);
-                enemy.hp = Math.min(enemy.maxHp, enemy.hp + cura);
-                addMessage(`A Gosma Reluzente regenera parte do seu corpo! Recupera ${cura} de HP.`, true);
+            if (enemy.vida < enemy.maxVida / 2) {
+                const cura = Math.floor((enemy.maxVida - enemy.vida) * 0.3);
+                enemy.vida = Math.min(enemy.maxVida, enemy.vida + cura);
+                addMessage(`A Gosma Reluzente regenera parte do seu corpo! Recupera ${cura} de Vida.`, true);
             } else {
                 ataqueInimigoBasico(enemy);
             }
@@ -167,7 +167,7 @@ const ENEMY_BEHAVIORS = {
                 const ataque = { ...enemy, forca: Math.floor(enemy.forca * 0.7) };
                 const result = calculateDamage(ataque, gameState);
                 if (result.damage > 0) {
-                    gameState.hp = Math.max(0, gameState.hp - result.damage);
+                    gameState.vida = Math.max(0, gameState.vida - result.damage);
                     totalDano += result.damage;
                 } else {
                     esquivas++;
@@ -183,7 +183,7 @@ const ENEMY_BEHAVIORS = {
         } else {
             const result = calculateDamage({ ...enemy }, gameState);
             if (result.damage > 0) {
-                gameState.hp = Math.max(0, gameState.hp - result.damage);
+                gameState.vida = Math.max(0, gameState.vida - result.damage);
                 applyPlayerDebuff("defesa", 4, 3);
                 addMessage("O Slime Abissal expele uma onda corrosiva! Sua defesa foi reduzida por 3 turnos.", true);
                 addMessage(`Você sofreu ${result.damage} de dano.`, true);
@@ -199,11 +199,11 @@ const ENEMY_BEHAVIORS = {
         } else {
             const result = calculateDamage({ ...enemy }, gameState);
             if (result.damage > 0) {
-                gameState.hp = Math.max(0, gameState.hp - result.damage);
+                gameState.vida = Math.max(0, gameState.vida - result.damage);
                 const cura = result.damage * 3;
-                enemy.hp = Math.min(enemy.maxHp, enemy.hp + cura);
+                enemy.vida = Math.min(enemy.maxVida, enemy.vida + cura);
                 addMessage("O Morcego Vampiro morde e suga sua energia vital!", true);
-                addMessage(`Você sofreu ${result.damage} de dano. O morcego recuperou ${cura} de HP.`, true);
+                addMessage(`Você sofreu ${result.damage} de dano. O morcego recuperou ${cura} de Vida.`, true);
             } else {
                 addMessage("O Morcego Vampiro tentou morder, mas você esquivou!", true);
             }
@@ -244,5 +244,7 @@ const ENEMY_BEHAVIORS = {
     // Adicione outros inimigos especiais aqui conforme necessário
 };
 
-// Exporta para o escopo global
+/* =====================[ TRECHO 2: EXPORTAÇÃO GLOBAL ]===================== */
 window.ENEMY_BEHAVIORS = ENEMY_BEHAVIORS;
+
+/* =====================[ FIM DO ARQUIVO enemyBehaviors.js ]===================== */

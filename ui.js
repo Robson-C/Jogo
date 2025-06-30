@@ -3,55 +3,56 @@
 /* =====================[ TRECHO 1: BLOQUEIO/DESBLOQUEIO DAS OPÇÕES ]===================== */
 
 /**
- * Bloqueia todas as opções do jogador (ex: durante animações de combate)
- * Garante acessibilidade (aria-live), previne clique/teclado e mostra visualmente
+ * Desabilita todos os botões das opções.
  */
-function bloquearOpcoesJogador(msg = "Aguarde...") {
+function bloquearOpcoesJogador() {
     const optionsBox = DOM_ELEMENTS.options;
     if (!optionsBox) return;
-    optionsBox.classList.add("options-bloqueadas");
     Array.from(optionsBox.querySelectorAll("button")).forEach(btn => {
         btn.disabled = true;
-        btn.setAttribute("aria-disabled", "true");
-        btn.style.cursor = "not-allowed";
         btn.tabIndex = -1;
     });
-    // Mensagem de espera acessível (apenas se não já existe)
-    if (!optionsBox.querySelector(".bloqueio-msg")) {
-        const div = document.createElement("div");
-        div.className = "bloqueio-msg";
-        div.setAttribute("aria-live", "polite");
-        div.style.padding = "8px 0";
-        div.style.textAlign = "center";
-        div.style.opacity = "0.85";
-        div.innerText = msg;
-        optionsBox.appendChild(div);
-    }
 }
+
+/**
+ * Habilita todos os botões das opções, exceto os que já deveriam estar desabilitados (ex: magia sem MP).
+ */
 function desbloquearOpcoesJogador() {
     const optionsBox = DOM_ELEMENTS.options;
     if (!optionsBox) return;
-    optionsBox.classList.remove("options-bloqueadas");
     Array.from(optionsBox.querySelectorAll("button")).forEach(btn => {
-        btn.disabled = btn.getAttribute("data-original-disabled") === "true" ? true : false;
-        btn.removeAttribute("aria-disabled");
-        btn.style.cursor = "";
-        btn.tabIndex = 0;
-        btn.removeAttribute("data-original-disabled");
+        // Só ativa se o botão não tiver o atributo data-original-disabled=true
+        if (btn.getAttribute("data-original-disabled") === "true") {
+            btn.disabled = true;
+            btn.tabIndex = -1;
+        } else {
+            btn.disabled = false;
+            btn.tabIndex = 0;
+        }
     });
-    Array.from(optionsBox.querySelectorAll(".bloqueio-msg")).forEach(el => el.remove());
 }
+
+/* =====================[ FIM TRECHO 1 ]===================== */
+
 
 /* =====================[ TRECHO 2: SISTEMA DE MENSAGENS ]===================== */
 
 const messageCount = 20;
 
+// Auxiliar para aplicar animação SÓ na nova mensagem (tipo e classe específica)
 function addMessage(text, isCritical = false, isHighlighted = false, customClass = '') {
     const roomName = getRoomName();
     const timestamp = `Dia ${gameState.day}, Andar ${gameState.currentFloor} (${roomName})`;
     const fullMessage = `${timestamp}: ${text}`;
 
-    gameState.messageHistory.push({ text: fullMessage, isCritical, isHighlighted, customClass });
+    // Novo: marca o tipo da mensagem para animar na UI
+    let animationClass = '';
+    if (isCritical && customClass === 'attack') animationClass = 'animate-attack';
+    else if (isCritical) animationClass = 'animate-damage';
+    else if (isHighlighted) animationClass = 'animate-levelup';
+    else if (customClass === 'memory') animationClass = 'animate-memory';
+
+    gameState.messageHistory.push({ text: fullMessage, isCritical, isHighlighted, customClass, animationClass });
 
     if (gameState.messageHistory.length > 50) {
         gameState.messageHistory.shift();
@@ -69,22 +70,46 @@ function scrollFullHistoryToEnd() {
     }
 }
 
+// NOVO: Só aplica animação visual na mensagem recém inserida
 function updateMessageDisplay() {
     const lastMessages = gameState.messageHistory.slice(-messageCount);
 
     DOM_ELEMENTS.fullHistory.innerHTML = lastMessages
-        .map(msg => {
+        .map((msg, i, arr) => {
             let classes = "message";
+            // Classes originais
             if (msg.isCritical) classes += " damage";
             if (msg.isHighlighted) classes += " levelup";
             if (msg.customClass) classes += ` ${msg.customClass}`;
+            // Só a última mensagem relevante recebe a classe de animação
+            if (
+                i === arr.length - 1 && // só a mais recente
+                msg.animationClass      // só se precisa animar
+            ) {
+                classes += ` ${msg.animationClass}`;
+            }
             return `<div class="${classes}">${msg.text}</div>`;
         })
         .join('');
 
+    // Remove a classe de animação após a duração (evita re-animar ao atualizar)
+    const lastMsgDiv = DOM_ELEMENTS.fullHistory.lastElementChild;
+    if (lastMsgDiv) {
+        const classesToRemove = [
+            'animate-damage', 'animate-levelup', 'animate-attack', 'animate-memory'
+        ];
+        classesToRemove.forEach(cls => {
+            if (lastMsgDiv.classList.contains(cls)) {
+                setTimeout(() => {
+                    lastMsgDiv.classList.remove(cls);
+                }, 700); // Duração da animação (ms)
+            }
+        });
+    }
+
     scrollFullHistoryToEnd();
 }
-
+// Função auxiliar do sistema de mensagens — precisa estar junto no bloco!
 function getRoomName() {
     switch (gameState.currentRoom) {
         case 'vazia': return 'Sala Vazia';
@@ -95,6 +120,8 @@ function getRoomName() {
         default: return 'Sala Desconhecida';
     }
 }
+/* =====================[ FIM TRECHO 2 ]===================== */
+
 
 /* =====================[ TRECHO 3: CÁLCULO DE PONTUAÇÃO FINAL ]===================== */
 
@@ -126,38 +153,16 @@ function processarGameOverEspecial(msgFinal) {
 
 /* =====================[ TRECHO 5: EXIBIÇÃO DE OPÇÕES DO JOGADOR ]===================== */
 
-/**
- * Função utilitária: Detecta se o painel do inimigo está animando
- * (checando presença do requestAnimationFrame ativo ou classe visível durante transição)
- */
-function painelInimigoAnimando() {
-    const panel = document.getElementById('enemyPanel');
-    // Importa ENEMY_PANEL_ANIMATION_DURATION do status.js
-    if (!panel) return false;
-    return panel.classList.contains('animando') || (typeof window.enemyPanelAnimationFrame !== "undefined" && window.enemyPanelAnimationFrame !== null);
-}
-
-/**
- * Versão modificada para bloquear/desbloquear opções durante animação do painel do inimigo.
- * Só renderiza opções quando seguro interagir!
- */
 function presentOptions() {
-    DOM_ELEMENTS.options.innerHTML = '';
-
-    // Se o painel do inimigo está animando, bloqueia opções e espera animação terminar
-    if (painelInimigoAnimando()) {
-        bloquearOpcoesJogador("Aguardando o inimigo...");
-        // Aguarda animação terminar para renderizar as opções
-        setTimeout(() => {
-            if (!painelInimigoAnimando()) {
-                desbloquearOpcoesJogador();
-                presentOptions();
-            }
-        }, ENEMY_PANEL_ANIMATION_DURATION + 50);
+    // Se o painel inimigo está animando, apenas desabilite todos os botões e não re-renderize nada
+    if (window.enemyPanelAnimating) {
+        bloquearOpcoesJogador();
         return;
     } else {
         desbloquearOpcoesJogador();
     }
+
+    DOM_ELEMENTS.options.innerHTML = '';
 
     if (gameState.gameOver) {
         renderGameOverOptions();
@@ -168,9 +173,9 @@ function presentOptions() {
     if (
         !gameState.inCombat &&
         gameState.currentRoom === 'com monstro' &&
-        (!gameState.currentEnemy || gameState.currentEnemy.hp <= 0)
+        (!gameState.currentEnemy || gameState.currentEnemy.vida <= 0)
     ) {
-        if (gameState.stamina < 5) {
+        if (gameState.energia < 5) {
             processarGameOverEspecial("Você tenta forçar seu corpo, mas não tem energia para continuar. A exaustão te vence...");
             return;
         }
@@ -186,7 +191,7 @@ function presentOptions() {
         return;
     }
 
-    if (gameState.inCombat && (gameState.stunnedTurns > 0 || gameState.hp <= 0 || (gameState.currentEnemy && gameState.currentEnemy.hp <= 0))) {
+    if (gameState.inCombat && (gameState.stunnedTurns > 0 || gameState.vida <= 0 || (gameState.currentEnemy && gameState.currentEnemy.vida <= 0))) {
         // Painel de stun é mostrado por renderPlayerStunPanel (não faz nada aqui)
         return;
     }
@@ -204,6 +209,8 @@ function presentOptions() {
 
     renderOptions(actions);
 }
+
+/* =====================[ FIM TRECHO 5 ]===================== */
 
 /* =====================[ TRECHO 6: GAME OVER E OPÇÕES DE COMBATE ]===================== */
 
@@ -226,43 +233,43 @@ function renderGameOverOptions() {
 
 /**
  * Garante que as três opções de combate SEMPRE aparecem no mesmo lugar:
- * 1. Atacar (pode ser desabilitado por falta de stamina)
- * 2. Cura Mágica (pode ser desabilitado por falta de MP)
+ * 1. Atacar (pode ser desabilitado por falta de energia)
+ * 2. Cura Mágica (pode ser desabilitado por falta de mana)
  * 3. Fugir (sempre aparece, mas pode ser desabilitado em edge cases)
  */
 function getCombatActions() {
     const actions = [];
 
     // 1. Atacar
-    if (gameState.stamina >= 5) {
+    if (gameState.energia >= 5) {
         actions.push({
             text: '⚔️ Atacar (-5 ⚡)',
             action: 'attack',
-            ariaLabel: 'Atacar gastando 5 de stamina',
+            ariaLabel: 'Atacar gastando 5 de energia',
             disabled: false
         });
     } else {
         actions.push({
-            text: '⚔️ Atacar (Sem Stamina)',
+            text: '⚔️ Atacar (Sem Energia)',
             action: null,
-            ariaLabel: 'Atacar indisponível: sem stamina suficiente',
+            ariaLabel: 'Atacar indisponível: sem energia suficiente',
             disabled: true
         });
     }
 
     // 2. Cura Mágica
-    if (gameState.mp >= 15) {
+    if (gameState.mana >= 15) {
         actions.push({
             text: '✨ Cura Mágica (-15 🔮)',
             action: 'healSpell',
-            ariaLabel: 'Cura Mágica, gasta 15 de MP e restaura HP',
+            ariaLabel: 'Cura Mágica, gasta 15 de mana e restaura Vida',
             disabled: false
         });
     } else {
         actions.push({
-            text: '✨ Cura Mágica (Sem MP)',
+            text: '✨ Cura Mágica (Sem Mana)',
             action: null,
-            ariaLabel: 'Cura Mágica indisponível: sem MP suficiente',
+            ariaLabel: 'Cura Mágica indisponível: sem mana suficiente',
             disabled: true
         });
     }
@@ -285,10 +292,10 @@ function getExplorationActions() {
     // Fonte de Água — Meditar só 1 vez por sala
     if (gameState.currentRoom === ROOM_TYPES.WATER) {
         actions.push({
-            text: '🧘 Meditar (Recupera todo o 🔮 MP)',
+            text: '🧘 Meditar (Recupera toda a 🔮 Mana)',
             action: gameState.meditouNaSala ? null : 'meditate',
             disabled: !!gameState.meditouNaSala,
-            ariaLabel: gameState.meditouNaSala ? 'Já meditou nesta sala, opção indisponível' : 'Meditar e recuperar todo o MP'
+            ariaLabel: gameState.meditouNaSala ? 'Já meditou nesta sala, opção indisponível' : 'Meditar e recuperar toda a Mana'
         });
     }
 
@@ -298,21 +305,21 @@ function getExplorationActions() {
         gameState.currentRoom !== ROOM_TYPES.MONSTER &&
         gameState.currentRoom !== ROOM_TYPES.BOSS
     ) {
-        let hpRec, staminaRec, sanityRec;
+        let vidaRec, energiaRec, sanityRec;
         if (gameState.currentRoom === ROOM_TYPES.EMPTY) {
-            hpRec = Math.floor(gameState.maxHp * 0.2);
-            staminaRec = gameState.maxStamina;
+            vidaRec = Math.floor(gameState.maxVida * 0.2);
+            energiaRec = gameState.maxEnergia;
             sanityRec = gameState.maxSanity;
         } else {
-            hpRec = Math.floor(gameState.maxHp * 0.1);
-            staminaRec = Math.floor(gameState.maxStamina * 0.5);
+            vidaRec = Math.floor(gameState.maxVida * 0.1);
+            energiaRec = Math.floor(gameState.maxEnergia * 0.5);
             sanityRec = Math.floor(gameState.maxSanity * 0.5);
         }
         actions.push({
-            text: `🛌 Descansar (+${hpRec} ❤️, +${staminaRec} ⚡, +${sanityRec} 🌌)`,
+            text: `🛌 Descansar (+${vidaRec} ❤️, +${energiaRec} ⚡, +${sanityRec} 🌌)`,
             action: gameState.descansouNaSala ? null : 'rest',
             disabled: !!gameState.descansouNaSala,
-            ariaLabel: gameState.descansouNaSala ? 'Já descansou nesta sala, opção indisponível' : `Descansar e recuperar ${hpRec} HP, ${staminaRec} Stamina e ${sanityRec} Sanidade`
+            ariaLabel: gameState.descansouNaSala ? 'Já descansou nesta sala, opção indisponível' : `Descansar e recuperar ${vidaRec} Vida, ${energiaRec} Energia e ${sanityRec} Sanidade`
         });
     }
 
@@ -320,6 +327,7 @@ function getExplorationActions() {
     return actions;
 }
 
+/* =====================[ FIM TRECHO 6 ]===================== */
 
 /* =====================[ TRECHO 7: RENDERIZAÇÃO DOS BOTÕES DE OPÇÃO ]===================== */
 
@@ -356,7 +364,6 @@ function renderOptions(actions) {
     if (focusBtn) focusBtn.focus();
 }
 
-
 /* =====================[ TRECHO 8: FLUXO DE AÇÕES DE EXPLORAÇÃO ]===================== */
 
 function processarFimDeAcao() {
@@ -370,21 +377,21 @@ function restAction() {
         presentOptions();
         return;
     }
-    let hpRec, staminaRec, sanityRec;
+    let vidaRec, energiaRec, sanityRec;
     if (gameState.currentRoom === ROOM_TYPES.EMPTY) {
-        hpRec = Math.floor(gameState.maxHp * 0.2);
-        staminaRec = gameState.maxStamina;
+        vidaRec = Math.floor(gameState.maxVida * 0.2);
+        energiaRec = gameState.maxEnergia;
         sanityRec = gameState.maxSanity;
     } else {
-        hpRec = Math.floor(gameState.maxHp * 0.1);
-        staminaRec = Math.floor(gameState.maxStamina * 0.5);
+        vidaRec = Math.floor(gameState.maxVida * 0.1);
+        energiaRec = Math.floor(gameState.maxEnergia * 0.5);
         sanityRec = Math.floor(gameState.maxSanity * 0.5);
     }
-    gameState.hp = Math.min(gameState.maxHp, gameState.hp + hpRec);
-    gameState.stamina = Math.min(gameState.maxStamina, gameState.stamina + staminaRec);
+    gameState.vida = Math.min(gameState.maxVida, gameState.vida + vidaRec);
+    gameState.energia = Math.min(gameState.maxEnergia, gameState.energia + energiaRec);
     gameState.sanity = Math.min(gameState.maxSanity, gameState.sanity + sanityRec);
     gameState.descansouNaSala = true;
-    addMessage(`Você descansa. Recupera ${hpRec} ❤️, ${staminaRec} ⚡ e ${sanityRec} 🌌.`);
+    addMessage(`Você descansa. Recupera ${vidaRec} ❤️, ${energiaRec} ⚡ e ${sanityRec} 🌌.`);
     if (!checkExaustaoOuLoucura()) {
         processarFimDeAcao();
     }
@@ -396,7 +403,7 @@ function meditateAction() {
         presentOptions();
         return;
     }
-    gameState.mp = gameState.maxMp;
+    gameState.mana = gameState.maxMana;
     gameState.meditouNaSala = true;
     addMessage("Você medita e sente sua energia mágica ser restaurada por completo.");
     if (!checkExaustaoOuLoucura()) {
@@ -409,12 +416,12 @@ function exploreAction() {
     gameState.descansouNaSala = false;
     gameState.meditouNaSala = false;
 
-    if (gameState.stamina === 0) {
+    if (gameState.energia === 0) {
         processarGameOverEspecial("Você tenta forçar seu corpo, mas não tem energia para continuar. A exaustão te vence...");
         return;
     }
-    if (gameState.stamina === 5 || gameState.stamina === 10) {
-        gameState.stamina = 0;
+    if (gameState.energia === 5 || gameState.energia === 10) {
+        gameState.energia = 0;
         gameState.sanity -= 5;
         gameState.day++;
         if (checkExaustaoOuLoucura()) return;
@@ -426,12 +433,12 @@ function exploreAction() {
         processarFimDeAcao();
         return;
     }
-    if (gameState.stamina < 5) {
+    if (gameState.energia < 5) {
         processarGameOverEspecial("Você tenta forçar seu corpo, mas não tem energia para continuar. A exaustão te vence...");
         return;
     }
-    gameState.stamina -= 10;
-    if (gameState.stamina < 0) gameState.stamina = 0;
+    gameState.energia -= 10;
+    if (gameState.energia < 0) gameState.energia = 0;
     gameState.sanity -= 5;
     gameState.day++;
     if (checkExaustaoOuLoucura()) return;
@@ -439,9 +446,17 @@ function exploreAction() {
     processarFimDeAcao();
 }
 
+/* =====================[ FIM TRECHO 8 ]===================== */
+
 /* =====================[ TRECHO 9: ESCOLHA DO JOGADOR ]===================== */
 
 function chooseOption(option) {
+    // NOVO: Bloqueio absoluto enquanto anima o painel inimigo
+    if (window.enemyPanelAnimating) {
+        if (typeof bloquearOpcoesJogador === "function") bloquearOpcoesJogador("Aguardando o inimigo...");
+        return;
+    }
+
     if (gameState.gameOver) return;
     if (gameState.stunnedTurns > 0 || (gameState.inCombat && (gameState.hp <= 0 || (gameState.currentEnemy && gameState.currentEnemy.hp <= 0)))) {
         return;
@@ -477,6 +492,9 @@ function chooseOption(option) {
         // processarFimDeAcao() já é chamado dentro das funções de exploração agora
     }
 }
+
+/* =====================[ FIM TRECHO 9 ]===================== */
+
 
 /* =====================[ TRECHO 10: PAINEL DE STUN ]===================== */
 

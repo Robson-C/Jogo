@@ -1,6 +1,6 @@
-// enemyBehaviors.js — Define o comportamento especial de cada inimigo durante o combate (habilidades únicas, ataques especiais, buffs/debuffs aplicados), integrado ao motor de combate.
+// exploration.js — Exploração de salas, lógica de eventos de sala, armadilhas e boss.
 
-// ===== EXPLORAÇÃO DE SALAS =====
+/* =====================[ TRECHO 1: EXPLORAÇÃO DE SALAS ]===================== */
 function exploreRoom() {
     if (gameState.gameOver) return;
 
@@ -59,6 +59,7 @@ function shouldProcessBossRespawn() {
     );
 }
 
+/* =====================[ TRECHO 2: PROCESSAMENTO DE SALAS ]===================== */
 function processarBossRoom() {
     gameState.currentRoom = ROOM_TYPES.BOSS;
     addMessage('Você sente uma presença poderosa... O chefe deste andar está à sua espera!');
@@ -149,28 +150,30 @@ function processarSala(roomType) {
     }
 }
 
-// ===== ARMADILHAS =====
+/* =====================[ TRECHO 3: ARMADILHAS ]===================== */
 function handleTrapRoom() {
-    // Novo cálculo: 10% do HP máximo + 3 x andar atual, sem mitigação
-    const percentDamage = Math.floor(gameState.maxHp * 0.10);
+    // Novo cálculo: 10% do Vida máximo + 3 x andar atual, sem mitigação
+    const percentDamage = Math.floor(gameState.maxVida * 0.10);
     const floorDamage = 3 * gameState.currentFloor;
     const damage = percentDamage + floorDamage;
 
-    const trapStaminaPenalty = 10;
+    const trapEnergiaPenalty = 10;
     const trapSanityPenalty = 10;
 
-    gameState.hp = Math.max(0, gameState.hp - damage);
-    gameState.stamina = Math.max(0, gameState.stamina - trapStaminaPenalty);
+    gameState.vida = Math.max(0, gameState.vida - damage);
+    gameState.energia = Math.max(0, gameState.energia - trapEnergiaPenalty);
     gameState.sanity = Math.max(0, gameState.sanity - trapSanityPenalty);
 
     addMessage(
-        `Armadilha! Você sofreu ${damage} de dano, perdeu ${trapStaminaPenalty} de stamina e ${trapSanityPenalty} de sanidade.`,
+        `Armadilha! Você sofreu ${damage} de dano, perdeu ${trapEnergiaPenalty} de energia e ${trapSanityPenalty} de sanidade.`,
         true
     );
 
     // Checagem imediata de morte após armadilha
-    if (gameState.hp <= 0) {
+    if (gameState.vida <= 0) {
         processarGameOverEspecial("Você caiu em uma armadilha e sucumbiu aos ferimentos.");
         return;
     }
 }
+
+/* =====================[ FIM DO ARQUIVO exploration.js ]===================== */

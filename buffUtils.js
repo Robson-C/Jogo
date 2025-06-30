@@ -1,6 +1,6 @@
 // buffUtils.js — Centraliza a definição, aplicação, atualização e remoção de buffs/debuffs para jogador e inimigo. Inclui funções auxiliares para cálculo de stats ajustados e informações de efeito.
 
-// ===== DICIONÁRIO CENTRAL DE BUFFS/DEBUFFS =====
+/* =====================[ TRECHO 1: DICIONÁRIO CENTRAL DE BUFFS/DEBUFFS ]===================== */
 const BUFFS_INFO = {
     // Buffs compostos
     aura_real: {
@@ -44,7 +44,7 @@ const BUFFS_INFO = {
         nome: "Veneno",
         descricao: "Dano contínuo a cada turno",
         icone: "☠️",
-        efeitos: { hp: "-X/turno" }
+        efeitos: { vida: "-X/turno" }
     },
     agilidade: {
         nome: "Lentidão",
@@ -61,7 +61,7 @@ const BUFFS_INFO = {
     // Adicione novos buffs/debuffs aqui!
 };
 
-// ===== REGISTRO DE BUFFS COMPOSTOS (um buff, vários efeitos) =====
+/* =====================[ TRECHO 2: REGISTRO DE BUFFS COMPOSTOS ]===================== */
 const COMPOSITE_BUFFS = {
     // Exemplo: buff do Rato-Rei
     aura_real: ["forca", "defesa"],
@@ -69,6 +69,7 @@ const COMPOSITE_BUFFS = {
     // Adicione outros compostos se quiser
 };
 
+/* =====================[ TRECHO 3: UTILITÁRIOS DE BUFFS/DEBUFFS ]===================== */
 // Utilitário para buscar info do buff/debuff
 function getBuffInfo(buffKey) {
     return BUFFS_INFO[buffKey] || null;
@@ -76,6 +77,8 @@ function getBuffInfo(buffKey) {
 function isCompositeBuff(buffKey) {
     return !!COMPOSITE_BUFFS[buffKey];
 }
+
+/* =====================[ TRECHO 4: DEBUFFS DO JOGADOR — APLICAÇÃO E ATUALIZAÇÃO ]===================== */
 
 // -- Aplicar debuff genérico no player --
 // Valor ACUMULA, duração é sempre a maior (exceto precisão/veneno)
@@ -120,8 +123,8 @@ function tickPlayerDebuffs() {
     for (const type in gameState.debuffs) {
         // Efeito especial: veneno dá dano direto
         if (type === "veneno") {
-            const danoVeneno = Math.max(3, Math.floor(gameState.maxHp * 0.04));
-            gameState.hp = Math.max(0, gameState.hp - danoVeneno);
+            const danoVeneno = Math.max(3, Math.floor(gameState.maxVida * 0.04));
+            gameState.vida = Math.max(0, gameState.vida - danoVeneno);
             addMessage(`Você sofre ${danoVeneno} de dano do veneno!`, true);
         }
         gameState.debuffs[type].turns -= 1;
@@ -137,6 +140,8 @@ function tickPlayerDebuffs() {
         delete gameState.debuffs["teia_pegajosa"];
     }
 }
+
+/* =====================[ TRECHO 5: BUFFS DO INIMIGO — APLICAÇÃO E ATUALIZAÇÃO ]===================== */
 
 // -- Aplicar buff genérico no inimigo --
 function applyEnemyBuff(type, value, turns) {
@@ -181,7 +186,7 @@ function tickEnemyBuffs() {
     }
 }
 
-// ---- Funções utilitárias para obter stats reais (player e inimigo) ----
+/* =====================[ TRECHO 6: FUNÇÕES DE STATUS REAIS (PLAYER E INIMIGO) ]===================== */
 
 // Força do inimigo considerando buff
 function getEnemyForcaAtual() {
@@ -238,6 +243,7 @@ function getPlayerForcaAtual() {
     return forca;
 }
 
+/* =====================[ TRECHO 7: EXPORTAÇÃO GLOBAL ]===================== */
 // ----- Exportação para uso global -----
 window.BUFFS_INFO = BUFFS_INFO;
 window.getBuffInfo = getBuffInfo;
@@ -252,3 +258,5 @@ window.getPlayerAgilidadeAtual = getPlayerAgilidadeAtual;
 window.getPlayerDefesaAtual = getPlayerDefesaAtual;
 window.getPlayerPrecisaoAtual = getPlayerPrecisaoAtual;
 window.getPlayerForcaAtual = getPlayerForcaAtual;
+
+/* =====================[ FIM DO ARQUIVO buffUtils.js ]===================== */

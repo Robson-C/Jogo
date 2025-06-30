@@ -4,85 +4,20 @@
 
 /* =====================[ TRECHO 1: CONSTANTES E ANIMAÇÃO DO PAINEL ]===================== */
 
-const MAX_HISTORY_HEIGHT_DESKTOP = 250; // px (sem inimigo)
-const MAX_HISTORY_HEIGHT_MOBILE = 250;  // px (sem inimigo)
-const MIN_HISTORY_HEIGHT_COMBAT = 100;  // px (com inimigo aberto totalmente)
-const ENEMY_PANEL_ANIMATION_DURATION = 1000; // ms, mesma duração do CSS .enemy-status-wrapper
-
-let enemyPanelAnimationFrame = null;
-
-function animateEnemyPanelAndHistory(abrir, startTime) {
+function expandirPainelInimigo() {
     const panel = document.getElementById('enemyPanel');
-    const fullHistory = DOM_ELEMENTS.fullHistory;
-    if (!panel || !fullHistory) return;
-
-    if (enemyPanelAnimationFrame !== null) {
-        cancelAnimationFrame(enemyPanelAnimationFrame);
-        enemyPanelAnimationFrame = null;
+    if (panel && !panel.classList.contains('expandido')) {
+        panel.classList.add('expandido');
     }
-
-    const isMobile = window.matchMedia("(max-width: 600px)").matches;
-    const maxHistoryHeight = isMobile ? MAX_HISTORY_HEIGHT_MOBILE : MAX_HISTORY_HEIGHT_DESKTOP;
-
-    let panelInitialHeight = panel.offsetHeight;
-    let panelTargetHeight = 0;
-    let historyInitialHeight = fullHistory.offsetHeight;
-    let historyTargetHeight = 0;
-
-    if (abrir) {
-        panel.style.display = "";
-        panel.classList.add('visible');
-        const inner = panel.querySelector('.enemy-status');
-        let enemyPanelHeight = inner ? inner.scrollHeight : 110;
-        enemyPanelHeight += 7;
-        panelInitialHeight = 0;
-        panelTargetHeight = enemyPanelHeight;
-        historyInitialHeight = maxHistoryHeight;
-        historyTargetHeight = maxHistoryHeight - enemyPanelHeight;
-        panel.style.maxHeight = "0px";
-    } else {
-        let currentPanelHeight = panel.scrollHeight;
-        panelInitialHeight = currentPanelHeight;
-        panelTargetHeight = 0;
-        historyInitialHeight = maxHistoryHeight - currentPanelHeight;
-        historyTargetHeight = maxHistoryHeight;
-        panel.style.display = ""; // Mantém o painel ocupando espaço até a animação acabar!
-    }
-
-    function clamp(v) { return Math.max(40, v); }
-
-    function step(now) {
-        if (!startTime) startTime = now;
-        const elapsed = now - startTime;
-        let progress = elapsed / ENEMY_PANEL_ANIMATION_DURATION;
-        if (progress > 1) progress = 1;
-
-        const currPanelHeight = Math.round(panelInitialHeight + (panelTargetHeight - panelInitialHeight) * progress);
-        const currHistoryHeight = clamp(Math.round(historyInitialHeight + (historyTargetHeight - historyInitialHeight) * progress));
-
-        panel.style.maxHeight = currPanelHeight + "px";
-        fullHistory.style.height = currHistoryHeight + "px";
-
-        if (progress < 1) {
-            enemyPanelAnimationFrame = requestAnimationFrame(step);
-        } else {
-            // Valores finais exatos:
-            panel.style.maxHeight = panelTargetHeight + "px";
-            fullHistory.style.height = clamp(historyTargetHeight) + "px";
-            enemyPanelAnimationFrame = null;
-
-            if (!abrir) {
-                panel.classList.remove('visible');
-                // Corrigido: só limpa e esconde DEPOIS de mais um repaint/frame do histórico!
-                requestAnimationFrame(() => {
-                    panel.innerHTML = `<div class="enemy-status"></div>`;
-                    panel.style.display = "none";
-                });
-            }
-        }
-    }
-    requestAnimationFrame(step);
 }
+function recolherPainelInimigo() {
+    const panel = document.getElementById('enemyPanel');
+    if (panel && panel.classList.contains('expandido')) {
+        panel.classList.remove('expandido');
+    }
+}
+
+/* =====================[ FIM TRECHO 1 ]===================== */
 
 /* =====================[ TRECHO 2: STATUS DO JOGADOR E BARRAS ]===================== */
 
@@ -178,34 +113,34 @@ function updateStatus() {
                 <div class="bar-fill xp" style="width: ${xpPercent}%"></div>
             </div>
         </div>
-        <div class="status-item hp"
+        <div class="status-item vida"
             role="progressbar"
-            aria-valuenow="${gameState.hp}" aria-valuemax="${gameState.maxHp}" aria-label="Vida: ${gameState.hp} de ${gameState.maxHp}"
+            aria-valuenow="${gameState.vida}" aria-valuemax="${gameState.maxVida}" aria-label="Vida: ${gameState.vida} de ${gameState.maxVida}"
             tabindex="0"
         >
-            <span>❤️ Vida: ${gameState.hp}/${gameState.maxHp}</span>
+            <span>❤️ Vida: ${gameState.vida}/${gameState.maxVida}</span>
             <div class="status-bar">
-                <div class="bar-fill" style="width: ${(gameState.hp/gameState.maxHp)*100}%"></div>
+                <div class="bar-fill" style="width: ${(gameState.vida/gameState.maxVida)*100}%"></div>
             </div>
         </div>
-        <div class="status-item mp"
+        <div class="status-item mana"
             role="progressbar"
-            aria-valuenow="${gameState.mp}" aria-valuemax="${gameState.maxMp}" aria-label="MP: ${gameState.mp} de ${gameState.maxMp}"
+            aria-valuenow="${gameState.mana}" aria-valuemax="${gameState.maxMana}" aria-label="Mana: ${gameState.mana} de ${gameState.maxMana}"
             tabindex="0"
         >
-            <span>🔮 MP: ${gameState.mp}/${gameState.maxMp}</span>
+            <span>🔮 Mana: ${gameState.mana}/${gameState.maxMana}</span>
             <div class="status-bar">
-                <div class="bar-fill" style="width: ${(gameState.mp/gameState.maxMp)*100}%"></div>
+                <div class="bar-fill" style="width: ${(gameState.mana/gameState.maxMana)*100}%"></div>
             </div>
         </div>
-        <div class="status-item stamina"
+        <div class="status-item energia"
             role="progressbar"
-            aria-valuenow="${gameState.stamina}" aria-valuemax="${gameState.maxStamina}" aria-label="Stamina: ${gameState.stamina} de ${gameState.maxStamina}"
+            aria-valuenow="${gameState.energia}" aria-valuemax="${gameState.maxEnergia}" aria-label="Energia: ${gameState.energia} de ${gameState.maxEnergia}"
             tabindex="0"
         >
-            <span>⚡ Stamina: ${gameState.stamina}/${gameState.maxStamina}</span>
+            <span>⚡ Energia: ${gameState.energia}/${gameState.maxEnergia}</span>
             <div class="status-bar">
-                <div class="bar-fill" style="width: ${(gameState.stamina/gameState.maxStamina)*100}%"></div>
+                <div class="bar-fill" style="width: ${(gameState.energia/gameState.maxEnergia)*100}%"></div>
             </div>
         </div>
         <div class="status-item sanity"
@@ -226,18 +161,21 @@ function updateStatus() {
     initBuffTooltipHandlers();
 }
 
-/* =====================[ TRECHO 3: ATUALIZAÇÃO DO PAINEL DO INIMIGO ]===================== */
+/* =====================[ FIM TRECHO 2 ]===================== */
 
-let enemyPanelCloseToken = 0; // Novo: token para garantir que só a última animação pode limpar/esconder
+/* =====================[ TRECHO 3: ATUALIZAÇÃO DO PAINEL DO INIMIGO ]===================== */
 
 function updateEnemyPanel() {
     const panel = document.getElementById('enemyPanel');
     if (!panel) return;
 
-    const shouldShow = gameState.inCombat && gameState.currentEnemy;
-    const isCurrentlyVisible = panel.classList.contains('visible');
-
     let innerHTML = `<div class="enemy-status"></div>`;
+
+    if (typeof window.enemyPanelAnimating === "undefined") window.enemyPanelAnimating = false;
+
+    const shouldShow = gameState.inCombat && gameState.currentEnemy;
+    const isExpanded = panel.classList.contains('expandido');
+
     if (shouldShow) {
         let enemyBuffs = '';
         let buffsArr = [];
@@ -310,41 +248,39 @@ function updateEnemyPanel() {
         `;
     }
 
-    // === CORREÇÃO: Bloqueio de múltiplos fechamentos concorrentes ===
-    if (!shouldShow && isCurrentlyVisible) {
-        // Novo token a cada fechamento
-        enemyPanelCloseToken++;
-        const thisToken = enemyPanelCloseToken;
+    const ANIMATION_DURATION = 1000; // ms
 
-        DOM_ELEMENTS.fullHistory.style.height =
-            (window.matchMedia("(max-width: 600px)").matches
-                ? MAX_HISTORY_HEIGHT_MOBILE
-                : MAX_HISTORY_HEIGHT_DESKTOP
-            ) + "px";
-
-        animateEnemyPanelAndHistory(false);
-
-        // Limpeza do DOM do painel agora só ocorre se este fechamento foi o último disparado:
+    if (shouldShow && !isExpanded) {
+        window.enemyPanelAnimating = true;
+        bloquearOpcoesJogador();
+        panel.classList.add('expandido');
+        panel.innerHTML = innerHTML;
         setTimeout(() => {
-            // Se outro open/close disparou depois, não faz nada!
-            if (enemyPanelCloseToken === thisToken) {
-                panel.innerHTML = `<div class="enemy-status"></div>`;
-                panel.style.display = "none";
-            }
-        }, ENEMY_PANEL_ANIMATION_DURATION + 32); // Garante que tudo já animou/renderizou
-        // --- FIM PROTEÇÃO ---
-    } else if (shouldShow && !isCurrentlyVisible) {
-        // ABRE: anima para abrir
-        panel.innerHTML = innerHTML;
-        initBuffTooltipHandlers();
-        animateEnemyPanelAndHistory(true);
-    } else {
-        // Apenas atualiza o conteúdo, se já está aberto
-        panel.innerHTML = innerHTML;
-        initBuffTooltipHandlers();
+            panel.innerHTML = innerHTML;
+            window.enemyPanelAnimating = false;
+            presentOptions(); // <<---- Aqui re-renderiza as opções de acordo com o novo estado!
+        }, ANIMATION_DURATION);
     }
+    else if (!shouldShow && isExpanded) {
+        window.enemyPanelAnimating = true;
+        bloquearOpcoesJogador();
+        panel.classList.remove('expandido');
+        setTimeout(() => {
+            if (!panel.classList.contains('expandido')) {
+                panel.innerHTML = `<div class="enemy-status"></div>`;
+                window.enemyPanelAnimating = false;
+                presentOptions(); // <<---- Aqui também!
+            }
+        }, ANIMATION_DURATION);
+    }
+    else if (shouldShow && isExpanded) {
+        panel.innerHTML = innerHTML;
+    }
+
+    initBuffTooltipHandlers();
 }
 
+/* =====================[ FIM TRECHO 3 ]===================== */
 
 /* =====================[ TRECHO 4: UTILS DE STATUS E TOOLTIP ]===================== */
 
