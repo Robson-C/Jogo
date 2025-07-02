@@ -124,18 +124,31 @@ function calculateScore() {
 function checkExaustaoOuLoucura() {
     if (gameState.sanity <= 0) {
         gameState.sanity = 0;
+        if (!gameState.deathsByMadness) gameState.deathsByMadness = 0;
+        gameState.deathsByMadness++;
         processarGameOverEspecial("Sua mente se parte em mil fragmentos. Você sucumbe à loucura...");
         return true;
     }
+
     return false;
 }
 
 function processarGameOverEspecial(msgFinal) {
     gameState.gameOver = true;
+    gameState.inCombat = false;
+    gameState.currentEnemy = null;
+
+    // Remoção física garantida do painel inimigo.
+    const panel = document.getElementById('enemyPanel');
+    if (panel && panel.parentNode) panel.parentNode.removeChild(panel);
+
     addMessage(msgFinal, true);
+
+    // [Ajuste QA 2024-07-02] Checa títulos imediatamente no fim de jogo.
+    if (typeof checarTitulos === "function") checarTitulos(gameState);
+
     presentOptions();
 }
-
 /* =====================[ TRECHO 5: EXIBIÇÃO DE OPÇÕES DO JOGADOR ]===================== */
 
 /** Fluxo central para decidir quais opções devem aparecer, bloqueando durante animação do painel inimigo. */
@@ -211,11 +224,31 @@ function renderGameOverOptions() {
             🏢 Andares: +${score.floorsPoints}
         </div>
     `;
-    DOM_ELEMENTS.options.innerHTML = scoreMessage + '<button onclick="initGame()" aria-label="Jogar Novamente">Jogar Novamente</button>';
-    const btn = DOM_ELEMENTS.options.querySelector('button');
-    if (btn) btn.focus();
+    // Adiciona botão "Voltar ao Menu" acima do "Jogar Novamente"
+    DOM_ELEMENTS.options.innerHTML = `
+        ${scoreMessage}
+        <button id="btnVoltarMenuGameOver" aria-label="Voltar ao Menu Inicial" tabindex="0">Voltar ao Menu</button>
+        <button onclick="initGame()" aria-label="Jogar Novamente">Jogar Novamente</button>
+    `;
+    // Handler do botão "Voltar ao Menu" — sempre remove listeners antigos antes!
+    const btnMenu = document.getElementById('btnVoltarMenuGameOver');
+    if (btnMenu) {
+        btnMenu.onclick = function() {
+            if (typeof mostrarMenuPrincipal === "function") mostrarMenuPrincipal();
+        };
+        btnMenu.onkeydown = function(e) {
+            if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+                e.preventDefault();
+                if (typeof mostrarMenuPrincipal === "function") mostrarMenuPrincipal();
+            }
+        };
+        btnMenu.focus();
+    } else {
+        // Foco no "Jogar Novamente" caso botão de menu não exista
+        const btn = DOM_ELEMENTS.options.querySelector('button[onclick]');
+        if (btn) btn.focus();
+    }
 }
-
 /** Lista padronizada das opções em combate (atacar, curar, fugir). */
 function getCombatActions() {
     const actions = [];
@@ -331,6 +364,7 @@ function renderOptions(actions) {
 
 function processarFimDeAcao() {
     updateStatus();
+    if (typeof checarTitulos === "function") checarTitulos(window.gameState);
     presentOptions();
 }
 

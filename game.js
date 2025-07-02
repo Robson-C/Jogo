@@ -189,8 +189,17 @@ const INITIAL_GAME_STATE = {
     monstersDefeated: 0,
     descansouNaSala: false,
     meditouNaSala: false,
+    titulosDesbloqueados: [],
+    // =====================[ CAMPOS PARA TÍTULOS — NOVOS ]=====================
+    totalExploracoes: 0,             // "Explorador"
+    deathsByMadness: 0,              // "Louco"
+    totalEsquivas: 0,                // "Pés Ligeiros"
+    deathsByHp: 0,                   // "Resistente"
+    combatesSemFugirSeguidos: 0,     // "Maníaco do Combate"
+    ofuscamentosSofridos: 0,         // "Óculos de Sol"
+    venenamentosSofridos: 0          // "Imune"
+    // ====================[ FIM DOS CAMPOS PARA TÍTULOS ]======================
 };
-
 const gameState = { ...INITIAL_GAME_STATE };
 
 /* =====================[ FIM TRECHO 5 ]===================== */
@@ -268,6 +277,11 @@ function configurarBotaoTitulos() {
     if (DOM_ELEMENTS.btnTitulos) {
         DOM_ELEMENTS.btnTitulos.onclick = function() {
             mostrarPainel(DOM_ELEMENTS.painelTitulos);
+            setTimeout(function() {
+                if (typeof renderPainelTitulos === "function") {
+                    renderPainelTitulos(window.gameState || { titulosDesbloqueados: [] });
+                }
+            }, 10);
         };
     }
 }

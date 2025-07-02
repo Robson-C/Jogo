@@ -101,10 +101,14 @@ function applyPlayerDebuff(type, value, turns) {
         } else {
             gameState.debuffs[type] = { value: 0, turns };
         }
+        if (!gameState.ofuscamentosSofridos) gameState.ofuscamentosSofridos = 0;
+        gameState.ofuscamentosSofridos++;
     }
     // Veneno: só renova duração (um só efeito)
     else if (type === "veneno") {
         gameState.debuffs[type] = { value: 0, turns };
+        if (!gameState.venenamentosSofridos) gameState.venenamentosSofridos = 0;
+        gameState.venenamentosSofridos++;
     }
     // Default genérico
     else {

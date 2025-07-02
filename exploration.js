@@ -2,6 +2,9 @@
 
 /* =====================[ TRECHO 1: EXPLORAÇÃO DE SALAS ]===================== */
 function exploreRoom() {
+    if (!gameState.totalExploracoes) gameState.totalExploracoes = 0;
+    gameState.totalExploracoes++;
+    
     if (gameState.gameOver) return;
 
     gameState.roomsExploredOnFloor++;

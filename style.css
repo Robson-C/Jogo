@@ -19,8 +19,8 @@ body {
 .game-container,
 .menu-inicial,
 .menu-painel {
-    width: 90vw;
-    height: 90vh;
+    width: 100vw;
+    height: 100vh;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -31,7 +31,6 @@ body {
 .menu-painel {
     padding: 32px 10px 32px 10px;
     background: linear-gradient(135deg, #39342b 0%, #42351c 100%);
-    border-radius: 16px;
     box-shadow: 0 0 24px 2px rgba(80, 60, 10, 0.18), 0 0 0 2px #493613;
     gap: 18px;
     align-items: center;
@@ -154,8 +153,8 @@ h1 {
 
 /* =====================[ TRECHO 2: ESTRUTURA DO JOGO ]===================== */
 .game-container {
-    width: 90vw;
-    height: 90vh;
+    width: 100vw;
+    height: 100vh;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -693,3 +692,113 @@ button:focus-visible {
 }
 
 /* =====================[ FIM ]===================== */
+
+/* =====================[ TRECHO 8: GRID DE TÍTULOS ]===================== */
+
+.titulos-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px 12px;
+    justify-items: center;
+}
+.titulo-card {
+    width: 68px;
+    min-height: 82px;
+    background: #231e1a;
+    border-radius: 11px;
+    box-shadow: 0 1px 7px #0003;
+    border: 2px solid #554c30;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0.6;
+    padding: 8px 5px 4px 5px;
+    transition: border-color 0.2s, opacity 0.2s;
+}
+.titulo-card.unlocked {
+    border-color: #ffe194;
+    opacity: 1;
+}
+.titulo-card .titulo-icone {
+    font-size: 2.1em;
+    margin-bottom: 5px;
+}
+.titulo-card .titulo-nome {
+    font-size: 0.98em;
+    font-weight: bold;
+    color: #fbeed1;
+    margin-bottom: 2px;
+    text-align: center;
+}
+.titulo-card .titulo-desc {
+    font-size: 0.82em;
+    color: #c2b186;
+    text-align: center;
+    min-height: 26px;
+    max-width: 64px;
+    overflow-wrap: break-word;
+}
+.grid-break { display: none; } /* Não é mais necessário */
+
+.titulo-card .titulo-nome,
+.titulo-card .titulo-desc {
+    display: none !important;
+}
+.titulo-card {
+    justify-content: center;
+    padding: 16px 5px 8px 5px;
+    min-height: 58px;
+    height: 62px;
+}
+.titulo-card .titulo-icone {
+    font-size: 2.25em;
+    margin-bottom: 0;
+}
+.titulo-tooltip {
+    position: absolute;
+    z-index: 1200;
+    background: #282117;
+    border: 2px solid #6b6044;
+    border-radius: 8px;
+    color: #ffe6be;
+    min-width: 160px;
+    max-width: 240px;
+    box-shadow: 0 2px 14px #0008;
+    padding: 11px 14px 9px 13px;
+    font-size: 0.98em;
+    pointer-events: none;
+    animation: fadeInTooltip .19s;
+}
+@keyframes fadeInTooltip {
+    from { opacity: 0; transform: translateY(-7px);}
+    to   { opacity: 1; transform: translateY(0);}
+}
+.titulo-tooltip-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.titulo-tooltip-title {
+    font-size: 1.12em;
+    font-weight: bold;
+    margin-bottom: 2px;
+    color: #ffe6be;
+}
+.titulo-tooltip-desc {
+    font-size: 0.96em;
+    margin-bottom: 3px;
+    color: #e0d3a5;
+}
+.titulo-tooltip-beneficio {
+    font-size: 0.92em;
+    color: #b6f69f;
+    font-weight: 600;
+}
+.titulo-tooltip-lock {
+    margin-top: 3px;
+    font-size: 0.88em;
+    color: #ffb57a;
+    font-style: italic;
+}
+
+/* =====================[ FIM TRECHO : TÍTULOS ]===================== */

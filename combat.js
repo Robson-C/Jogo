@@ -119,14 +119,13 @@ function playerAttack() {
 }
 
 function processarDerrotaPorExaustao() {
+    // [Ajuste QA 2024-07-02] Game over centralizado via processarGameOverEspecial para sumir painel inimigo.
     gameState.vida = 0;
-    addMessage('Você caiu de exaustão durante o combate. Seu corpo não aguenta mais lutar...', true);
     if (gameState.debuffs) gameState.debuffs = {};
     if (gameState.currentEnemy && gameState.currentEnemy.buffs) gameState.currentEnemy.buffs = {};
     gameState.stunnedTurns = 0;
-    gameState.gameOver = true;
-    updateStatus();
-    presentOptions();
+    // Centraliza o fim de jogo e toda limpeza visual.
+    processarGameOverEspecial('Você caiu de exaustão durante o combate. Seu corpo não aguenta mais lutar...');
 }
 
 function playerHealSpell() {
@@ -139,6 +138,7 @@ function playerHealSpell() {
 }
 
 function playerFlee() {
+    gameState.combatesSemFugirSeguidos = 0;
     if (!gameState.inCombat) return;
     gameState.sanity = Math.max(0, gameState.sanity - 5);
     if (typeof checkExaustaoOuLoucura === "function" && checkExaustaoOuLoucura()) return;
@@ -189,6 +189,8 @@ function ataqueInimigoBasico(enemy, buffado = false) {
         gameState.vida = Math.max(0, gameState.vida - result.damage);
         addMessage(`${enemy.name} atacou! Você sofreu ${result.damage} de dano.`, true);
     } else {
+        if (!gameState.totalEsquivas) gameState.totalEsquivas = 0;
+        gameState.totalEsquivas++;
         addMessage(`O ataque do inimigo falhou, você esquivou!`, true);
     }
 }
@@ -229,6 +231,8 @@ function processarVitoria() {
     const xpGained = Math.floor(gameState.currentEnemy.maxVida * 0.5 + 10);
     gameState.xp += xpGained;
     gameState.monstersDefeated++;
+    if (!gameState.combatesSemFugirSeguidos) gameState.combatesSemFugirSeguidos = 0;
+    gameState.combatesSemFugirSeguidos++;
 
     if (gameState.debuffs) gameState.debuffs = {};
     if (gameState.currentEnemy && gameState.currentEnemy.buffs) gameState.currentEnemy.buffs = {};
@@ -255,12 +259,14 @@ function processarVitoria() {
 }
 
 function processarDerrota() {
-    gameState.vida = 0;
-    addMessage('Você foi derrotado em combate!', true);
+    if (!gameState.deathsByHp) gameState.deathsByHp = 0;
+    gameState.deathsByHp++;
+    // [Ajuste QA 2024-07-02] Game over centralizado via processarGameOverEspecial para sumir painel inimigo.
     if (gameState.debuffs) gameState.debuffs = {};
     if (gameState.currentEnemy && gameState.currentEnemy.buffs) gameState.currentEnemy.buffs = {};
     gameState.stunnedTurns = 0;
-    gameState.gameOver = true;
+    // Centraliza o fim de jogo e toda limpeza visual.
+    processarGameOverEspecial('Você foi derrotado em combate!');
 }
 
 /* =====================[ TRECHO 9: LEVEL UP E ANDARES ]===================== */
