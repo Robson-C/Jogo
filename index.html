@@ -58,16 +58,11 @@
     <!-- CONTAINER DO JOGO COM FLEXBOX VERTICAL -->
     <div class="game-container" style="display:none;" role="main" aria-label="Área principal do Jogo" tabindex="-1">
         <div class="game-inner" style="display: flex; flex-direction: column; height: 100%; min-height: 0;">
-            <h1 style="text-align:center;">Torre da Redenção</h1>
             <div id="fullHistory" class="full-history" aria-live="polite" aria-atomic="false" aria-label="Histórico de Mensagens do Jogo" tabindex="0">
                 <!-- Mensagens serão adicionadas aqui -->
             </div>
             <div id="status" class="status-box" aria-label="Painel de Status do Jogador" tabindex="0">
                 <!-- Status será atualizado aqui -->
-            </div>
-            <!-- PAINEL DO INIMIGO: FLEX TRANSITION, use .expandido para mostrar -->
-            <div id="enemyPanel" class="enemy-status-wrapper" tabindex="0" aria-label="Painel de Status do Inimigo">
-                <!-- Status do monstro será atualizado aqui -->
             </div>
             <div id="options" class="options-box" aria-label="Opções do Jogador" tabindex="0">
                 <!-- Opções serão geradas aqui -->

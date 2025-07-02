@@ -166,17 +166,28 @@ function updateStatus() {
 /* =====================[ TRECHO 3: ATUALIZAÇÃO DO PAINEL DO INIMIGO ]===================== */
 
 function updateEnemyPanel() {
-    const panel = document.getElementById('enemyPanel');
-    if (!panel) return;
-
-    let innerHTML = `<div class="enemy-status"></div>`;
+    let panel = document.getElementById('enemyPanel');
+    const shouldShow = gameState.inCombat && gameState.currentEnemy;
+    const ANIMATION_DURATION = 1000; // Tempo da animação em ms (deve bater com o seu CSS)
 
     if (typeof window.enemyPanelAnimating === "undefined") window.enemyPanelAnimating = false;
 
-    const shouldShow = gameState.inCombat && gameState.currentEnemy;
-    const isExpanded = panel.classList.contains('expandido');
+    // Cria o painel dinamicamente se necessário
+    if (shouldShow && !panel) {
+        panel = document.createElement('div');
+        panel.id = 'enemyPanel';
+        panel.className = 'enemy-status-wrapper';
+        panel.setAttribute('tabindex', '0');
+        panel.setAttribute('aria-label', 'Painel de Status do Inimigo');
+        const statusBox = document.getElementById('status');
+        if (statusBox && statusBox.parentNode) {
+            statusBox.parentNode.insertBefore(panel, statusBox.nextSibling);
+        }
+    }
 
-    if (shouldShow) {
+    if (shouldShow && panel) {
+        let innerHTML = `<div class="enemy-status"></div>`;
+
         let enemyBuffs = '';
         let buffsArr = [];
         const handledBuffs = new Set();
@@ -230,13 +241,13 @@ function updateEnemyPanel() {
         }
 
         innerHTML = `
-            <div class="enemy-status" tabindex="0" aria-label="Status do inimigo: ${gameState.currentEnemy.name}, HP ${gameState.currentEnemy.hp} de ${gameState.currentEnemy.maxHp}">
+            <div class="enemy-status" tabindex="0" aria-label="Status do inimigo: ${gameState.currentEnemy.name}, HP ${gameState.currentEnemy.vida} de ${gameState.currentEnemy.maxVida}">
                 <span>
-                    👹 ${gameState.currentEnemy.name}: HP ${gameState.currentEnemy.hp}/${gameState.currentEnemy.maxHp}
+                    👹 ${gameState.currentEnemy.name}: HP ${gameState.currentEnemy.vida}/${gameState.currentEnemy.maxVida}
                     ${enemyBuffs}
                 </span>
-                <div class="status-bar enemy-hp" role="progressbar" aria-label="HP do inimigo: ${gameState.currentEnemy.hp} de ${gameState.currentEnemy.maxHp}">
-                    <div class="bar-fill" style="width: ${(gameState.currentEnemy.hp/gameState.currentEnemy.maxHp)*100}%"></div>
+                <div class="status-bar enemy-hp" role="progressbar" aria-label="HP do inimigo: ${gameState.currentEnemy.vida} de ${gameState.currentEnemy.maxVida}">
+                    <div class="bar-fill" style="width: ${(gameState.currentEnemy.vida/gameState.currentEnemy.maxVida)*100}%"></div>
                 </div>
                 <div class="enemy-secondary-stats" tabindex="0" aria-label="Atributos do inimigo: Ataque ${getEnemyStat("forca", gameState.currentEnemy)}, Defesa ${getEnemyStat("defesa", gameState.currentEnemy)}, Precisão ${gameState.currentEnemy.precisao}%, Agilidade ${gameState.currentEnemy.agilidade}%">
                     <span><b>🗡 Ataque:</b> ${getEnemyStat("forca", gameState.currentEnemy)}</span>
@@ -246,38 +257,47 @@ function updateEnemyPanel() {
                 </div>
             </div>
         `;
-    }
 
-    const ANIMATION_DURATION = 1000; // ms
-
-    if (shouldShow && !isExpanded) {
-        window.enemyPanelAnimating = true;
-        bloquearOpcoesJogador();
-        panel.classList.add('expandido');
-        panel.innerHTML = innerHTML;
-        setTimeout(() => {
+        // Animação de entrada (adiciona .expandido)
+        if (!panel.classList.contains('expandido')) {
+            // BLOQUEIA opções durante a animação
+            window.enemyPanelAnimating = true;
+            if (typeof bloquearOpcoesJogador === "function") bloquearOpcoesJogador();
             panel.innerHTML = innerHTML;
-            window.enemyPanelAnimating = false;
-            presentOptions(); // <<---- Aqui re-renderiza as opções de acordo com o novo estado!
-        }, ANIMATION_DURATION);
-    }
-    else if (!shouldShow && isExpanded) {
-        window.enemyPanelAnimating = true;
-        bloquearOpcoesJogador();
-        panel.classList.remove('expandido');
-        setTimeout(() => {
-            if (!panel.classList.contains('expandido')) {
-                panel.innerHTML = `<div class="enemy-status"></div>`;
-                window.enemyPanelAnimating = false;
-                presentOptions(); // <<---- Aqui também!
-            }
-        }, ANIMATION_DURATION);
-    }
-    else if (shouldShow && isExpanded) {
-        panel.innerHTML = innerHTML;
-    }
+            setTimeout(() => {
+                panel.classList.add('expandido');
+                setTimeout(() => {
+                    window.enemyPanelAnimating = false;
+                    if (typeof presentOptions === "function") presentOptions();
+                }, ANIMATION_DURATION);
+            }, 10);
+        } else {
+            panel.innerHTML = innerHTML;
+        }
 
-    initBuffTooltipHandlers();
+        initBuffTooltipHandlers();
+
+    } else if (panel) {
+        // Animação de saída antes de remover do DOM
+        if (panel.classList.contains('expandido')) {
+            window.enemyPanelAnimating = true;
+            if (typeof bloquearOpcoesJogador === "function") bloquearOpcoesJogador();
+            panel.classList.remove('expandido');
+            setTimeout(() => {
+                if (panel && panel.parentNode) {
+                    panel.parentNode.removeChild(panel);
+                }
+                window.enemyPanelAnimating = false;
+                if (typeof presentOptions === "function") presentOptions();
+            }, ANIMATION_DURATION);
+        } else {
+            if (panel && panel.parentNode) {
+                panel.parentNode.removeChild(panel);
+            }
+            window.enemyPanelAnimating = false;
+            if (typeof presentOptions === "function") presentOptions();
+        }
+    }
 }
 
 /* =====================[ FIM TRECHO 3 ]===================== */
