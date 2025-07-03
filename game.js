@@ -188,19 +188,23 @@ const INITIAL_GAME_STATE = {
     visitedRooms: [],
     monstersDefeated: 0,
     descansouNaSala: false,
-    meditouNaSala: false,
-    titulosDesbloqueados: [],
-    // =====================[ CAMPOS PARA TÍTULOS — NOVOS ]=====================
-    totalExploracoes: 0,             // "Explorador"
-    deathsByMadness: 0,              // "Louco"
-    totalEsquivas: 0,                // "Pés Ligeiros"
-    deathsByHp: 0,                   // "Resistente"
-    combatesSemFugirSeguidos: 0,     // "Maníaco do Combate"
-    ofuscamentosSofridos: 0,         // "Óculos de Sol"
-    venenamentosSofridos: 0          // "Imune"
-    // ====================[ FIM DOS CAMPOS PARA TÍTULOS ]======================
+    meditouNaSala: false
+    // ===== REMOVIDOS: titulosDesbloqueados, totalExploracoes, deathsByMadness, totalEsquivas, deathsByHp, combatesSemFugirSeguidos, ofuscamentosSofridos, venenamentosSofridos =====
 };
 const gameState = { ...INITIAL_GAME_STATE };
+
+/* ======= NOVO: PERFIL DE JOGADOR GLOBAL POR SESSÃO ======= */
+const playerProfile = {
+    titulosDesbloqueados: [],
+    totalExploracoes: 0,
+    deathsByMadness: 0,
+    totalEsquivas: 0,
+    deathsByHp: 0,
+    combatesSemFugirSeguidos: 0,
+    ofuscamentosSofridos: 0,
+    venenamentosSofridos: 0
+};
+window.playerProfile = playerProfile;
 
 /* =====================[ FIM TRECHO 5 ]===================== */
 
@@ -236,6 +240,7 @@ function resetGameState() {
     Object.assign(gameState, JSON.parse(JSON.stringify(INITIAL_GAME_STATE)), {
         roomsToNextFloor: getRandomRoomsToNextFloor()
     });
+    // Não zera nem altera playerProfile!
 }
 
 function limparHistoricoMensagens() {

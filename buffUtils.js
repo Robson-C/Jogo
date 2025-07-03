@@ -60,6 +60,7 @@ const BUFFS_INFO = {
     }
     // Adicione novos buffs/debuffs aqui!
 };
+/* =====================[ FIM TRECHO 1 ]===================== */
 
 /* =====================[ TRECHO 2: REGISTRO DE BUFFS COMPOSTOS ]===================== */
 const COMPOSITE_BUFFS = {
@@ -68,6 +69,7 @@ const COMPOSITE_BUFFS = {
     teia_pegajosa: ["agilidade", "defesa"]
     // Adicione outros compostos se quiser
 };
+/* =====================[ FIM TRECHO 2 ]===================== */
 
 /* =====================[ TRECHO 3: UTILITÁRIOS DE BUFFS/DEBUFFS ]===================== */
 // Utilitário para buscar info do buff/debuff
@@ -77,6 +79,7 @@ function getBuffInfo(buffKey) {
 function isCompositeBuff(buffKey) {
     return !!COMPOSITE_BUFFS[buffKey];
 }
+/* =====================[ FIM TRECHO 3 ]===================== */
 
 /* =====================[ TRECHO 4: DEBUFFS DO JOGADOR — APLICAÇÃO E ATUALIZAÇÃO ]===================== */
 
@@ -101,14 +104,16 @@ function applyPlayerDebuff(type, value, turns) {
         } else {
             gameState.debuffs[type] = { value: 0, turns };
         }
-        if (!gameState.ofuscamentosSofridos) gameState.ofuscamentosSofridos = 0;
-        gameState.ofuscamentosSofridos++;
+        // Registro global de ofuscamento para títulos (agora em playerProfile)
+        if (!playerProfile.ofuscamentosSofridos) playerProfile.ofuscamentosSofridos = 0;
+        playerProfile.ofuscamentosSofridos++;
     }
     // Veneno: só renova duração (um só efeito)
     else if (type === "veneno") {
         gameState.debuffs[type] = { value: 0, turns };
-        if (!gameState.venenamentosSofridos) gameState.venenamentosSofridos = 0;
-        gameState.venenamentosSofridos++;
+        // Registro global de veneno para títulos (agora em playerProfile)
+        if (!playerProfile.venenamentosSofridos) playerProfile.venenamentosSofridos = 0;
+        playerProfile.venenamentosSofridos++;
     }
     // Default genérico
     else {
@@ -144,6 +149,7 @@ function tickPlayerDebuffs() {
         delete gameState.debuffs["teia_pegajosa"];
     }
 }
+/* =====================[ FIM TRECHO 4 ]===================== */
 
 /* =====================[ TRECHO 5: BUFFS DO INIMIGO — APLICAÇÃO E ATUALIZAÇÃO ]===================== */
 
@@ -189,6 +195,7 @@ function tickEnemyBuffs() {
         }
     }
 }
+/* =====================[ FIM TRECHO 5 ]===================== */
 
 /* =====================[ TRECHO 6: FUNÇÕES DE STATUS REAIS (PLAYER E INIMIGO) ]===================== */
 
@@ -246,6 +253,7 @@ function getPlayerForcaAtual() {
     }
     return forca;
 }
+/* =====================[ FIM TRECHO 6 ]===================== */
 
 /* =====================[ TRECHO 7: EXPORTAÇÃO GLOBAL ]===================== */
 // ----- Exportação para uso global -----
@@ -262,5 +270,4 @@ window.getPlayerAgilidadeAtual = getPlayerAgilidadeAtual;
 window.getPlayerDefesaAtual = getPlayerDefesaAtual;
 window.getPlayerPrecisaoAtual = getPlayerPrecisaoAtual;
 window.getPlayerForcaAtual = getPlayerForcaAtual;
-
 /* =====================[ FIM DO ARQUIVO buffUtils.js ]===================== */

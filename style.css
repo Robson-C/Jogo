@@ -691,69 +691,251 @@ button:focus-visible {
     z-index: 10;
 }
 
-/* =====================[ FIM ]===================== */
+/* =====================[ FIM TRECHO 7 ]===================== */
 
-/* =====================[ TRECHO 8: GRID DE TÍTULOS ]===================== */
+/* =====================[ TÍTULOS — SLOTS, GRID E PAINEL MODAL ]===================== */
 
+/* SLOTS de equipar (acima do painel) */
+.titulo-equip-slots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 22px;
+    margin: 0 auto 24px auto;
+    width: 90vw;
+    max-width: 410px;
+    margin-top: 18px;
+    margin-bottom: 28px;
+}
+.titulo-equip-slot {
+    width: 52px;
+    height: 52px;
+    border: 2.5px dashed #a39773;
+    border-radius: 13px;
+    background: rgba(240,236,230,0.77);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.15em;
+    color: #bcb4a1;
+    box-shadow: 0 2px 6px rgba(180,150,90,0.09);
+    transition: box-shadow 0.18s, border-color 0.18s;
+    cursor: pointer;
+}
+.titulo-equip-slot:focus {
+    outline: 2px solid #8d7f4a;
+    border-color: #c2b98e;
+}
+.titulo-equip-slot.ocupado {
+    border-style: solid;
+    border-color: #ffe194;
+    background: #fff9ee;
+    color: #846d33;
+    cursor: pointer;
+}
+.titulo-equip-slot.vazio {
+    opacity: 0.67;
+    cursor: default;
+}
+
+/* Painel central dos títulos */
+.titulos-painel-box {
+    width: 90vw;
+    max-width: 410px;
+    margin: 0 auto;
+    background: #2c241b;
+    border-radius: 22px;
+    box-shadow: 0 4px 18px rgba(70,60,25,0.16);
+    padding: 28px 16px 20px 16px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+}
+@media (max-width: 470px) {
+    .titulos-painel-box {
+        width: 90vw;
+        max-width: 90vw;
+        padding: 10vw 2vw 6vw 2vw;
+        border-radius: 13px;
+    }
+}
+
+/* =====================[ GRID DE TÍTULOS ]===================== */
 .titulos-grid {
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto 7px auto;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px 12px;
+    gap: 9px 7px;
     justify-items: center;
+    min-width: 0;
+}
+@media (max-width: 470px) {
+    .titulos-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 7px 4px;
+        max-width: 260px;
+    }
 }
 .titulo-card {
-    width: 68px;
-    min-height: 82px;
+    width: 54px;
+    min-height: 54px;
+    max-width: 58px;
+    max-height: 58px;
     background: #231e1a;
-    border-radius: 11px;
+    border-radius: 10px;
     box-shadow: 0 1px 7px #0003;
     border: 2px solid #554c30;
     display: flex;
     flex-direction: column;
     align-items: center;
     opacity: 0.6;
-    padding: 8px 5px 4px 5px;
+    padding: 6px 3px 3px 3px;
     transition: border-color 0.2s, opacity 0.2s;
+    justify-content: center;
+    margin: 0;
+    cursor: pointer;
 }
 .titulo-card.unlocked {
     border-color: #ffe194;
     opacity: 1;
+    cursor: pointer;
+}
+.titulo-card.equipado {
+    border-color: #70e386;
+    box-shadow: 0 0 0 2.5px #a2ffbb66, 0 1px 7px #0003;
 }
 .titulo-card .titulo-icone {
-    font-size: 2.1em;
-    margin-bottom: 5px;
-}
-.titulo-card .titulo-nome {
-    font-size: 0.98em;
-    font-weight: bold;
-    color: #fbeed1;
-    margin-bottom: 2px;
-    text-align: center;
-}
-.titulo-card .titulo-desc {
-    font-size: 0.82em;
-    color: #c2b186;
-    text-align: center;
-    min-height: 26px;
-    max-width: 64px;
-    overflow-wrap: break-word;
-}
-.grid-break { display: none; } /* Não é mais necessário */
-
-.titulo-card .titulo-nome,
-.titulo-card .titulo-desc {
-    display: none !important;
-}
-.titulo-card {
-    justify-content: center;
-    padding: 16px 5px 8px 5px;
-    min-height: 58px;
-    height: 62px;
-}
-.titulo-card .titulo-icone {
-    font-size: 2.25em;
+    font-size: 1.58em;
     margin-bottom: 0;
 }
+.titulo-card:focus {
+    outline: 2px solid #8d7f4a;
+    border-color: #c2b98e;
+}
+
+/* =====================[ MODAL/PAINEL DE INFORMAÇÃO DE TÍTULO ]===================== */
+.painel-titulo-info {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    z-index: 3002;
+    transform: translate(-50%, -50%);
+    background: #231e1a;
+    border: 3px solid #8d7f4a;
+    border-radius: 16px;
+    box-shadow: 0 4px 32px #000a, 0 0px 0px #fff0;
+    color: #fffbe6;
+    padding: 32px 20px 20px 20px;
+    min-width: 220px;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeInPainelTitulo .24s;
+}
+@keyframes fadeInPainelTitulo {
+    from { opacity: 0; transform: translate(-50%, -60%);}
+    to   { opacity: 1; transform: translate(-50%, -50%);}
+}
+.painel-titulo-info-inner {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.painel-titulo-info-icone {
+    font-size: 2.3em;
+    margin-bottom: 6px;
+}
+.painel-titulo-info-nome {
+    font-size: 1.22em;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #ffe194;
+    text-align: center;
+}
+.painel-titulo-info-desc {
+    font-size: 1em;
+    color: #fff7c7;
+    margin-bottom: 9px;
+    text-align: center;
+}
+.painel-titulo-info-bonus {
+    font-size: 0.99em;
+    color: #a5ffb3;
+    font-weight: 600;
+    margin-bottom: 11px;
+    text-align: center;
+}
+.painel-titulo-info-lock {
+    color: #ffb57a;
+    font-size: 0.96em;
+    margin: 8px 0 0 0;
+    font-style: italic;
+}
+.painel-titulo-info-ja-equipado {
+    color: #5fd6ff;
+    font-size: 0.98em;
+    margin: 8px 0 0 0;
+    font-style: italic;
+}
+.painel-titulo-info button,
+.btn-equipar-titulo,
+.btn-remover-titulo,
+.btn-fechar-titulo-info {
+    display: inline-block;
+    padding: 8px 19px;
+    background: linear-gradient(90deg,#ffe7b5,#f1d07a 87%);
+    border: 1.5px solid #a28f53;
+    border-radius: 7px;
+    color: #453708;
+    font-size: 1em;
+    margin: 8px 4px 2px 4px;
+    font-weight: 600;
+    box-shadow: 0 1px 7px #0003;
+    cursor: pointer;
+    transition: background 0.16s, color 0.16s, border-color 0.16s;
+}
+.painel-titulo-info button:hover,
+.btn-equipar-titulo:hover,
+.btn-remover-titulo:hover,
+.btn-fechar-titulo-info:hover {
+    background: #ffe3a0;
+    color: #684d09;
+    border-color: #bfa95a;
+}
+.painel-titulo-info button:focus,
+.btn-equipar-titulo:focus,
+.btn-remover-titulo:focus,
+.btn-fechar-titulo-info:focus {
+    outline: 2px solid #c2b98e;
+}
+
+.painel-titulo-aviso {
+    position: fixed;
+    left: 50%;
+    top: 15%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    background: #554c30;
+    color: #ffe7b5;
+    padding: 11px 26px;
+    border-radius: 11px;
+    font-size: 1.05em;
+    box-shadow: 0 3px 14px #0006;
+    border: 2px solid #ffe194;
+    animation: fadeInAvisoTitulo .19s;
+}
+@keyframes fadeInAvisoTitulo {
+    from { opacity: 0; transform: translateX(-50%) scale(0.9);}
+    to   { opacity: 1; transform: translateX(-50%) scale(1);}
+}
+
+/* =====================[ TOOLTIP DE TÍTULOS (opcional, para hover/focus) ]===================== */
 .titulo-tooltip {
     position: absolute;
     z-index: 1200;
@@ -801,4 +983,4 @@ button:focus-visible {
     font-style: italic;
 }
 
-/* =====================[ FIM TRECHO : TÍTULOS ]===================== */
+/* =====================[ FIM DO CSS DE TÍTULOS E MODAIS ]===================== */

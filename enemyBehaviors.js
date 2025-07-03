@@ -17,6 +17,9 @@ const ENEMY_BEHAVIORS = {
                     totalDano += result.damage;
                 } else {
                     esquivas++;
+                    // Incrementa esquiva no perfil global
+                    if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
+                    playerProfile.totalEsquivas++;
                 }
             }
             if (totalDano > 0) {
@@ -40,6 +43,9 @@ const ENEMY_BEHAVIORS = {
                 addMessage(`Você sofreu ${result.damage} de dano.`, true);
             } else {
                 addMessage("O slime sombrio lançou uma gelatina, mas você esquivou!", true);
+                // Incrementa esquiva no perfil global
+                if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
+                playerProfile.totalEsquivas++;
             }
         }
     },
@@ -56,6 +62,9 @@ const ENEMY_BEHAVIORS = {
                 addMessage(`Você sofreu ${result.damage} de dano.`, true);
             } else {
                 addMessage("O morcego das sombras tentou gritar, mas você esquivou!", true);
+                // Incrementa esquiva no perfil global
+                if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
+                playerProfile.totalEsquivas++;
             }
         }
     },
@@ -92,6 +101,9 @@ const ENEMY_BEHAVIORS = {
                 applyPlayerDebuff("precisao", 0, 3);
                 addMessage("O Slime Luminoso libera uma luz cegante! Sua precisão foi reduzida por 3 turnos.", true);
             }
+            // Incrementa ofuscamento no perfil global
+            if (!playerProfile.ofuscamentosSofridos) playerProfile.ofuscamentosSofridos = 0;
+            playerProfile.ofuscamentosSofridos++;
         }
     },
     "Slime Gigante": function(enemy) {
@@ -121,6 +133,9 @@ const ENEMY_BEHAVIORS = {
                     totalDano += result.damage;
                 } else {
                     esquivas++;
+                    // Incrementa esquiva no perfil global
+                    if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
+                    playerProfile.totalEsquivas++;
                 }
             }
             addMessage(`O Morcego Alfa executa uma chuva de mordidas! Dano total: ${totalDano}. Esquivas: ${esquivas}.`, true);
@@ -139,6 +154,9 @@ const ENEMY_BEHAVIORS = {
                 addMessage(`Você sofreu ${result.damage} de dano.`, true);
             } else {
                 addMessage("A Aranha Rainha tentou atacar, mas você esquivou!", true);
+                // Incrementa esquiva no perfil global
+                if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
+                playerProfile.totalEsquivas++;
             }
         }
     },
@@ -171,6 +189,9 @@ const ENEMY_BEHAVIORS = {
                     totalDano += result.damage;
                 } else {
                     esquivas++;
+                    // Incrementa esquiva no perfil global
+                    if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
+                    playerProfile.totalEsquivas++;
                 }
             }
             addMessage(`A Horda de Ratos avança em enxame! Dano total: ${totalDano}. Esquivas: ${esquivas}.`, true);
@@ -189,6 +210,9 @@ const ENEMY_BEHAVIORS = {
                 addMessage(`Você sofreu ${result.damage} de dano.`, true);
             } else {
                 addMessage("O Slime Abissal atacou, mas você esquivou!", true);
+                // Incrementa esquiva no perfil global
+                if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
+                playerProfile.totalEsquivas++;
             }
         }
     },
@@ -206,6 +230,9 @@ const ENEMY_BEHAVIORS = {
                 addMessage(`Você sofreu ${result.damage} de dano. O morcego recuperou ${cura} de Vida.`, true);
             } else {
                 addMessage("O Morcego Vampiro tentou morder, mas você esquivou!", true);
+                // Incrementa esquiva no perfil global
+                if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
+                playerProfile.totalEsquivas++;
             }
         }
     },
@@ -216,6 +243,9 @@ const ENEMY_BEHAVIORS = {
         } else {
             applyPlayerDebuff("veneno", 1, 3);
             addMessage("O Aracnídeo Sombrio injeta um veneno profundo! Você sofrerá dano contínuo por 3 turnos.", true);
+            // Incrementa veneno no perfil global
+            if (!playerProfile.venenamentosSofridos) playerProfile.venenamentosSofridos = 0;
+            playerProfile.venenamentosSofridos++;
         }
     },
     "Coruja Anciã": function(enemy) {
@@ -234,6 +264,9 @@ const ENEMY_BEHAVIORS = {
                 addMessage(`Você perdeu ${result.damage} de sanidade.`, true);
             } else {
                 addMessage("Você resiste ao olhar hipnótico da Coruja Anciã!", true);
+                // Incrementa esquiva no perfil global
+                if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
+                playerProfile.totalEsquivas++;
             }
         } else {
             applyEnemyBuff("agilidade", 8, 4);
@@ -243,8 +276,8 @@ const ENEMY_BEHAVIORS = {
     }
     // Adicione outros inimigos especiais aqui conforme necessário
 };
+/* =====================[ FIM TRECHO 1 ]===================== */
 
 /* =====================[ TRECHO 2: EXPORTAÇÃO GLOBAL ]===================== */
 window.ENEMY_BEHAVIORS = ENEMY_BEHAVIORS;
-
 /* =====================[ FIM DO ARQUIVO enemyBehaviors.js ]===================== */

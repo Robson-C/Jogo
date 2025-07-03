@@ -2,9 +2,12 @@
 
 /* =====================[ TRECHO 1: EXPLORAÇÃO DE SALAS ]===================== */
 function exploreRoom() {
-    if (!gameState.totalExploracoes) gameState.totalExploracoes = 0;
-    gameState.totalExploracoes++;
-    
+    if (!window.playerProfile) window.playerProfile = { totalExploracoes: 0 };
+    if (!playerProfile.totalExploracoes) playerProfile.totalExploracoes = 0;
+    playerProfile.totalExploracoes++;
+
+    if (typeof checarTitulos === "function") checarTitulos(playerProfile);
+
     if (gameState.gameOver) return;
 
     gameState.roomsExploredOnFloor++;
@@ -61,6 +64,7 @@ function shouldProcessBossRespawn() {
         gameState.bossEncounterCounter >= gameState.bossRespawnThreshold
     );
 }
+/* =====================[ FIM TRECHO 1 ]===================== */
 
 /* =====================[ TRECHO 2: PROCESSAMENTO DE SALAS ]===================== */
 function processarBossRoom() {
@@ -152,6 +156,7 @@ function processarSala(roomType) {
             break;
     }
 }
+/* =====================[ FIM TRECHO 2 ]===================== */
 
 /* =====================[ TRECHO 3: ARMADILHAS ]===================== */
 function handleTrapRoom() {
@@ -178,5 +183,6 @@ function handleTrapRoom() {
         return;
     }
 }
+/* =====================[ FIM TRECHO 3 ]===================== */
 
 /* =====================[ FIM DO ARQUIVO exploration.js ]===================== */

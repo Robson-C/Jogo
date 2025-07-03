@@ -230,9 +230,12 @@ function checkCombatEndOrNextTurn() {
 function processarVitoria() {
     const xpGained = Math.floor(gameState.currentEnemy.maxVida * 0.5 + 10);
     gameState.xp += xpGained;
-    gameState.monstersDefeated++;
-    if (!gameState.combatesSemFugirSeguidos) gameState.combatesSemFugirSeguidos = 0;
-    gameState.combatesSemFugirSeguidos++;
+
+    // Atualiza progresso de títulos globais no perfil da sessão
+    if (!playerProfile.monstersDefeated) playerProfile.monstersDefeated = 0;
+    playerProfile.monstersDefeated++;
+    if (!playerProfile.combatesSemFugirSeguidos) playerProfile.combatesSemFugirSeguidos = 0;
+    playerProfile.combatesSemFugirSeguidos++;
 
     if (gameState.debuffs) gameState.debuffs = {};
     if (gameState.currentEnemy && gameState.currentEnemy.buffs) gameState.currentEnemy.buffs = {};
@@ -259,8 +262,10 @@ function processarVitoria() {
 }
 
 function processarDerrota() {
-    if (!gameState.deathsByHp) gameState.deathsByHp = 0;
-    gameState.deathsByHp++;
+    // Atualiza progresso de títulos globais no perfil da sessão
+    if (!playerProfile.deathsByHp) playerProfile.deathsByHp = 0;
+    playerProfile.deathsByHp++;
+
     // [Ajuste QA 2024-07-02] Game over centralizado via processarGameOverEspecial para sumir painel inimigo.
     if (gameState.debuffs) gameState.debuffs = {};
     if (gameState.currentEnemy && gameState.currentEnemy.buffs) gameState.currentEnemy.buffs = {};
@@ -268,6 +273,34 @@ function processarDerrota() {
     // Centraliza o fim de jogo e toda limpeza visual.
     processarGameOverEspecial('Você foi derrotado em combate!');
 }
+
+function checkLevelUp() {
+    if (gameState.xp >= gameState.nextLevel) {
+        gameState.level++;
+        gameState.xp -= gameState.nextLevel;
+        gameState.nextLevel = Math.floor(gameState.nextLevel * 1.5);
+
+        gameState.maxVida += 10;
+        gameState.vida = gameState.maxVida;
+        gameState.maxMana += 5;
+        gameState.mana = gameState.maxMana;
+        gameState.maxEnergia += 5;
+        gameState.energia = gameState.maxEnergia;
+        gameState.maxSanity += 5;
+        gameState.sanity = gameState.maxSanity;
+
+        gameState.forca += 2;
+        gameState.defesa += 1;
+        gameState.precisao += 1;
+        gameState.agilidade += 1;
+
+        addMessage(
+            `Nível ${gameState.level}! Atributos aumentados!`, false, false, 'levelup'
+        );
+        updateStatus();
+    }
+}
+/* =====================[ FIM TRECHO 8 ]===================== */
 
 /* =====================[ TRECHO 9: LEVEL UP E ANDARES ]===================== */
 function checkLevelUp() {

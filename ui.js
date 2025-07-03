@@ -432,14 +432,27 @@ function exploreAction() {
         processarGameOverEspecial("Você tenta forçar seu corpo, mas não tem energia para continuar. A exaustão te vence...");
         return;
     }
-    gameState.energia -= 10;
+
+    // ===== [AJUSTE: TÍTULO "EXPLORADOR"] =====
+    let custoExplorar = 10;
+    if (
+        window.playerProfile &&
+        Array.isArray(window.playerProfile.titulosEquipados) &&
+        window.playerProfile.titulosEquipados.includes("explorador")
+    ) {
+        custoExplorar = 5;
+    }
+    gameState.energia -= custoExplorar;
     if (gameState.energia < 0) gameState.energia = 0;
     gameState.sanity -= 5;
     gameState.day++;
+    // ===== [FIM DO AJUSTE] =====
+
     if (checkExaustaoOuLoucura()) return;
     exploreRoom();
     processarFimDeAcao();
 }
+
 
 /* =====================[ FIM TRECHO 8 ]===================== */
 
