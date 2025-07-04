@@ -3,15 +3,18 @@
 /* =====================[ TRECHO 1: CÁLCULO DE DANO ]===================== */
 function calculateDamage(attacker, defender) {
     try {
-        // Força e defesa sempre positivas
+        // Usa precisão e agilidade como valores numéricos, não mais %
         const forca = typeof attacker.forca === 'number' ? attacker.forca : 0;
         const defesa = typeof defender.defesa === 'number' ? defender.defesa : 0;
         const precisao = typeof attacker.precisao === 'number' ? attacker.precisao : 0;
         const agilidade = typeof defender.agilidade === 'number' ? defender.agilidade : 0;
 
-        // Checa se o ataque acerta: chance = precisao atacante - agilidade defensor (mínimo 5%)
-        const acertoChance = Math.max(5, Math.min(95, precisao - agilidade));
-        if (Math.random() * 100 >= acertoChance) {
+        // NOVA FÓRMULA: chance = 70 + (precisao - agilidade) * 2, limitada entre 20% e 95%
+        let chance = 70 + (precisao - agilidade) * 2;
+        if (chance > 95) chance = 95;
+        if (chance < 20) chance = 20;
+
+        if (Math.random() * 100 >= chance) {
             return { damage: 0, message: "O ataque errou seu alvo!" };
         }
 
@@ -30,6 +33,8 @@ function calculateDamage(attacker, defender) {
     }
 }
 window.calculateDamage = calculateDamage;
+/* =====================[ FIM TRECHO 1 ]===================== */
+
 
 /* =====================[ TRECHO 2: MOTOR DE COMBATE — AVANÇO DE TURNOS ]===================== */
 function advanceCombatTurn() {

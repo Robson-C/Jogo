@@ -33,22 +33,22 @@ const ROOM_TYPES = {
 };
 
 const ENEMIES = [
-    { name: "Rato Gigante", vida: 18, maxVida: 18, forca: 5, defesa: 1, precisao: 68, agilidade: 10 },
-    { name: "Slime Sombrio", vida: 22, maxVida: 22, forca: 4, defesa: 2, precisao: 62, agilidade: 8 },
-    { name: "Aranha Cinzenta", vida: 20, maxVida: 20, forca: 6, defesa: 2, precisao: 70, agilidade: 10 },
-    { name: "Slime Luminoso", vida: 20, maxVida: 20, forca: 5, defesa: 2, precisao: 67, agilidade: 10 },
-    { name: "Morcego das Sombras", vida: 14, maxVida: 14, forca: 4, defesa: 1, precisao: 74, agilidade: 14 },
-
-    { name: "Rato-Rei",           vida: 40,  maxVida: 40,  forca: 8,  defesa: 2,  precisao: 70, agilidade: 10 },
-    { name: "Gosma Reluzente",    vida: 55,  maxVida: 55,  forca: 10, defesa: 4,  precisao: 72, agilidade: 10 },
-    { name: "Aranha Rainha",      vida: 62,  maxVida: 62,  forca: 11, defesa: 5,  precisao: 74, agilidade: 12 },
-    { name: "Morcego Alfa",       vida: 56,  maxVida: 56,  forca: 11, defesa: 5,  precisao: 75, agilidade: 14 },
-    { name: "Horda de Ratos",     vida: 65,  maxVida: 65,  forca: 12, defesa: 6,  precisao: 77, agilidade: 13 },
-    { name: "Slime Gigante",      vida: 75,  maxVida: 75,  forca: 13, defesa: 7,  precisao: 78, agilidade: 11 },
-    { name: "Slime Abissal",      vida: 85,  maxVida: 85,  forca: 14, defesa: 8,  precisao: 80, agilidade: 12 },
-    { name: "Morcego Vampiro",    vida: 90,  maxVida: 90,  forca: 15, defesa: 8,  precisao: 82, agilidade: 18 },
-    { name: "Aracnídeo Sombrio",  vida: 100, maxVida: 100, forca: 16, defesa: 9,  precisao: 84, agilidade: 15 },
-    { name: "Coruja Anciã",       vida: 110, maxVida: 110, forca: 17, defesa: 10, precisao: 88, agilidade: 18 }
+    { name: "Rato Gigante", vida: 18, maxVida: 18, forca: 5, defesa: 1, precisao: 11, agilidade: 10 },
+    { name: "Slime Sombrio", vida: 22, maxVida: 22, forca: 4, defesa: 2, precisao: 10, agilidade: 8 },
+    { name: "Aranha Cinzenta", vida: 20, maxVida: 20, forca: 6, defesa: 2, precisao: 11, agilidade: 10 },
+    { name: "Slime Luminoso", vida: 20, maxVida: 20, forca: 5, defesa: 2, precisao: 12, agilidade: 10 },
+    { name: "Morcego das Sombras", vida: 14, maxVida: 14, forca: 4, defesa: 1, precisao: 12, agilidade: 14 },
+    //Chefes
+    { name: "Gosma Reluzente",    vida: 55,  maxVida: 55,  forca: 10, defesa: 4,  precisao: 13, agilidade: 10 },
+    { name: "Morcego Vampiro",    vida: 90,  maxVida: 90,  forca: 15, defesa: 8,  precisao: 17, agilidade: 18 },
+    { name: "Aranha Rainha",      vida: 62,  maxVida: 62,  forca: 11, defesa: 5,  precisao: 14, agilidade: 12 },
+    { name: "Horda de Ratos",     vida: 65,  maxVida: 65,  forca: 12, defesa: 6,  precisao: 14, agilidade: 13 },
+    { name: "Coruja Anciã",       vida: 110, maxVida: 110, forca: 17, defesa: 10, precisao: 19, agilidade: 18 }
+    { name: "Morcego Alfa",       vida: 56,  maxVida: 56,  forca: 11, defesa: 5,  precisao: 14, agilidade: 14 },
+    { name: "Rato-Rei",           vida: 40,  maxVida: 40,  forca: 8,  defesa: 2,  precisao: 13, agilidade: 10 },
+    { name: "Aracnídeo Sombrio",  vida: 100, maxVida: 100, forca: 16, defesa: 9,  precisao: 18, agilidade: 15 },
+    { name: "Slime Abissal",      vida: 85,  maxVida: 85,  forca: 14, defesa: 8,  precisao: 16, agilidade: 12 },
+    { name: "Slime Gigante",      vida: 75,  maxVida: 75,  forca: 13, defesa: 7,  precisao: 15, agilidade: 11 },
 ];
 
 const ENEMY_POOLS = {
@@ -103,17 +103,18 @@ const ENEMY_POOLS = {
     ]
 };
 
+// Ordem dos bosses conforme ranking de perigo
 const MINI_BOSSES_BY_FLOOR = {
-    1: "Rato-Rei",
-    2: "Gosma Reluzente",
+    1: "Gosma Reluzente",
+    2: "Morcego Vampiro",
     3: "Aranha Rainha",
-    4: "Morcego Alfa",
-    5: "Horda de Ratos",
-    6: "Slime Gigante",
-    7: "Slime Abissal",
-    8: "Morcego Vampiro",
-    9: "Aracnídeo Sombrio",
-    10: "Coruja Anciã"
+    4: "Horda de Ratos",
+    5: "Coruja Anciã",
+    6: "Morcego Alfa",
+    7: "Rato-Rei",
+    8: "Aracnídeo Sombrio",
+    9: "Slime Abissal",
+    10: "Slime Gigante"
 };
 
 /* =====================[ FIM TRECHO 2 ]===================== */
@@ -175,8 +176,8 @@ const INITIAL_GAME_STATE = {
     maxSanity: 50,
     forca: 8,
     defesa: 4,
-    precisao: 85,
-    agilidade: 15,
+    precisao: 10,
+    agilidade: 9,
     currentRoom: ROOM_TYPES.EMPTY,
     currentEnemy: null,
     gameOver: false,
@@ -193,7 +194,7 @@ const INITIAL_GAME_STATE = {
 };
 const gameState = { ...INITIAL_GAME_STATE };
 
-/* ======= NOVO: PERFIL DE JOGADOR GLOBAL POR SESSÃO ======= */
+//PERFIL DE JOGADOR GLOBAL POR SESSÃO
 const playerProfile = {
     titulosDesbloqueados: [],
     totalExploracoes: 0,
