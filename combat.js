@@ -18,15 +18,20 @@ function calculateDamage(attacker, defender) {
             return { damage: 0, message: "O ataque errou seu alvo!" };
         }
 
-        // Dano básico
-        let dano = Math.max(1, forca - defesa);
+        // NOVO CÁLCULO DE DANO MULTIPLICATIVO COM VARIAÇÃO PERCENTUAL
+        let danoBase = forca * (80 / (80 + defesa));
+        // Adiciona variação aleatória de -10% a +10%
+        const variacao = (Math.random() * 0.2) - 0.1; // -0.1 a +0.1
+        let danoFinal = danoBase + (danoBase * variacao);
+
+        danoFinal = Math.max(1, Math.round(danoFinal));
 
         // Crítico simples (5% chance, dobra dano)
         if (Math.random() < 0.05) {
-            dano *= 2;
-            return { damage: dano, message: "Acerto crítico!" };
+            danoFinal *= 2;
+            return { damage: danoFinal, message: "Acerto crítico!" };
         }
-        return { damage: dano, message: "" };
+        return { damage: danoFinal, message: "" };
     } catch (e) {
         // Em caso de erro, retorna zero dano e mensagem clara
         return { damage: 0, message: "Falha ao calcular dano." };
@@ -34,6 +39,7 @@ function calculateDamage(attacker, defender) {
 }
 window.calculateDamage = calculateDamage;
 /* =====================[ FIM TRECHO 1 ]===================== */
+
 
 
 /* =====================[ TRECHO 2: MOTOR DE COMBATE — AVANÇO DE TURNOS ]===================== */
@@ -86,13 +92,15 @@ function playerTurn() {
 function playerAttack() {
     if (!gameState.inCombat) return;
 
-    if (gameState.energia < 5) {
-        processarDerrotaPorExaustao();
-        return;
+    // Gasta energia só se NÃO estiver com o título Maníaco do Combate equipado
+    if (!isTituloEquipado || !isTituloEquipado('maniac')) {
+        if (gameState.energia < 5) {
+            processarDerrotaPorExaustao();
+            return;
+        }
+        gameState.energia -= 5;
+        if (typeof checkExaustaoOuLoucura === "function" && checkExaustaoOuLoucura()) return;
     }
-
-    gameState.energia -= 5;
-    if (typeof checkExaustaoOuLoucura === "function" && checkExaustaoOuLoucura()) return;
 
     const attacker = {
         ...gameState,
@@ -102,7 +110,16 @@ function playerAttack() {
         agilidade: getPlayerAgilidadeAtual()
     };
 
-    const result = calculateDamage(attacker, gameState.currentEnemy);
+    let result = calculateDamage(attacker, gameState.currentEnemy);
+
+    // Bônus do título Matador de Gigantes: +30% de dano contra chefes
+    if (typeof isTituloEquipado === "function"
+        && isTituloEquipado('matadorGigantes')
+        && typeof isBossEnemy === "function"
+        && isBossEnemy(gameState.currentEnemy.name)
+        && result.damage > 0) {
+        result.damage = Math.floor(result.damage * 1.3);
+    }
 
     if (result.damage > 0) {
         gameState.currentEnemy.vida -= result.damage;
@@ -124,12 +141,10 @@ function playerAttack() {
 }
 
 function processarDerrotaPorExaustao() {
-    // [Ajuste QA 2024-07-02] Game over centralizado via processarGameOverEspecial para sumir painel inimigo.
     gameState.vida = 0;
     if (gameState.debuffs) gameState.debuffs = {};
     if (gameState.currentEnemy && gameState.currentEnemy.buffs) gameState.currentEnemy.buffs = {};
     gameState.stunnedTurns = 0;
-    // Centraliza o fim de jogo e toda limpeza visual.
     processarGameOverEspecial('Você caiu de exaustão durante o combate. Seu corpo não aguenta mais lutar...');
 }
 
@@ -148,7 +163,13 @@ function playerFlee() {
     gameState.sanity = Math.max(0, gameState.sanity - 5);
     if (typeof checkExaustaoOuLoucura === "function" && checkExaustaoOuLoucura()) return;
 
-    const fleeChance = 40 + gameState.agilidade;
+    // Calcula chance de fuga (Covarde: +20% se equipado)
+    let fleeChance = 40 + gameState.agilidade;
+    if (typeof isTituloEquipado === "function" && isTituloEquipado('covarde')) {
+        fleeChance += 20;
+    }
+    fleeChance = Math.max(10, Math.min(95, fleeChance));
+
     if (Math.random() * 100 < fleeChance) {
         if (gameState.currentRoom === ROOM_TYPES.BOSS) {
             addMessage('Você fugiu do chefe... mas ele irá te encontrar novamente em breve!');
@@ -166,6 +187,7 @@ function playerFlee() {
         checkCombatEndOrNextTurn();
     }
 }
+/* =====================[ FIM TRECHO 5 ]===================== */
 
 /* =====================[ TRECHO 6: LÓGICA DO INIMIGO E TURNO ]===================== */
 function enemyTurn() {
@@ -233,7 +255,12 @@ function checkCombatEndOrNextTurn() {
 
 /* =====================[ TRECHO 8: VITÓRIA, DERROTA, LEVEL UP ]===================== */
 function processarVitoria() {
-    const xpGained = Math.floor(gameState.currentEnemy.maxVida * 0.5 + 10);
+    const xpGainedBase = Math.floor(gameState.currentEnemy.maxVida * 0.5 + 10);
+    let xpGained = xpGainedBase;
+    // Aplica bônus de XP do título Veterano, se equipado
+    if (typeof isTituloEquipado === "function" && isTituloEquipado('veterano')) {
+        xpGained = Math.floor(xpGainedBase * 1.1);
+    }
     gameState.xp += xpGained;
 
     // Atualiza progresso de títulos globais no perfil da sessão
@@ -267,15 +294,12 @@ function processarVitoria() {
 }
 
 function processarDerrota() {
-    // Atualiza progresso de títulos globais no perfil da sessão
     if (!playerProfile.deathsByHp) playerProfile.deathsByHp = 0;
     playerProfile.deathsByHp++;
 
-    // [Ajuste QA 2024-07-02] Game over centralizado via processarGameOverEspecial para sumir painel inimigo.
     if (gameState.debuffs) gameState.debuffs = {};
     if (gameState.currentEnemy && gameState.currentEnemy.buffs) gameState.currentEnemy.buffs = {};
     gameState.stunnedTurns = 0;
-    // Centraliza o fim de jogo e toda limpeza visual.
     processarGameOverEspecial('Você foi derrotado em combate!');
 }
 
@@ -285,7 +309,7 @@ function checkLevelUp() {
         gameState.xp -= gameState.nextLevel;
         gameState.nextLevel = Math.floor(gameState.nextLevel * 1.5);
 
-        gameState.maxVida += 10;
+        gameState.maxVida += 5;
         gameState.vida = gameState.maxVida;
         gameState.maxMana += 5;
         gameState.mana = gameState.maxMana;
@@ -294,7 +318,7 @@ function checkLevelUp() {
         gameState.maxSanity += 5;
         gameState.sanity = gameState.maxSanity;
 
-        gameState.forca += 2;
+        gameState.forca += 1;
         gameState.defesa += 1;
         gameState.precisao += 1;
         gameState.agilidade += 1;
@@ -306,6 +330,8 @@ function checkLevelUp() {
     }
 }
 /* =====================[ FIM TRECHO 8 ]===================== */
+
+
 
 /* =====================[ TRECHO 9: LEVEL UP E ANDARES ]===================== */
 function checkLevelUp() {
@@ -386,12 +412,14 @@ function getEnemyForCurrentFloor() {
     let enemy = { ...baseEnemy };
 
     // Calcula os upgrades pelo andar atual (a cada 2 andares)
-    const upgrades = Math.floor((gameState.currentFloor - 1) / 2);
+    const upgrades = Math.floor(gameState.currentFloor / 2);
     if (!isBossEnemy(enemy.name)) {
-        enemy.forca += upgrades * 4;
-        enemy.defesa += upgrades * 1;
-        enemy.vida += upgrades * 3;
-        enemy.maxVida += upgrades * 3;
+        enemy.maxVida += upgrades * 7;
+        enemy.vida += upgrades * 7;
+        enemy.forca += upgrades * 5;
+        enemy.defesa += upgrades * 2;
+        enemy.precisao += upgrades * 1;
+        enemy.agilidade += upgrades * 1;
     }
     return enemy;
 }

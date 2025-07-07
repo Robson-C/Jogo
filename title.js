@@ -1,5 +1,3 @@
-/* =====================[ title.js — Sistema de Títulos/Jogador, Revisão 2024-07-03 ]===================== */
-
 /* =====================[ TRECHO 1: DICIONÁRIO CENTRAL DE TÍTULOS ]===================== */
 
 const TITLES_INFO = {
@@ -8,34 +6,41 @@ const TITLES_INFO = {
         descricao: "Explorou 100 vezes.",
         beneficio: "Explorar custa 5 de stamina a menos.",
         icone: "🧭",
-        requisito: (profile) => (profile.totalExploracoes || 0) >= 3
+        requisito: (profile) => (profile.totalExploracoes || 0) >= 100
     },
-    matador: {
-        nome: "Matador",
-        descricao: "Derrotou 50 inimigos.",
-        beneficio: "+50% atk e def contra chefes.",
-        icone: "⚔️",
-        requisito: (profile) => (profile.monstersDefeated || 0) >= 50
+    covarde: {
+        nome: "Covarde",
+        descricao: "Fugiu de 50 combates.",
+        beneficio: "+20% de chance ao tentar fugir de combates.",
+        icone: "🐔",
+        requisito: (profile) => (profile.fugasBemSucedidas || 0) >= 50
     },
-    louco: {
-        nome: "Louco",
+    matadorGigantes: {
+        nome: "Matador de Gigantes",
+        descricao: "Derrotou 50 chefes.",
+        beneficio: "+30% de dano contra chefes.",
+        icone: "🗡️",
+        requisito: (profile) => (profile.bossesDerrotados || 0) >= 50
+    },
+    foraDaCasinha: {
+        nome: "Fora da Casinha",
         descricao: "Morreu 5 vezes por loucura.",
-        beneficio: "+30 sanidade inicial.",
-        icone: "🌀",
+        beneficio: "+30 Sanidade.",
+        icone: "🤪",
         requisito: (profile) => (profile.deathsByMadness || 0) >= 5
     },
-    pesLigeiros: {
-        nome: "Pés Ligeiros",
+    toureiro: {
+        nome: "Toureiro, Olé",
         descricao: "Esquivou 50 vezes.",
         beneficio: "+10 agilidade.",
-        icone: "👟",
+        icone: "🐂",
         requisito: (profile) => (profile.totalEsquivas || 0) >= 50
     },
-    resistente: {
-        nome: "Resistente",
+    cascaGrossa: {
+        nome: "Casca Grossa",
         descricao: "Morreu 5 vezes por HP zerado.",
-        beneficio: "+30 HP inicial.",
-        icone: "🛡️",
+        beneficio: "+30 Vida.",
+        icone: "🦾",
         requisito: (profile) => (profile.deathsByHp || 0) >= 5
     },
     maniac: {
@@ -52,14 +57,65 @@ const TITLES_INFO = {
         icone: "🕶️",
         requisito: (profile) => (profile.ofuscamentosSofridos || 0) >= 10
     },
-    imuneVeneno: {
-        nome: "Imune",
+    reiDoSoro: {
+        nome: "Rei do Soro",
         descricao: "Foi envenenado 10 vezes.",
         beneficio: "Imune a veneno.",
         icone: "🧪",
         requisito: (profile) => (profile.venenamentosSofridos || 0) >= 10
-    }
+    },
+    espiritoIndomavel: {
+        nome: "Espírito Indomável",
+        descricao: "Morreu 10 vezes.",
+        beneficio: "Na próxima vez em que morrer, revive com 1 de HP (1 vez por partida).",
+        icone: "👻",
+        requisito: (profile) => (profile.deathsTotal || 0) >= 10
+    },
+    imperturbavel: {
+        nome: "Imperturbável",
+        descricao: "Sofreu 10 atordoamentos.",
+        beneficio: "Imune a atordoar.",
+        icone: "😐",
+        requisito: (profile) => (profile.stunsSofridos || 0) >= 10
+    },
+    monstroSupino: {
+        nome: "Monstro do Supino",
+        descricao: "Sofreu 10 reduções de força.",
+        beneficio: "Imune a redução de força.",
+        icone: "💪",
+        requisito: (profile) => (profile.forcaReduzidaSofrida || 0) >= 10
+    },
+    peleRinoceronte: {
+        nome: "Pele de Rinoceronte",
+        descricao: "Sofreu 10 reduções de defesa.",
+        beneficio: "Imune a redução de defesa.",
+        icone: "🦏",
+        requisito: (profile) => (profile.defesaReduzidaSofrida || 0) >= 10
+    },
+    chineloVeloz: {
+        nome: "Chinelo Veloz",
+        descricao: "Sofreu 10 reduções de agilidade.",
+        beneficio: "Imune a redução de agilidade.",
+        icone: "👟",
+        requisito: (profile) => (profile.agilidadeReduzidaSofrida || 0) >= 10
+    },
+    veterano: {
+        nome: "Veterano",
+        descricao: "Chegou ao level 10.",
+        beneficio: "+10% de experiência ganha.",
+        icone: "🎖️",
+        requisito: (profile) => (profile.levelMaxAlcancado || 0) >= 10
+    },
+    dorminhoco: {
+        nome: "Dorminhoco",
+        descricao: "Descansou 100 vezes.",
+        beneficio: "Ao descansar, sempre recupera totalmente Vida, Mana, Energia e Sanidade.",
+        icone: "🛏️",
+        requisito: (profile) => (profile.descansosTotais || 0) >= 100
+    },
 };
+
+/* =====================[ FIM TRECHO 1 ]===================== */
 
 /* =====================[ TRECHO 2: UTILITÁRIOS DE TÍTULOS (Centralizados) ]===================== */
 
@@ -301,3 +357,11 @@ window.renderPainelTitulos = renderPainelTitulos;
 window.mostrarPainelInfoTitulo = mostrarPainelInfoTitulo;
 
 /* =====================[ FIM DO ARQUIVO title.js ]===================== */
+
+//APENAS PARA TESTES
+window.liberar = function() {
+    if (!window.playerProfile) return;
+    window.playerProfile.titulosDesbloqueados = Object.keys(TITLES_INFO);
+    renderPainelTitulos && renderPainelTitulos();
+    addMessage && addMessage("Todos os títulos foram desbloqueados para teste!", true, true, "levelup");
+};

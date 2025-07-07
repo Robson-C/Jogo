@@ -33,17 +33,17 @@ const ROOM_TYPES = {
 };
 
 const ENEMIES = [
-    { name: "Rato Gigante", vida: 18, maxVida: 18, forca: 5, defesa: 1, precisao: 11, agilidade: 10 },
-    { name: "Slime Sombrio", vida: 22, maxVida: 22, forca: 4, defesa: 2, precisao: 10, agilidade: 8 },
-    { name: "Aranha Cinzenta", vida: 20, maxVida: 20, forca: 6, defesa: 2, precisao: 11, agilidade: 10 },
-    { name: "Slime Luminoso", vida: 20, maxVida: 20, forca: 5, defesa: 2, precisao: 12, agilidade: 10 },
-    { name: "Morcego das Sombras", vida: 14, maxVida: 14, forca: 4, defesa: 1, precisao: 12, agilidade: 14 },
+    { name: "Rato Gigante", vida: 18, maxVida: 18, forca: 7, defesa: 1, precisao: 11, agilidade: 10 },
+    { name: "Slime Sombrio", vida: 22, maxVida: 22, forca: 6, defesa: 2, precisao: 10, agilidade: 8 },
+    { name: "Aranha Cinzenta", vida: 20, maxVida: 20, forca: 8, defesa: 2, precisao: 11, agilidade: 10 },
+    { name: "Slime Luminoso", vida: 20, maxVida: 20, forca: 7, defesa: 2, precisao: 12, agilidade: 10 },
+    { name: "Morcego das Sombras", vida: 14, maxVida: 14, forca: 6, defesa: 1, precisao: 12, agilidade: 14 },
     //Chefes
     { name: "Gosma Reluzente",    vida: 55,  maxVida: 55,  forca: 10, defesa: 4,  precisao: 13, agilidade: 10 },
     { name: "Morcego Vampiro",    vida: 90,  maxVida: 90,  forca: 15, defesa: 8,  precisao: 17, agilidade: 18 },
     { name: "Aranha Rainha",      vida: 62,  maxVida: 62,  forca: 11, defesa: 5,  precisao: 14, agilidade: 12 },
     { name: "Horda de Ratos",     vida: 65,  maxVida: 65,  forca: 12, defesa: 6,  precisao: 14, agilidade: 13 },
-    { name: "Coruja Anciã",       vida: 110, maxVida: 110, forca: 17, defesa: 10, precisao: 19, agilidade: 18 }
+    { name: "Coruja Anciã",       vida: 110, maxVida: 110, forca: 17, defesa: 10, precisao: 19, agilidade: 18 },
     { name: "Morcego Alfa",       vida: 56,  maxVida: 56,  forca: 11, defesa: 5,  precisao: 14, agilidade: 14 },
     { name: "Rato-Rei",           vida: 40,  maxVida: 40,  forca: 8,  defesa: 2,  precisao: 13, agilidade: 10 },
     { name: "Aracnídeo Sombrio",  vida: 100, maxVida: 100, forca: 16, defesa: 9,  precisao: 18, agilidade: 15 },

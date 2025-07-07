@@ -282,7 +282,8 @@ function getCombatActions() {
             disabled: true
         });
     }
-    const fleeChance = 40 + gameState.agilidade;
+    const fleeChance = 60 + (gameState.agilidade - (gameState.currentEnemy ? gameState.currentEnemy.agilidade : 0)) * 5;
+    const fleeChanceFinal = Math.max(10, Math.min(95, fleeChance));
     actions.push({
         text: `🏃 Fugir (${fleeChance}% 💨)`,
         action: 'flee',

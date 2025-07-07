@@ -21,4 +21,3 @@ Regra Fundamental — Obrigatoriedade Total: O assistente deve seguir 100% de to
    (Se futuramente houver sistema de save): Garantir persistência confiável de estado e proteção contra corrupção de dados.
 10. Comentário e registro de mudanças importantes: Sempre que for feita uma alteração significativa em qualquer parte do código (função, fluxo, lógica de estado, comportamento da UI, etc.), ou implementar uma regra de negócio não óbvia, o assistente deve inserir um comentário claro e sucinto no local do código alterado, explicando o motivo e o efeito da mudança. O objetivo é garantir total rastreabilidade para outros desenvolvedores, facilitar manutenção futura e evitar bugs causados por desconhecimento de lógica específica.
 
-

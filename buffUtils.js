@@ -75,7 +75,7 @@ const COMPOSITE_BUFFS = {
 // Utilitário para buscar info do buff/debuff
 function getBuffInfo(buffKey) {
     return BUFFS_INFO[buffKey] || null;
-}
+}isTituloEquipado
 function isCompositeBuff(buffKey) {
     return !!COMPOSITE_BUFFS[buffKey];
 }
@@ -87,6 +87,37 @@ function isCompositeBuff(buffKey) {
 // Valor ACUMULA, duração é sempre a maior (exceto precisão/veneno)
 function applyPlayerDebuff(type, value, turns) {
     if (!gameState.debuffs) gameState.debuffs = {};
+
+    // ---- IMUNIDADES POR TÍTULO EQUIPADO ----
+    if (typeof isTituloEquipado === "function") {
+        // Força
+        if (type === "forca" && isTituloEquipado("monstroSupino")) {
+            if (typeof addMessage === "function") addMessage("Você absorveu o enfraquecimento e ficou MAIS forte!", true);
+            // Inverte o sinal: se valor era -3, vira +3, se era -2, vira +2 etc
+            gameState.forca += Math.abs(value);
+            return;
+        }
+        // Defesa
+        if (type === "defesa" && isTituloEquipado("peleRinoceronte")) {
+            if (typeof addMessage === "function") addMessage("Você está imune a redução de defesa!", true);
+            return;
+        }
+        // Agilidade
+        if (type === "agilidade" && isTituloEquipado("chineloVeloz")) {
+            if (typeof addMessage === "function") addMessage("Você está imune a redução de agilidade!", true);
+            return;
+        }
+        // Precisão (ofuscamento)
+        if (type === "precisao" && isTituloEquipado("oculosSol")) {
+            if (typeof addMessage === "function") addMessage("Você está imune a ofuscamento!", true);
+            return;
+        }
+        // Veneno
+        if (type === "veneno" && isTituloEquipado("reiDoSoro")) {
+            if (typeof addMessage === "function") addMessage("Você está imune a veneno!", true);
+            return;
+        }
+    }
 
     // Stacking inteligente: soma valor, duração = maior (exceto precisão/veneno)
     if (type === "defesa" || type === "agilidade" || type === "forca") {

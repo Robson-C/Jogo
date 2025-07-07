@@ -93,11 +93,11 @@ function updateStatus() {
         : 0;
 
     const statusSecundarios = `
-        <div class="secondary-stats" tabindex="0" aria-label="Atributos secundários: Ataque ${forcaAtual}, Defesa ${defesaAtual}, Precisão ${precisaoAtual}%, Agilidade ${agilidadeAtual}%">
+        <div class="secondary-stats" tabindex="0" aria-label="Atributos secundários: Ataque ${forcaAtual}, Defesa ${defesaAtual}, Precisão ${precisaoAtual}, Agilidade ${agilidadeAtual}">
             <span><b>🗡 Ataque:</b> ${forcaAtual}</span>
             <span><b>🛡 Defesa:</b> ${defesaAtual}</span>
-            <span><b>🎯 Precisão:</b> ${precisaoAtual}%</span>
-            <span><b>💨 Agilidade:</b> ${agilidadeAtual}%</span>
+            <span><b>🎯 Precisão:</b> ${precisaoAtual}</span>
+            <span><b>💨 Agilidade:</b> ${agilidadeAtual}</span>
         </div>
     `;
 
@@ -249,11 +249,11 @@ function updateEnemyPanel() {
                 <div class="status-bar enemy-hp" role="progressbar" aria-label="HP do inimigo: ${gameState.currentEnemy.vida} de ${gameState.currentEnemy.maxVida}">
                     <div class="bar-fill" style="width: ${(gameState.currentEnemy.vida/gameState.currentEnemy.maxVida)*100}%"></div>
                 </div>
-                <div class="enemy-secondary-stats" tabindex="0" aria-label="Atributos do inimigo: Ataque ${getEnemyStat("forca", gameState.currentEnemy)}, Defesa ${getEnemyStat("defesa", gameState.currentEnemy)}, Precisão ${gameState.currentEnemy.precisao}%, Agilidade ${gameState.currentEnemy.agilidade}%">
+                <div class="enemy-secondary-stats" tabindex="0" aria-label="Atributos do inimigo: Ataque ${getEnemyStat("forca", gameState.currentEnemy)}, Defesa ${getEnemyStat("defesa", gameState.currentEnemy)}, Precisão ${gameState.currentEnemy.precisao}, Agilidade ${gameState.currentEnemy.agilidade}">
                     <span><b>🗡 Ataque:</b> ${getEnemyStat("forca", gameState.currentEnemy)}</span>
                     <span><b>🛡 Defesa:</b> ${getEnemyStat("defesa", gameState.currentEnemy)}</span>
-                    <span><b>🎯 Precisão:</b> ${gameState.currentEnemy.precisao}%</span>
-                    <span><b>💨 Agilidade:</b> ${gameState.currentEnemy.agilidade}%</span>
+                    <span><b>🎯 Precisão:</b> ${gameState.currentEnemy.precisao}</span>
+                    <span><b>💨 Agilidade:</b> ${gameState.currentEnemy.agilidade}</span>
                 </div>
             </div>
         `;

@@ -17,7 +17,6 @@ const ENEMY_BEHAVIORS = {
                     totalDano += result.damage;
                 } else {
                     esquivas++;
-                    // Incrementa esquiva no perfil global
                     if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
                     playerProfile.totalEsquivas++;
                 }
@@ -43,7 +42,6 @@ const ENEMY_BEHAVIORS = {
                 addMessage(`Você sofreu ${result.damage} de dano.`, true);
             } else {
                 addMessage("O slime sombrio lançou uma gelatina, mas você esquivou!", true);
-                // Incrementa esquiva no perfil global
                 if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
                 playerProfile.totalEsquivas++;
             }
@@ -57,12 +55,16 @@ const ENEMY_BEHAVIORS = {
             const result = calculateDamage({ ...enemy }, gameState);
             if (result.damage > 0) {
                 gameState.vida = Math.max(0, gameState.vida - result.damage);
-                gameState.stunnedTurns = 1;
-                addMessage("O morcego das sombras emite um grito agudo — você fica atordoado! 🌀", true);
+                // Imunidade a stun por título "imperturbavel"
+                if (typeof isTituloEquipado === "function" && isTituloEquipado("imperturbavel")) {
+                    addMessage("O morcego das sombras tentou atordoar, mas você está imune a atordoamento!", true);
+                } else {
+                    gameState.stunnedTurns = 1;
+                    addMessage("O morcego das sombras emite um grito agudo — você fica atordoado! 🌀", true);
+                }
                 addMessage(`Você sofreu ${result.damage} de dano.`, true);
             } else {
                 addMessage("O morcego das sombras tentou gritar, mas você esquivou!", true);
-                // Incrementa esquiva no perfil global
                 if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
                 playerProfile.totalEsquivas++;
             }
@@ -101,7 +103,6 @@ const ENEMY_BEHAVIORS = {
                 applyPlayerDebuff("precisao", 0, 3);
                 addMessage("O Slime Luminoso libera uma luz cegante! Sua precisão foi reduzida por 3 turnos.", true);
             }
-            // Incrementa ofuscamento no perfil global
             if (!playerProfile.ofuscamentosSofridos) playerProfile.ofuscamentosSofridos = 0;
             playerProfile.ofuscamentosSofridos++;
         }
@@ -114,8 +115,13 @@ const ENEMY_BEHAVIORS = {
             const danoBase = Math.floor(enemy.forca * 1.5);
             const dano = Math.max(1, danoBase - getPlayerDefesaAtual());
             gameState.vida = Math.max(0, gameState.vida - dano);
-            gameState.stunnedTurns = 1;
-            addMessage("O Slime Gigante desaba sobre você com um impacto esmagador! Você ficou atordoado! 🌀", true);
+            // Imunidade a stun por título "imperturbavel"
+            if (typeof isTituloEquipado === "function" && isTituloEquipado("imperturbavel")) {
+                addMessage("O Slime Gigante tentou atordoar, mas você está imune a atordoamento!", true);
+            } else {
+                gameState.stunnedTurns = 1;
+                addMessage("O Slime Gigante desaba sobre você com um impacto esmagador! Você ficou atordoado! 🌀", true);
+            }
             addMessage(`Você sofreu ${dano} de dano.`, true);
         }
     },
@@ -133,7 +139,6 @@ const ENEMY_BEHAVIORS = {
                     totalDano += result.damage;
                 } else {
                     esquivas++;
-                    // Incrementa esquiva no perfil global
                     if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
                     playerProfile.totalEsquivas++;
                 }
@@ -154,7 +159,6 @@ const ENEMY_BEHAVIORS = {
                 addMessage(`Você sofreu ${result.damage} de dano.`, true);
             } else {
                 addMessage("A Aranha Rainha tentou atacar, mas você esquivou!", true);
-                // Incrementa esquiva no perfil global
                 if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
                 playerProfile.totalEsquivas++;
             }
@@ -189,7 +193,6 @@ const ENEMY_BEHAVIORS = {
                     totalDano += result.damage;
                 } else {
                     esquivas++;
-                    // Incrementa esquiva no perfil global
                     if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
                     playerProfile.totalEsquivas++;
                 }
@@ -210,7 +213,6 @@ const ENEMY_BEHAVIORS = {
                 addMessage(`Você sofreu ${result.damage} de dano.`, true);
             } else {
                 addMessage("O Slime Abissal atacou, mas você esquivou!", true);
-                // Incrementa esquiva no perfil global
                 if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
                 playerProfile.totalEsquivas++;
             }
@@ -230,7 +232,6 @@ const ENEMY_BEHAVIORS = {
                 addMessage(`Você sofreu ${result.damage} de dano. O morcego recuperou ${cura} de Vida.`, true);
             } else {
                 addMessage("O Morcego Vampiro tentou morder, mas você esquivou!", true);
-                // Incrementa esquiva no perfil global
                 if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
                 playerProfile.totalEsquivas++;
             }
@@ -243,7 +244,6 @@ const ENEMY_BEHAVIORS = {
         } else {
             applyPlayerDebuff("veneno", 1, 3);
             addMessage("O Aracnídeo Sombrio injeta um veneno profundo! Você sofrerá dano contínuo por 3 turnos.", true);
-            // Incrementa veneno no perfil global
             if (!playerProfile.venenamentosSofridos) playerProfile.venenamentosSofridos = 0;
             playerProfile.venenamentosSofridos++;
         }
@@ -264,7 +264,6 @@ const ENEMY_BEHAVIORS = {
                 addMessage(`Você perdeu ${result.damage} de sanidade.`, true);
             } else {
                 addMessage("Você resiste ao olhar hipnótico da Coruja Anciã!", true);
-                // Incrementa esquiva no perfil global
                 if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
                 playerProfile.totalEsquivas++;
             }
