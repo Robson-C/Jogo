@@ -387,7 +387,7 @@ function advanceToNextFloor() {
 
 /* =====================[ TRECHO 10: INIMIGOS DINÂMICOS E ESCOLHA DE INIMIGO ]===================== */
 
-// ====== NOVO: inimigos comuns escalam com o andar ======
+// ====== NOVO: inimigos comuns NÃO escalam mais com o andar ======
 function getEnemyForCurrentFloor() {
     const floorKey = gameState.currentFloor >= 10 ? 10 : gameState.currentFloor;
     const pool = ENEMY_POOLS[floorKey];
@@ -405,22 +405,8 @@ function getEnemyForCurrentFloor() {
         }
     }
     if (!baseEnemy) baseEnemy = ENEMIES[0];
-
-    // ===== PROGRESSÃO DINÂMICA DOS INIMIGOS COMUNS =====
-    // Chefes NÃO sofrem progressão aqui
-    // Clona os dados do inimigo base
+    // Apenas retorna o inimigo base sorteado, sem upgrades de stats
     let enemy = { ...baseEnemy };
-
-    // Calcula os upgrades pelo andar atual (a cada 2 andares)
-    const upgrades = Math.floor(gameState.currentFloor / 2);
-    if (!isBossEnemy(enemy.name)) {
-        enemy.maxVida += upgrades * 7;
-        enemy.vida += upgrades * 7;
-        enemy.forca += upgrades * 5;
-        enemy.defesa += upgrades * 2;
-        enemy.precisao += upgrades * 1;
-        enemy.agilidade += upgrades * 1;
-    }
     return enemy;
 }
 
@@ -437,6 +423,8 @@ function getBossForCurrentFloor() {
     const bossName = MINI_BOSSES_BY_FLOOR[gameState.currentFloor];
     return ENEMIES.find(e => e.name === bossName) || ENEMIES[0];
 }
+
+/* =====================[ FIM TRECHO 10 ]===================== */
 
 /* =====================[ TRECHO 11: EXPORTAÇÃO GLOBAL ]===================== */
 window.playerAttack = playerAttack;

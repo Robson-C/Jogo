@@ -1,21 +1,56 @@
-Player: Paciente em coma, preso em sua própria mente após um trauma grave.
-    Precisa reconstruir suas memórias e enfrentar seu trauma para despertar.
+LORE INTERNA — “A Torre da Redenção”
 
-Trauma: 
-    - Alex acredita (consciente ou inconscientemente) que causou o acidente de carro devido a uma distração (discutir ao volante com sua esposa) .
+Prólogo:
+Alex, o protagonista, sofreu um acidente de carro grave durante uma discussão com sua esposa. No impacto, perdeu a consciência — e, na tragédia, perdeu também sua esposa (que estava grávida).
+Ao acordar, Alex não retorna ao mundo real: ele está preso em um estado de coma profundo, onde sua mente constrói uma torre interminável, feita de memórias, remorsos e distorções de tudo o que foi vivido, perdido e esquecido.
 
-    - No acidente, Alex perdeu uma pessoa querida (esposa). A culpa dessa perda o aprisiona emocionalmente.
+A Torre
+A torre é um espaço mental: um mecanismo de defesa da psique de Alex para suportar a dor da culpa, do luto e do trauma.
+- Cada andar da torre é preenchido por criaturas, entidades e pessoas que representam, de forma crescente:
+- Medos e sentimentos primitivos (monstros, bestas, criaturas deformadas)
+- Fragmentos de memórias distorcidas (bestiário vai ficando mais “familiar”)
+- Pessoas e papéis do cotidiano de Alex (enfermeiros, médicos, padres, esposa, filho não nascido, etc)
+- Elementos do acidente e do hospital
+À medida que Alex sobe, os monstros deixam de ser “criaturas do vazio” e passam a ser lembranças de pessoas e situações reais, distorcidas pelo trauma.
+
+Os Capítulos (Estrutura e Progressão)
+Capítulos iniciais:
+Criaturas abstratas, irreconhecíveis, puro medo, vazio e esquecimento (expressão do instinto de fuga, repressão das emoções, negação da dor).
+Capítulos intermediários:
+Monstros humanoides, entidades que lembram pessoas, sentimentos mais claros, fragmentos de cenas do passado — a memória de Alex começa a retornar, a dor se torna mais nítida.
+Capítulos finais:
+Pessoas reais, cada uma ligada diretamente ao trauma (esposa, socorristas, médicos, bebê espectral, padres, enfermeiras, etc).
+Cada figura é um confronto com um aspecto específico da perda, culpa ou julgamento.
+As batalhas não são só físicas: são simbólicas, cada vitória representa aceitação, perdão ou superação de um medo/peso emocional.
+
+A Sombra de Alex
+O chefão final não é um monstro, mas a própria sombra de Alex:
+Sua autoimagem distorcida pela culpa.
+É a parte dele que deseja esquecer tudo, se entregar ao vazio, não despertar para a dor real — e só ao vencer (aceitar) essa sombra, Alex pode decidir despertar (aceitando a realidade e o luto) ou permanecer preso ao ciclo da torre.
+
+Mensagens e Ambientação
+As mensagens precisam ser fragmentadas, confusas, oníricas, quase sempre frases que parecem memórias, sensações ou dúvidas ("Por que não salvou?", "Você não lembra o cheiro dela", "A culpa dói menos no escuro").
+Evitar frases muito explicativas no início: manter o tom de “amnésia emocional” e atmosfera de esquecimento. As lembraças vão voltando aos poucos, até o capitulo 4 apenas sensações e sentimentos, no capitulo 5 ao matar o chefe tera lembraças especias na sala do chefe vazia, e apos continua como está com mensagens de sentimentos e sensações.
+- Mensagens em salas: fragmentos oníricos, dúvidas, sensação de vazio, medo de lembrar.
+- Chefes: barreiras simbólicas, falas curtas e evasivas, proteção ao esquecimento.
+- Pós-chefe: tentação ao esquecimento, reforço da fuga, dúvida sobre seguir adiante.
+
+Temas centrais
+- Culpa, Perdão, Luto, Aceitação
+- Memória e Esquecimento
+- Despersonalização e Reconstrução do Eu
+- Ambiguidade dos sentimentos (o que antes parecia inimigo pode ser guia para aceitação)
+
+Final alternativo
+Após vencer a Sombra de Alex, a escolha:
+- Aceitar a realidade: acordar do coma, encarar o luto, buscar reconstruir a vida.
+- Se afundar na perda: recusar o despertar, voltar ao início da torre (loop narrativo, repressão da dor).
 
 
-Torre:
-    -Projeção mental criada pelo subconsciente do player como mecanismo de defesa, que materializa  seus medos, traumas e culpa.
-    - Ao subir a torre os monstros vao ficando mais humanoides, até os ultimos andares como fantasmas e zumbis, o chefe poderia ser uma sombra do player
 
-Objetivo Final: Enfrentar seu trauma diretamente no topo da torre para acordar do coma. O fracasso o mantém preso em estado vegetativo ou reinicia a luta interna.
-
+À medida que Alex sobe, os monstros deixam de ser “criaturas do vazio” e passam a ser lembranças de pessoas e situações reais, distorcidas pelo trauma.
 História
-    Capítulo 1: "O Despertar do Vazio"
-        -Objetivo: Transmitir sensação de vazio, negação e início da luta interior. Apenas nas mensagens e atmosfera.
+    Capítulo 1: "O Despertar do Vazio/Quem sou? Onde Estou?/O Inicio"
         -Atmosfera: 
         -Pistas/Mensagens
             01: "O silêncio é esmagador, mas não incomoda… por quê?"
@@ -29,12 +64,8 @@ História
             09: "Você busca uma saída, mas não se lembra do que deixou para trás."
             10: "Ecos de gritos distantes invadem a névoa. Algo dentro de você resiste em escutar."
             10: "Imagens desfocadas de um volante, uma voz familiar… tudo some antes que você alcance."
-        -Monstros: Rato Gigante, Slime Sombrio, Morcego das Sombras
-        -Mini-bosses: Rato-Rei, Slime Gigante, Morcego Alfa, ..., Gosma Reluzente, ..., Slime Abissal, Morcego Vampiro e Aranha Rainha
-        -Boss: Coruja Anciã
         -Boss Falas: "Ainda não é hora de lembrar."/"Volte para o vazio, aqui não há dor."/"Você não pertence à verdade.""O esquecimento é seu abrigo."/"Não desperte o que está adormecido."/"O vazio é mais seguro do que a verdade."/"Por que insistir em lembrar?"
-        -Situação do Player: Total negação, recusa-se a acreditar ou lembrar do acidente. O boss representa o bloqueio mental.
-    
+        
     Capítulo 2: "Fragmentos de Um Passado Quebrado"
         -Pistas/Mensagens
             01: 
@@ -48,13 +79,8 @@ História
             09: 
             10: 
             10: 
-        
-        -Boss: 
-        
         -Boss Falas: 
-    
-        -Situação do Player: 
-    
+
     Capítulo 3: "Caminhando Entre Ruínas"
         -Pistas/Mensagens
             01: 
@@ -117,69 +143,128 @@ História
     
         -Situação do Player: 
 
+1 -  Fantasia
+//Monstros normais
+Slime Verde
+Planta que ri
+Cogumelo Saltitante
+Fada Travessa
+Cubo de Gelatina
+Livro Falante
+Máscara Flutuante
+Salamandra de Néon
+Olho Vigilante
+Orbe Sombria
 
-Andar 1
-Rato Gigante: 50%
-Slime Sombrio: 35%
-Morcego das Sombras: 15%
-Mini-Boss: Rato-Rei
+//Mini-boss e Boss
+Slime Sábio
+Planta Voraz
+Cogumelo Ancestral
+Fada Sombria
+Cubo de Espinhos
+Livro Proibido
+Máscara Assustadora
+Salamandra Radiante
+Orbe Abissal
+Olho Onisciente
 
-Andar 2
-Rato Gigante: 35%
-Slime Sombrio: 35%
-Morcego das Sombras: 20%
-Aranha Cinzenta: 10%
-Mini-Boss: Slime Gigante
+2 - Real deformado
+//Monstros normais
+Sapo com chifres
+Cobra Alada
+Aranha Cinzenta
+Coruja de 3 olhos
+Lobo de 2 cabeças
+Rato gigante 
+Morcego de vidro
+Aranha Carniceira
+Urso de boca gigante
+Tatu com garras
 
-Andar 3
-Rato Gigante: 25%
-Slime Sombrio: 25%
-Morcego das Sombras: 25%
-Aranha Cinzenta: 15%
-Slime Luminoso: 10% (raro)
-Mini-Boss: Morcego Alfa
+//Mini-boss e Boss
+Sapo de Marfim
+Cobra Espectral
+Aranha Viúva Sombria
+Coruja Vidente
+Lobo Calamidade
+Rato Rei
+Morcego Prismático
+Aranha da Peste
+Urso Abissal
+Tatu Demolidor
 
-Andar 4
-Rato Gigante: 15%
-Slime Sombrio: 25%
-Morcego das Sombras: 25%
-Aranha Cinzenta: 25%
-Slime Luminoso: 10%
-Mini-Boss: Aranha Rainha
+3 - Monstro humanoide
+//Monstros normais
+Globin pequeno
+Marionete viva
+Harpia
+Esqueleto de armadura
+Orc costurado
+Anjo de barro
+Troll
+Ogro de Crista
+Minotauro
+Golem de Aço
 
-Andar 5
-Slime Sombrio: 20%
-Morcego das Sombras: 20%
-Aranha Cinzenta: 35%
-Slime Luminoso: 15%
-Rato Gigante: 10%
-Mini-Boss: Gosma Reluzente
+//Mini-boss e Boss
+Globin Sanguinário
+Marionete Possessa
+Harpia Tempestuosa
+Esqueleto Imortal
+Orc Abominável
+Anjo Maculado
+Troll Voraz
+Ogro Brutal
+Minotauro Labiríntico
+Golem Colossal
 
-Andar 6
-Morcego das Sombras: 25%
-Aranha Cinzenta: 35%
-Slime Luminoso: 15%
-Slime Sombrio: 15%
-Rato Gigante: 10%
-Mini-Boss: Horda de Ratos
+4 - Monstro Humanoide aparencia humana
+//Monstros normais
+Espectro Errante
+Fantasma Uivante
+Dama da Névoa
+Noiva Espectral
+Cavaleiro Sem Cabeça
+Homem de Fumaça
+Zumbi Podre
+Sucubos Sedutora
+Vampiro Sedento
+Mulher sem Rosto
 
-Andar 7
-Aranha Cinzenta: 35%
-Morcego das Sombras: 30%
-Slime Luminoso: 20%
-Slime Sombrio: 15%
-Mini-Boss: Slime Abissal
+//Mini-boss e Boss
+Espectro Arcano
+Fantasma Ancestral
+Senhora dos Suspiros
+Noiva do Abismo
+Cavaleiro do Eclipse
+Arauto Etéreo
+Zumbi Corrompido
+Súcubo Rainha
+Lord Vampiro
+Matriarca do Vazio
 
-Andar 8
-Aranha Cinzenta: 30%
-Morcego das Sombras: 30%
-Slime Luminoso: 25%
-Slime Sombrio: 15%
-Mini-Boss: Morcego Vampiro
+5 - Pessoas
+//Monstros normais
+Policial Fantasma
+Socorrista Cego
+Médico Macabro
+Padre sem Boca
+Enfermeira dos Sussurros
+Visitante Sem Rosto
+Mensageiro do Fim
+Bebê Espectral
+Noiva em Chamas
+Sombra Distorcida
 
-Andar 9
-Aranha Cinzenta: 25%
-Slime Luminoso: 30%
-Morcego das Sombras: 30%
-Slime Sombrio: 15%
-Mini-Boss: Aracnídeo Sombrio
+
+//Mini-boss e BossInspetor do Além
+O Vigia
+Anjo do Resgate
+Cirurgião do Destino
+Guia do Perdão
+Enfermeira do Zelo
+Amparo Esquecido
+Ceifeiro
+Pequeno Guardião
+Noiva Amada
+Sombra de Alex
