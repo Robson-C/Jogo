@@ -2,278 +2,118 @@
 
 /* =====================[ TRECHO 1: HANDLERS DE COMPORTAMENTO DE INIMIGOS ]===================== */
 const ENEMY_BEHAVIORS = {
-    "Rato Gigante": function(enemy) {
-        const roll = Math.random() * 100;
-        if (roll < 65) {
-            ataqueInimigoBasico(enemy);
-        } else {
-            let totalDano = 0;
-            let esquivas = 0;
-            let txt = "O rato gigante realiza duas mordidas rápidas em sequência!";
-            for (let i = 0; i < 2; i++) {
-                const result = calculateDamage({ ...enemy }, gameState);
-                if (result.damage > 0) {
-                    gameState.vida = Math.max(0, gameState.vida - result.damage);
-                    totalDano += result.damage;
-                } else {
-                    esquivas++;
-                    if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
-                    playerProfile.totalEsquivas++;
-                }
-            }
-            if (totalDano > 0) {
-                addMessage(`${txt} Você sofreu ${totalDano} de dano.`, true);
-            }
-            if (esquivas > 0) {
-                addMessage(`Você esquivou de ${esquivas} das mordidas rápidas!`, true);
-            }
-        }
-    },
-    "Slime Sombrio": function(enemy) {
-        const roll = Math.random() * 100;
-        if (roll < 70) {
-            ataqueInimigoBasico(enemy);
-        } else {
-            const result = calculateDamage({ ...enemy }, gameState);
-            if (result.damage > 0) {
-                gameState.vida = Math.max(0, gameState.vida - result.damage);
-                applyPlayerDebuff("agilidade", Math.floor(gameState.agilidade * 0.2), 2);
-                addMessage("O slime sombrio lança uma gelatina paralisante, deixando seus movimentos lentos! Sua agilidade foi reduzida por 2 turnos.", true);
-                addMessage(`Você sofreu ${result.damage} de dano.`, true);
-            } else {
-                addMessage("O slime sombrio lançou uma gelatina, mas você esquivou!", true);
-                if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
-                playerProfile.totalEsquivas++;
-            }
-        }
-    },
-    "Morcego das Sombras": function(enemy) {
-        const roll = Math.random() * 100;
-        if (roll < 85) {
-            ataqueInimigoBasico(enemy);
-        } else {
-            const result = calculateDamage({ ...enemy }, gameState);
-            if (result.damage > 0) {
-                gameState.vida = Math.max(0, gameState.vida - result.damage);
-                // Imunidade a stun por título "imperturbavel"
-                if (typeof isTituloEquipado === "function" && isTituloEquipado("imperturbavel")) {
-                    addMessage("O morcego das sombras tentou atordoar, mas você está imune a atordoamento!", true);
-                } else {
-                    gameState.stunnedTurns = 1;
-                    addMessage("O morcego das sombras emite um grito agudo — você fica atordoado! 🌀", true);
-                }
-                addMessage(`Você sofreu ${result.damage} de dano.`, true);
-            } else {
-                addMessage("O morcego das sombras tentou gritar, mas você esquivou!", true);
-                if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
-                playerProfile.totalEsquivas++;
-            }
-        }
-    },
-    "Rato-Rei": function(enemy) {
-        const roll = Math.random() * 100;
-        if (roll < 70) {
-            ataqueInimigoBasico(enemy, true);
-        } else {
-            applyEnemyBuff("forca", 4, 3);
-            applyEnemyBuff("defesa", 1, 3);
-            addMessage("O Rato-Rei ruge, seu corpo cresce e ele fica mais resistente! (+4 Força, +1 Defesa por 3 turnos)", true);
-        }
-    },
-    "Aranha Cinzenta": function(enemy) {
+    "Slime Verde": function(enemy) {
         const roll = Math.random() * 100;
         if (roll < 80) {
             ataqueInimigoBasico(enemy);
         } else {
-            applyPlayerDebuff("agilidade", 4, 2);
-            applyPlayerDebuff("defesa", 3, 2);
-            gameState.debuffs["teia_pegajosa"] = { turns: 2 };
-            addMessage("A Aranha Cinzenta lança uma teia pegajosa! Sua agilidade e defesa foram reduzidas por 2 turnos.", true);
+            applyPlayerDebuff("veneno", 3, 2);
+            addMessage("O Slime Verde expele uma gosma ácida! Você ficará envenenado por 2 turnos.", true);
         }
     },
-    "Slime Luminoso": function(enemy) {
+    "Cogumelo Saltitante": function(enemy) {
+        const roll = Math.random() * 100;
+        if (roll < 80) {
+            ataqueInimigoBasico(enemy);
+        } else {
+            applyPlayerDebuff("agilidade", 3, 2);
+            addMessage("O Cogumelo Saltitante solta esporos que deixam seus movimentos lentos! Sua agilidade foi reduzida.", true);
+        }
+    },
+    "Planta que ri": function(enemy) {
         const roll = Math.random() * 100;
         if (roll < 75) {
             ataqueInimigoBasico(enemy);
         } else {
-            if (gameState.debuffs && gameState.debuffs["precisao"]) {
-                applyPlayerDebuff("precisao", 0, 3);
-                addMessage("O Slime Luminoso intensifica sua luz cegante! A duração do debuff de precisão aumentou.", true);
-            } else {
-                applyPlayerDebuff("precisao", 0, 3);
-                addMessage("O Slime Luminoso libera uma luz cegante! Sua precisão foi reduzida por 3 turnos.", true);
-            }
-            if (!playerProfile.ofuscamentosSofridos) playerProfile.ofuscamentosSofridos = 0;
-            playerProfile.ofuscamentosSofridos++;
+            applyPlayerDebuff("agilidade", 2, 2);
+            applyPlayerDebuff("forca", 2, 2);
+            addMessage("A Planta que ri prende seus pés com vinhas e exala um pólen entorpecente! Sua agilidade e força caem por 2 turnos.", true);
         }
     },
-    "Slime Gigante": function(enemy) {
+    "Fada Travessa": function(enemy) {
         const roll = Math.random() * 100;
-        if (roll < 70) {
+        if (roll < 75) {
             ataqueInimigoBasico(enemy);
         } else {
-            const danoBase = Math.floor(enemy.forca * 1.5);
-            const dano = Math.max(1, danoBase - getPlayerDefesaAtual());
-            gameState.vida = Math.max(0, gameState.vida - dano);
-            // Imunidade a stun por título "imperturbavel"
-            if (typeof isTituloEquipado === "function" && isTituloEquipado("imperturbavel")) {
-                addMessage("O Slime Gigante tentou atordoar, mas você está imune a atordoamento!", true);
-            } else {
-                gameState.stunnedTurns = 1;
-                addMessage("O Slime Gigante desaba sobre você com um impacto esmagador! Você ficou atordoado! 🌀", true);
-            }
-            addMessage(`Você sofreu ${dano} de dano.`, true);
+            applyPlayerDebuff("stun", 1, 1);
+            addMessage("A Fada Travessa lança pó de sono em seus olhos. Você fica atordoado e perde o próximo turno!", true);
         }
     },
-    "Morcego Alfa": function(enemy) {
+    "Cubo de Gelatina": function(enemy) {
         const roll = Math.random() * 100;
-        if (roll < 70) {
+        if (roll < 80) {
             ataqueInimigoBasico(enemy);
         } else {
-            let totalDano = 0;
-            let esquivas = 0;
-            for (let i = 0; i < 3; i++) {
-                const result = calculateDamage({ ...enemy }, gameState);
-                if (result.damage > 0) {
-                    gameState.vida = Math.max(0, gameState.vida - result.damage);
-                    totalDano += result.damage;
-                } else {
-                    esquivas++;
-                    if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
-                    playerProfile.totalEsquivas++;
-                }
-            }
-            addMessage(`O Morcego Alfa executa uma chuva de mordidas! Dano total: ${totalDano}. Esquivas: ${esquivas}.`, true);
+            applyPlayerDebuff("defesa", 2, 2);
+            applyPlayerDebuff("agilidade", 2, 2);
+            gameState.debuffs["teia_pegajosa"] = { turns: 2 };
+            addMessage("O Cubo de Gelatina gruda em você, diminuindo sua defesa e agilidade por 2 turnos!", true);
         }
     },
-    "Aranha Rainha": function(enemy) {
+    "Livro Falante": function(enemy) {
         const roll = Math.random() * 100;
-        if (roll < 60) {
+        if (roll < 80) {
             ataqueInimigoBasico(enemy);
         } else {
-            const result = calculateDamage({ ...enemy }, gameState);
-            if (result.damage > 0) {
-                gameState.vida = Math.max(0, gameState.vida - result.damage);
-                applyPlayerDebuff("forca", 3, 2);
-                addMessage("A Aranha Rainha injeta veneno letárgico! Sua força foi reduzida por 2 turnos.", true);
-                addMessage(`Você sofreu ${result.damage} de dano.`, true);
-            } else {
-                addMessage("A Aranha Rainha tentou atacar, mas você esquivou!", true);
-                if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
-                playerProfile.totalEsquivas++;
-            }
+            applyPlayerDebuff("precisao", 10, 2);
+            addMessage("O Livro Falante recita enigmas — você se sente confuso, sua precisão cai por 2 turnos!", true);
         }
     },
-    "Gosma Reluzente": function(enemy) {
+    "Salamandra de Néon": function(enemy) {
         const roll = Math.random() * 100;
-        if (roll < 70) {
+        if (roll < 75) {
             ataqueInimigoBasico(enemy);
         } else {
-            if (enemy.vida < enemy.maxVida / 2) {
-                const cura = Math.floor((enemy.maxVida - enemy.vida) * 0.3);
-                enemy.vida = Math.min(enemy.maxVida, enemy.vida + cura);
-                addMessage(`A Gosma Reluzente regenera parte do seu corpo! Recupera ${cura} de Vida.`, true);
-            } else {
-                ataqueInimigoBasico(enemy);
+            applyPlayerDebuff("agilidade", 2, 2);
+            if (!gameState.debuffs["chama_neon"]) gameState.debuffs["chama_neon"] = { value: 3, turns: 2 };
+            else {
+                gameState.debuffs["chama_neon"].turns = Math.max(gameState.debuffs["chama_neon"].turns, 2);
             }
+            addMessage("As Chamas de Néon queimam sua pele e retardam seus movimentos!", true);
         }
     },
-    "Horda de Ratos": function(enemy) {
+    "Olho Vigilante": function(enemy) {
         const roll = Math.random() * 100;
-        if (roll < 60) {
+        if (roll < 80) {
             ataqueInimigoBasico(enemy);
         } else {
-            let totalDano = 0;
-            let esquivas = 0;
-            for (let i = 0; i < 4; i++) {
-                const ataque = { ...enemy, forca: Math.floor(enemy.forca * 0.7) };
-                const result = calculateDamage(ataque, gameState);
-                if (result.damage > 0) {
-                    gameState.vida = Math.max(0, gameState.vida - result.damage);
-                    totalDano += result.damage;
-                } else {
-                    esquivas++;
-                    if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
-                    playerProfile.totalEsquivas++;
-                }
-            }
-            addMessage(`A Horda de Ratos avança em enxame! Dano total: ${totalDano}. Esquivas: ${esquivas}.`, true);
+            applyPlayerDebuff("precisao", 10, 2);
+            addMessage("O Olho Vigilante brilha intensamente — você fica momentaneamente cego! Sua precisão cai por 2 turnos.", true);
         }
     },
-    "Slime Abissal": function(enemy) {
+    "Orbe Sombria": function(enemy) {
         const roll = Math.random() * 100;
-        if (roll < 70) {
+        if (roll < 80) {
             ataqueInimigoBasico(enemy);
         } else {
-            const result = calculateDamage({ ...enemy }, gameState);
-            if (result.damage > 0) {
-                gameState.vida = Math.max(0, gameState.vida - result.damage);
-                applyPlayerDebuff("defesa", 4, 3);
-                addMessage("O Slime Abissal expele uma onda corrosiva! Sua defesa foi reduzida por 3 turnos.", true);
-                addMessage(`Você sofreu ${result.damage} de dano.`, true);
-            } else {
-                addMessage("O Slime Abissal atacou, mas você esquivou!", true);
-                if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
-                playerProfile.totalEsquivas++;
+            applyPlayerDebuff("defesa", 2, 2);
+            if (!gameState.debuffs["sanidade_sombra"]) gameState.debuffs["sanidade_sombra"] = { value: 5, turns: 2 };
+            else {
+                gameState.debuffs["sanidade_sombra"].turns = Math.max(gameState.debuffs["sanidade_sombra"].turns, 2);
             }
+            addMessage("Uma aura negra envolve você, corroendo sua defesa e abalando sua sanidade por 2 turnos!", true);
         }
     },
-    "Morcego Vampiro": function(enemy) {
+    "Gárgula de Pedra": function(enemy) {
         const roll = Math.random() * 100;
-        if (roll < 70) {
+        if (roll < 85) {
             ataqueInimigoBasico(enemy);
         } else {
-            const result = calculateDamage({ ...enemy }, gameState);
-            if (result.damage > 0) {
-                gameState.vida = Math.max(0, gameState.vida - result.damage);
-                const cura = result.damage * 3;
-                enemy.vida = Math.min(enemy.maxVida, enemy.vida + cura);
-                addMessage("O Morcego Vampiro morde e suga sua energia vital!", true);
-                addMessage(`Você sofreu ${result.damage} de dano. O morcego recuperou ${cura} de Vida.`, true);
-            } else {
-                addMessage("O Morcego Vampiro tentou morder, mas você esquivou!", true);
-                if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
-                playerProfile.totalEsquivas++;
-            }
+            applyPlayerDebuff("defesa", 3, 2);
+            addMessage("A Gárgula acerta um golpe brutal, reduzindo sua defesa por 2 turnos!", true);
         }
     },
-    "Aracnídeo Sombrio": function(enemy) {
-        const roll = Math.random() * 100;
-        if (roll < 60) {
-            ataqueInimigoBasico(enemy);
-        } else {
-            applyPlayerDebuff("veneno", 1, 3);
-            addMessage("O Aracnídeo Sombrio injeta um veneno profundo! Você sofrerá dano contínuo por 3 turnos.", true);
-            if (!playerProfile.venenamentosSofridos) playerProfile.venenamentosSofridos = 0;
-            playerProfile.venenamentosSofridos++;
-        }
-    },
-    "Coruja Anciã": function(enemy) {
-        if (Math.random() < 0.2 && typeof CORUJA_ANCIÃ_PHRASES !== 'undefined') {
-            const frase = CORUJA_ANCIÃ_PHRASES[Math.floor(Math.random() * CORUJA_ANCIÃ_PHRASES.length)];
-            addMessage(`Coruja Anciã: "${frase}"`, true);
-        }
-        const roll = Math.random() * 100;
-        if (roll < 60) {
-            ataqueInimigoBasico(enemy);
-        } else if (roll < 80) {
-            const result = calculateDamage({ ...enemy }, gameState);
-            if (result.damage > 0) {
-                gameState.sanity = Math.max(0, gameState.sanity - result.damage);
-                addMessage("A Coruja Anciã foca seu olhar hipnótico — sua sanidade é abalada!", true);
-                addMessage(`Você perdeu ${result.damage} de sanidade.`, true);
-            } else {
-                addMessage("Você resiste ao olhar hipnótico da Coruja Anciã!", true);
-                if (!playerProfile.totalEsquivas) playerProfile.totalEsquivas = 0;
-                playerProfile.totalEsquivas++;
-            }
-        } else {
-            applyEnemyBuff("agilidade", 8, 4);
-            addMessage("A Coruja Anciã alça voo e se move rapidamente pelo campo! Sua agilidade aumentou por 4 turnos.", true);
-            updateStatus();
-        }
-    }
-    // Adicione outros inimigos especiais aqui conforme necessário
+    // Bosses Capítulo 1 (exemplo com ataques básicos — ajuste para mecânicas especiais se quiser)
+    "Slime Sábio": function(enemy) { ataqueInimigoBasico(enemy); },
+    "Cogumelo Ancestral": function(enemy) { ataqueInimigoBasico(enemy); },
+    "Planta Voraz": function(enemy) { ataqueInimigoBasico(enemy); },
+    "Fada Sombria": function(enemy) { ataqueInimigoBasico(enemy); },
+    "Cubo de Espinhos": function(enemy) { ataqueInimigoBasico(enemy); },
+    "Livro Proibido": function(enemy) { ataqueInimigoBasico(enemy); },
+    "Salamandra Radiante": function(enemy) { ataqueInimigoBasico(enemy); },
+    "Olho Onisciente": function(enemy) { ataqueInimigoBasico(enemy); },
+    "Orbe Abissal": function(enemy) { ataqueInimigoBasico(enemy); },
+    "Gárgula Ancestral": function(enemy) { ataqueInimigoBasico(enemy); }
 };
 /* =====================[ FIM TRECHO 1 ]===================== */
 

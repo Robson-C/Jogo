@@ -2,72 +2,94 @@
 
 /* =====================[ TRECHO 1: DICIONÁRIO CENTRAL DE BUFFS/DEBUFFS ]===================== */
 const BUFFS_INFO = {
-    // Buffs compostos
-    aura_real: {
-        nome: "Aura Real",
-        descricao: "Aumenta força e defesa",
-        icone: "👑",
-        efeitos: { forca: "+4", defesa: "+1" }
-    },
+    // Buffs compostos exclusivos por inimigo
     teia_pegajosa: {
         nome: "Teia Pegajosa",
-        descricao: "Reduz agilidade e defesa",
+        descricao: "Reduz sua agilidade e defesa por teia grudenta.",
         icone: "🕸️",
         efeitos: { agilidade: "-X", defesa: "-X" }
     },
-    // Buffs/debuffs simples
-    lentidao: {
-        nome: "Lentidão",
-        descricao: "Reduz sua agilidade",
-        icone: "🐢",
-        efeitos: { agilidade: "-X" }
+    gelatina_pegajosa: {
+        nome: "Gelatina Pegajosa",
+        descricao: "O cubo gruda em você, reduzindo defesa e agilidade.",
+        icone: "🟩",
+        efeitos: { agilidade: "-X", defesa: "-X" }
     },
-    defesa: {
-        nome: "Fraqueza",
-        descricao: "Reduz sua defesa",
-        icone: "🛡️",
-        efeitos: { defesa: "-X" }
+    grilhoes_naturais: {
+        nome: "Grilhões Naturais",
+        descricao: "A planta prende seus pés e drena sua força e agilidade.",
+        icone: "🌿",
+        efeitos: { agilidade: "-X", forca: "-X" }
     },
-    forca: {
-        nome: "Enfraquecimento",
-        descricao: "Reduz sua força",
-        icone: "💪",
-        efeitos: { forca: "-X" }
+    chama_neon: {
+        nome: "Chama de Néon",
+        descricao: "Você sofre queimaduras e se move mais devagar.",
+        icone: "🔥",
+        efeitos: { vida: "-3/turno", agilidade: "-2" }
     },
-    precisao: {
-        nome: "Ofuscamento",
-        descricao: "Reduz sua precisão",
-        icone: "🎯",
-        efeitos: { precisao: "-X%" }
+    aura_sombria: {
+        nome: "Aura Sombria",
+        descricao: "O orbe corrompe sua defesa e sanidade.",
+        icone: "🌑",
+        efeitos: { defesa: "-X", sanidade: "-5/turno" }
     },
+    // Buff composto global que ainda é usado por boss (Rato-Rei)
+    aura_real: {
+        nome: "Aura Real",
+        descricao: "Aumenta força e defesa.",
+        icone: "👑",
+        efeitos: { forca: "+4", defesa: "+1" }
+    },
+
+    // Debuffs simples em uso
     veneno: {
         nome: "Veneno",
-        descricao: "Dano contínuo a cada turno",
+        descricao: "Você sofre dano contínuo a cada turno.",
         icone: "☠️",
         efeitos: { vida: "-X/turno" }
     },
     agilidade: {
         nome: "Lentidão",
-        descricao: "Reduz sua agilidade",
+        descricao: "Reduz sua agilidade.",
         icone: "🐢",
         efeitos: { agilidade: "-X" }
     },
+    forca: {
+        nome: "Enfraquecimento",
+        descricao: "Reduz sua força.",
+        icone: "💪",
+        efeitos: { forca: "-X" }
+    },
+    defesa: {
+        nome: "Fraqueza",
+        descricao: "Reduz sua defesa.",
+        icone: "🛡️",
+        efeitos: { defesa: "-X" }
+    },
+    precisao: {
+        nome: "Ofuscamento",
+        descricao: "Reduz sua precisão.",
+        icone: "🎯",
+        efeitos: { precisao: "-X%" }
+    },
     stun: {
         nome: "Atordoamento",
-        descricao: "Você perde o turno",
+        descricao: "Você perde o turno.",
         icone: "🌀",
         efeitos: {}
     }
-    // Adicione novos buffs/debuffs aqui!
 };
 /* =====================[ FIM TRECHO 1 ]===================== */
 
+
 /* =====================[ TRECHO 2: REGISTRO DE BUFFS COMPOSTOS ]===================== */
 const COMPOSITE_BUFFS = {
-    // Exemplo: buff do Rato-Rei
-    aura_real: ["forca", "defesa"],
-    teia_pegajosa: ["agilidade", "defesa"]
-    // Adicione outros compostos se quiser
+    teia_pegajosa: ["agilidade", "defesa"],            // Usado pela Aranha Cinzenta
+    gelatina_pegajosa: ["agilidade", "defesa"],        // Usado pelo Cubo de Gelatina
+    grilhoes_naturais: ["agilidade", "forca"],         // Usado pela Planta que ri
+    chama_neon: ["agilidade", "vida"],                 // Usado pela Salamandra de Néon (reduz agilidade e dá dano por turno)
+    aura_sombria: ["defesa", "sanidade"],              // Usado pelo Orbe Sombria
+    aura_real: ["forca", "defesa"]                     // Boss/miniboss (Rato-Rei)
 };
 /* =====================[ FIM TRECHO 2 ]===================== */
 
@@ -90,29 +112,23 @@ function applyPlayerDebuff(type, value, turns) {
 
     // ---- IMUNIDADES POR TÍTULO EQUIPADO ----
     if (typeof isTituloEquipado === "function") {
-        // Força
         if (type === "forca" && isTituloEquipado("monstroSupino")) {
             if (typeof addMessage === "function") addMessage("Você absorveu o enfraquecimento e ficou MAIS forte!", true);
-            // Inverte o sinal: se valor era -3, vira +3, se era -2, vira +2 etc
             gameState.forca += Math.abs(value);
             return;
         }
-        // Defesa
         if (type === "defesa" && isTituloEquipado("peleRinoceronte")) {
             if (typeof addMessage === "function") addMessage("Você está imune a redução de defesa!", true);
             return;
         }
-        // Agilidade
         if (type === "agilidade" && isTituloEquipado("chineloVeloz")) {
             if (typeof addMessage === "function") addMessage("Você está imune a redução de agilidade!", true);
             return;
         }
-        // Precisão (ofuscamento)
         if (type === "precisao" && isTituloEquipado("oculosSol")) {
             if (typeof addMessage === "function") addMessage("Você está imune a ofuscamento!", true);
             return;
         }
-        // Veneno
         if (type === "veneno" && isTituloEquipado("reiDoSoro")) {
             if (typeof addMessage === "function") addMessage("Você está imune a veneno!", true);
             return;
@@ -135,14 +151,12 @@ function applyPlayerDebuff(type, value, turns) {
         } else {
             gameState.debuffs[type] = { value: 0, turns };
         }
-        // Registro global de ofuscamento para títulos (agora em playerProfile)
         if (!playerProfile.ofuscamentosSofridos) playerProfile.ofuscamentosSofridos = 0;
         playerProfile.ofuscamentosSofridos++;
     }
     // Veneno: só renova duração (um só efeito)
     else if (type === "veneno") {
         gameState.debuffs[type] = { value: 0, turns };
-        // Registro global de veneno para títulos (agora em playerProfile)
         if (!playerProfile.venenamentosSofridos) playerProfile.venenamentosSofridos = 0;
         playerProfile.venenamentosSofridos++;
     }
@@ -157,27 +171,57 @@ function applyPlayerDebuff(type, value, turns) {
     }
 }
 
-// -- Atualizar buffs/debuffs do player a cada turno, processando efeitos como veneno --
+// -- Atualizar buffs/debuffs do player a cada turno, processando efeitos como veneno, buffs compostos etc --
 function tickPlayerDebuffs() {
     if (!gameState.debuffs) return;
     for (const type in gameState.debuffs) {
-        // Efeito especial: veneno dá dano direto
+        // --- EFEITOS ESPECIAIS POR BUFF COMPOSTO OU SIMPLES ---
+        // Veneno (simples)
         if (type === "veneno") {
             const danoVeneno = Math.max(3, Math.floor(gameState.maxVida * 0.04));
             gameState.vida = Math.max(0, gameState.vida - danoVeneno);
             addMessage(`Você sofre ${danoVeneno} de dano do veneno!`, true);
         }
+        // Chama de Néon (composto)
+        if (type === "chama_neon") {
+            gameState.vida = Math.max(0, gameState.vida - 3);
+            addMessage("As queimaduras das Chamas de Néon causam 3 de dano!", true);
+        }
+        // Aura Sombria (composto)
+        if (type === "aura_sombria") {
+            if (typeof gameState.sanity === "number") {
+                gameState.sanity = Math.max(0, gameState.sanity - 5);
+                addMessage("A aura sombria drena sua sanidade! (-5)", true);
+            }
+        }
+        // Debuffs compostos exclusivos visuais (teia, gelatina, grilhoes) não têm efeito extra além dos stats afetados
+        // Efeito de stun já tratado no fluxo de combate
+
         gameState.debuffs[type].turns -= 1;
         if (gameState.debuffs[type].turns <= 0) {
             delete gameState.debuffs[type];
         }
     }
-    // Limpa o debuff composto teia_pegajosa se um dos dois sumir
-    if (
-        gameState.debuffs["teia_pegajosa"] &&
-        (!gameState.debuffs["agilidade"] || !gameState.debuffs["defesa"])
-    ) {
+    // Limpa debuff composto se um dos componentes sumir
+    if (gameState.debuffs["teia_pegajosa"] &&
+        (!gameState.debuffs["agilidade"] || !gameState.debuffs["defesa"])) {
         delete gameState.debuffs["teia_pegajosa"];
+    }
+    if (gameState.debuffs["gelatina_pegajosa"] &&
+        (!gameState.debuffs["agilidade"] || !gameState.debuffs["defesa"])) {
+        delete gameState.debuffs["gelatina_pegajosa"];
+    }
+    if (gameState.debuffs["grilhoes_naturais"] &&
+        (!gameState.debuffs["agilidade"] || !gameState.debuffs["forca"])) {
+        delete gameState.debuffs["grilhoes_naturais"];
+    }
+    if (gameState.debuffs["chama_neon"] &&
+        (!gameState.debuffs["agilidade"])) {
+        delete gameState.debuffs["chama_neon"];
+    }
+    if (gameState.debuffs["aura_sombria"] &&
+        (!gameState.debuffs["defesa"])) {
+        delete gameState.debuffs["aura_sombria"];
     }
 }
 /* =====================[ FIM TRECHO 4 ]===================== */
