@@ -110,6 +110,12 @@ const BUFFS_INFO = {
         icone: "☠️",
         efeitos: { vida: "-X/turno" }
     },
+    sangramento: {
+        nome: "Sangramento",
+        descricao: "Você está sangrando e perde vida a cada turno.",
+        icone: "🩸",
+        efeitos: { vida: "-X/turno" }
+    },
     agilidade: {
         nome: "Lentidão",
         descricao: "Reduz sua agilidade.",
@@ -132,7 +138,7 @@ const BUFFS_INFO = {
         nome: "Ofuscamento",
         descricao: "Reduz sua precisão.",
         icone: "🎯",
-        efeitos: { precisao: "-X%" }
+        efeitos: { precisao: "-X" }
     },
     stun: {
         nome: "Atordoamento",
@@ -178,7 +184,7 @@ function isCompositeBuff(buffKey) {
 /* =====================[ TRECHO 4: DEBUFFS DO JOGADOR — APLICAÇÃO E ATUALIZAÇÃO ]===================== */
 
 // -- Aplicar debuff genérico no player --
-// Valor ACUMULA, duração é sempre a maior (exceto precisão/veneno)
+// Agora veneno, sangramento e precisão aceitam value e turns custom
 function applyPlayerDebuff(type, value, turns) {
     if (!gameState.debuffs) gameState.debuffs = {};
 
@@ -207,7 +213,7 @@ function applyPlayerDebuff(type, value, turns) {
         }
     }
 
-    // Stacking inteligente: soma valor, duração = maior (exceto precisão/veneno)
+    // Stacking inteligente: soma valor, duração = maior (exceto precisão, veneno e sangramento)
     if (type === "defesa" || type === "agilidade" || type === "forca") {
         if (gameState.debuffs[type]) {
             gameState.debuffs[type].value += value;
@@ -216,21 +222,17 @@ function applyPlayerDebuff(type, value, turns) {
             gameState.debuffs[type] = { value, turns };
         }
     }
-    // Precisão: valor é sempre -5% por turno, só soma turnos (até -15%)
-    else if (type === "precisao") {
-        if (gameState.debuffs[type]) {
-            gameState.debuffs[type].turns += turns;
-        } else {
-            gameState.debuffs[type] = { value: 0, turns };
+    // Precisão, veneno e sangramento: sempre value/turns custom — não acumulam, apenas renovam duração e valor
+    else if (type === "precisao" || type === "veneno" || type === "sangramento") {
+        gameState.debuffs[type] = { value, turns };
+        if (type === "precisao") {
+            if (!playerProfile.ofuscamentosSofridos) playerProfile.ofuscamentosSofridos = 0;
+            playerProfile.ofuscamentosSofridos++;
         }
-        if (!playerProfile.ofuscamentosSofridos) playerProfile.ofuscamentosSofridos = 0;
-        playerProfile.ofuscamentosSofridos++;
-    }
-    // Veneno: só renova duração (um só efeito)
-    else if (type === "veneno") {
-        gameState.debuffs[type] = { value: 0, turns };
-        if (!playerProfile.venenamentosSofridos) playerProfile.venenamentosSofridos = 0;
-        playerProfile.venenamentosSofridos++;
+        if (type === "veneno") {
+            if (!playerProfile.venenamentosSofridos) playerProfile.venenamentosSofridos = 0;
+            playerProfile.venenamentosSofridos++;
+        }
     }
     // Default genérico
     else {
@@ -243,16 +245,25 @@ function applyPlayerDebuff(type, value, turns) {
     }
 }
 
-// -- Atualizar buffs/debuffs do player a cada turno, processando efeitos como veneno, buffs compostos etc --
+// -- Atualizar buffs/debuffs do player a cada turno, processando efeitos como veneno, sangramento, buffs compostos etc --
 function tickPlayerDebuffs() {
     if (!gameState.debuffs) return;
     for (const type in gameState.debuffs) {
-        // --- EFEITOS ESPECIAIS POR BUFF COMPOSTO OU SIMPLES ---
-        // Veneno (simples)
+        // Veneno (valor fixo)
         if (type === "veneno") {
-            const danoVeneno = Math.max(3, Math.floor(gameState.maxVida * 0.04));
-            gameState.vida = Math.max(0, gameState.vida - danoVeneno);
-            addMessage(`Você sofre ${danoVeneno} de dano do veneno!`, true);
+            const danoVeneno = gameState.debuffs[type].value || 0;
+            if (danoVeneno > 0) {
+                gameState.vida = Math.max(0, gameState.vida - danoVeneno);
+                addMessage(`Você sofre ${danoVeneno} de dano do veneno!`, true);
+            }
+        }
+        // Sangramento (valor fixo)
+        if (type === "sangramento") {
+            const danoSangue = gameState.debuffs[type].value || 0;
+            if (danoSangue > 0) {
+                gameState.vida = Math.max(0, gameState.vida - danoSangue);
+                addMessage(`Você sofre ${danoSangue} de dano do sangramento!`, true);
+            }
         }
         // Chama de Néon (composto)
         if (type === "chama_neon") {
@@ -297,6 +308,7 @@ function tickPlayerDebuffs() {
     }
 }
 /* =====================[ FIM TRECHO 4 ]===================== */
+
 
 /* =====================[ TRECHO 5: BUFFS DO INIMIGO — APLICAÇÃO E ATUALIZAÇÃO ]===================== */
 
@@ -382,12 +394,11 @@ function getPlayerDefesaAtual() {
     return def;
 }
 
-// Precisão do player considerando debuff (Slime Luminoso: -5% por turno restante)
+// Precisão do player considerando debuff (agora valor fixo)
 function getPlayerPrecisaoAtual() {
     let precisao = gameState.precisao;
     if (gameState.debuffs && gameState.debuffs["precisao"]) {
-        const reducao = Math.min(15, 5 * gameState.debuffs["precisao"].turns);
-        precisao = Math.max(0, precisao - reducao);
+        precisao = Math.max(0, precisao - gameState.debuffs["precisao"].value);
     }
     return precisao;
 }
@@ -401,6 +412,7 @@ function getPlayerForcaAtual() {
     return forca;
 }
 /* =====================[ FIM TRECHO 6 ]===================== */
+
 
 /* =====================[ TRECHO 7: EXPORTAÇÃO GLOBAL ]===================== */
 // ----- Exportação para uso global -----

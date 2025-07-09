@@ -20,7 +20,6 @@ function recolherPainelInimigo() {
 /* =====================[ FIM TRECHO 1 ]===================== */
 
 /* =====================[ TRECHO 2: STATUS DO JOGADOR E BARRAS ]===================== */
-
 function updateStatus() {
     // ===== Buffs/Debuffs do Player na linha do Nível (ícone único + tooltip) =====
     let playerBuffsHTML = '';
@@ -30,7 +29,8 @@ function updateStatus() {
         // Primeiro, checa buffs compostos
         Object.keys(COMPOSITE_BUFFS).forEach(compKey => {
             const stats = COMPOSITE_BUFFS[compKey];
-            const active = stats.every(stat => gameState.debuffs[stat]);
+            // Só exibe composto se a chave do composto existe nos debuffs E todos os componentes também estão ativos
+            const active = gameState.debuffs[compKey] && stats.every(stat => gameState.debuffs[stat]);
             if (active && !stats.some(stat => handledBuffs.has(stat))) {
                 const info = getBuffInfo(compKey);
                 const turns = Math.max(...stats.map(stat => gameState.debuffs[stat].turns));
@@ -48,6 +48,7 @@ function updateStatus() {
                     >${info.icone}</span>
                 `);
                 stats.forEach(stat => handledBuffs.add(stat));
+                handledBuffs.add(compKey); // Marcar o composto como handled
             }
         });
         // Agora exibe buffs/debuffs simples restantes
@@ -160,7 +161,6 @@ function updateStatus() {
     updateEnemyPanel();
     initBuffTooltipHandlers();
 }
-
 /* =====================[ FIM TRECHO 2 ]===================== */
 
 /* =====================[ TRECHO 3: ATUALIZAÇÃO DO PAINEL DO INIMIGO ]===================== */

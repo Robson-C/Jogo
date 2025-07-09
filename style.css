@@ -446,7 +446,7 @@ h1 {
     opacity: 0;
     display: flex;
     flex: 0 0 auto;
-    background: #2c2323; /* Restaurado fundo original */
+    background: #493131;
     padding: 6px;
     border-radius: 8px;
     box-shadow: 0 2px 8px 0 rgba(40,30,10,0.13);
