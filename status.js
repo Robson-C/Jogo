@@ -329,59 +329,53 @@ function initBuffTooltipHandlers() {
                 </div>
             `;
         }
-        el.onmouseenter = e => {
-            if (window.matchMedia("(hover: hover)").matches) {
-                const tip = document.createElement('div');
-                tip.className = 'buff-tooltip';
-                tip.innerHTML = buildTooltipHtml();
-                document.body.appendChild(tip);
-                const rect = el.getBoundingClientRect();
-                tip.style.left = `${rect.left + window.scrollX}px`;
-                tip.style.top = `${rect.bottom + window.scrollY + 4}px`;
+
+        // Função para criar e posicionar o tooltip para baixo/esquerda do clique/buff
+        function showTooltip(event) {
+            document.querySelectorAll('.buff-tooltip').forEach(tip => tip.remove());
+            const tip = document.createElement('div');
+            tip.className = 'buff-tooltip';
+            tip.innerHTML = buildTooltipHtml();
+            document.body.appendChild(tip);
+            const rect = el.getBoundingClientRect();
+            // Posição padrão: canto direito do buff, tooltip para esquerda
+            let left = rect.right - tip.offsetWidth + window.scrollX;
+            let top = rect.bottom + 6 + window.scrollY;
+            // Corrige se sair para a esquerda
+            if (left < 0) left = 0;
+            // Corrige se sair para a direita (fallback)
+            if (left + tip.offsetWidth > window.innerWidth) left = window.innerWidth - tip.offsetWidth;
+            // Corrige se sair para baixo da tela
+            if (top + tip.offsetHeight > window.innerHeight + window.scrollY) {
+                top = rect.top - tip.offsetHeight - 6 + window.scrollY;
+                if (top < 0) top = 0;
             }
+            tip.style.left = `${left}px`;
+            tip.style.top = `${top}px`;
+
+            // Fecha tooltip ao clicar fora ou perder foco
+            const closeTip = () => {
+                tip.remove();
+                document.body.removeEventListener('click', closeTip, true);
+            };
+            setTimeout(() => {
+                document.body.addEventListener('click', closeTip, true);
+            }, 20);
+        }
+
+        el.onmouseenter = e => {
+            if (window.matchMedia("(hover: hover)").matches) showTooltip(e);
         };
         el.onmouseleave = e => {
             document.querySelectorAll('.buff-tooltip').forEach(tip => tip.remove());
         };
         el.onclick = e => {
-            if (!window.matchMedia("(hover: hover)").matches) {
-                document.querySelectorAll('.buff-tooltip').forEach(tip => tip.remove());
-                const tip = document.createElement('div');
-                tip.className = 'buff-tooltip';
-                tip.innerHTML = buildTooltipHtml();
-                document.body.appendChild(tip);
-                const rect = el.getBoundingClientRect();
-                tip.style.left = `${rect.left + window.scrollX}px`;
-                tip.style.top = `${rect.bottom + window.scrollY + 6}px`;
-                e.stopPropagation();
-                const closeTip = () => {
-                    tip.remove();
-                    document.body.removeEventListener('click', closeTip, true);
-                };
-                setTimeout(() => {
-                    document.body.addEventListener('click', closeTip, true);
-                }, 20);
-            }
+            if (!window.matchMedia("(hover: hover)").matches || true) showTooltip(e);
+            e.stopPropagation();
         };
         el.onfocus = e => {
-            if (!window.matchMedia("(hover: hover)").matches) {
-                document.querySelectorAll('.buff-tooltip').forEach(tip => tip.remove());
-                const tip = document.createElement('div');
-                tip.className = 'buff-tooltip';
-                tip.innerHTML = buildTooltipHtml();
-                document.body.appendChild(tip);
-                const rect = el.getBoundingClientRect();
-                tip.style.left = `${rect.left + window.scrollX}px`;
-                tip.style.top = `${rect.bottom + window.scrollY + 6}px`;
-                e.stopPropagation();
-                const closeTip = () => {
-                    tip.remove();
-                    el.removeEventListener('blur', closeTip, true);
-                };
-                setTimeout(() => {
-                    el.addEventListener('blur', closeTip, true);
-                }, 20);
-            }
+            if (!window.matchMedia("(hover: hover)").matches) showTooltip(e);
         };
     });
 }
+/* =====================[ FIM TRECHO 4 ]===================== */

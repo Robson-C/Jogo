@@ -2,7 +2,70 @@
 
 /* =====================[ TRECHO 1: DICIONÁRIO CENTRAL DE BUFFS/DEBUFFS ]===================== */
 const BUFFS_INFO = {
-    // Buffs compostos exclusivos por inimigo
+    // Boss Capítulo 1 — Buffs e Debuffs exclusivos
+
+    gosma_paralisante: {
+        nome: "Gosma Paralisante",
+        descricao: "Você está paralisado por uma gosma viscosa.",
+        icone: "🟢",
+        efeitos: { agilidade: "-3", defesa: "-3" }
+    },
+    esporos_alucinogenos: {
+        nome: "Esporos Alucinógenos",
+        descricao: "Sua mente e visão estão alteradas por esporos tóxicos.",
+        icone: "🍄",
+        efeitos: { precisao: "-3", sanidade: "-4" }
+    },
+    crescimento_selvagem: {
+        nome: "Crescimento Selvagem",
+        descricao: "A planta voraz ficou mais forte e ágil.",
+        icone: "🌱",
+        efeitos: { forca: "+3", agilidade: "+2" }
+    },
+    encantamento_noturno: {
+        nome: "Encantamento Noturno",
+        descricao: "Você está atordoado e sua defesa foi reduzida.",
+        icone: "🌑",
+        efeitos: { stun: "1", defesa: "-2" }
+    },
+    perfuracao_profunda: {
+        nome: "Perfuração Profunda",
+        descricao: "Defesa drasticamente reduzida e sofre dano contínuo.",
+        icone: "🦔",
+        efeitos: { defesa: "-4", vida: "-5/turno" }
+    },
+    revelacao_proibida: {
+        nome: "Revelação Proibida",
+        descricao: "Palavras proibidas enfraquecem sua sanidade e precisão.",
+        icone: "📖",
+        efeitos: { sanidade: "-4", precisao: "-3" }
+    },
+    chamas_ardentes: {
+        nome: "Chamas Ardentes",
+        descricao: "A Salamandra está muito mais veloz.",
+        icone: "🔥",
+        efeitos: { agilidade: "+4" }
+    },
+    olhar_penetrante: {
+        nome: "Olhar Penetrante",
+        descricao: "Sua defesa e precisão foram expostas.",
+        icone: "👁️",
+        efeitos: { defesa: "-3", precisao: "-2" }
+    },
+    vortice_abissal: {
+        nome: "Vórtice Abissal",
+        descricao: "Sua mente e proteção estão sendo drenadas.",
+        icone: "🌀",
+        efeitos: { sanidade: "-3", defesa: "-3" }
+    },
+    endurecimento_ancestral: {
+        nome: "Endurecimento Ancestral",
+        descricao: "A Gárgula está incrivelmente resistente.",
+        icone: "🪨",
+        efeitos: { defesa: "+4" }
+    },
+
+    // Outros buffs compostos realmente usados
     teia_pegajosa: {
         nome: "Teia Pegajosa",
         descricao: "Reduz sua agilidade e defesa por teia grudenta.",
@@ -33,7 +96,6 @@ const BUFFS_INFO = {
         icone: "🌑",
         efeitos: { defesa: "-X", sanidade: "-5/turno" }
     },
-    // Buff composto global que ainda é usado por boss (Rato-Rei)
     aura_real: {
         nome: "Aura Real",
         descricao: "Aumenta força e defesa.",
@@ -41,7 +103,7 @@ const BUFFS_INFO = {
         efeitos: { forca: "+4", defesa: "+1" }
     },
 
-    // Debuffs simples em uso
+    // Debuffs simples
     veneno: {
         nome: "Veneno",
         descricao: "Você sofre dano contínuo a cada turno.",
@@ -81,15 +143,25 @@ const BUFFS_INFO = {
 };
 /* =====================[ FIM TRECHO 1 ]===================== */
 
-
 /* =====================[ TRECHO 2: REGISTRO DE BUFFS COMPOSTOS ]===================== */
 const COMPOSITE_BUFFS = {
-    teia_pegajosa: ["agilidade", "defesa"],            // Usado pela Aranha Cinzenta
-    gelatina_pegajosa: ["agilidade", "defesa"],        // Usado pelo Cubo de Gelatina
-    grilhoes_naturais: ["agilidade", "forca"],         // Usado pela Planta que ri
-    chama_neon: ["agilidade", "vida"],                 // Usado pela Salamandra de Néon (reduz agilidade e dá dano por turno)
-    aura_sombria: ["defesa", "sanidade"],              // Usado pelo Orbe Sombria
-    aura_real: ["forca", "defesa"]                     // Boss/miniboss (Rato-Rei)
+    gosma_paralisante: ["agilidade", "defesa"],         // Slime Sábio
+    esporos_alucinogenos: ["precisao", "sanidade"],     // Cogumelo Ancestral
+    crescimento_selvagem: ["forca", "agilidade"],       // Planta Voraz (buff próprio)
+    encantamento_noturno: ["stun", "defesa"],           // Fada Sombria
+    perfuracao_profunda: ["defesa", "vida"],            // Cubo de Espinhos
+    revelacao_proibida: ["sanidade", "precisao"],       // Livro Proibido
+    chamas_ardentes: ["agilidade"],                     // Salamandra Radiante (buff próprio)
+    olhar_penetrante: ["defesa", "precisao"],           // Olho Onisciente
+    vortice_abissal: ["sanidade", "defesa"],            // Orbe Abissal
+    endurecimento_ancestral: ["defesa"],                // Gárgula Ancestral (buff próprio)
+    // Outros compostos em uso por monstros comuns ou bosses de outros capítulos:
+    teia_pegajosa: ["agilidade", "defesa"],
+    gelatina_pegajosa: ["agilidade", "defesa"],
+    grilhoes_naturais: ["agilidade", "forca"],
+    chama_neon: ["agilidade", "vida"],
+    aura_sombria: ["defesa", "sanidade"],
+    aura_real: ["forca", "defesa"]
 };
 /* =====================[ FIM TRECHO 2 ]===================== */
 
