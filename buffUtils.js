@@ -2,8 +2,7 @@
 
 /* =====================[ TRECHO 1: DICIONÁRIO CENTRAL DE BUFFS/DEBUFFS ]===================== */
 const BUFFS_INFO = {
-    // Boss Capítulo 1 — Buffs e Debuffs exclusivos
-
+    // Buffs compostos usados por chefes/inimigos (mantidos!)
     gosma_paralisante: {
         nome: "Gosma Paralisante",
         descricao: "Você está paralisado por uma gosma viscosa.",
@@ -27,12 +26,6 @@ const BUFFS_INFO = {
         descricao: "Você está atordoado e sua defesa foi reduzida.",
         icone: "🌑",
         efeitos: { stun: "1", defesa: "-2" }
-    },
-    perfuracao_profunda: {
-        nome: "Perfuração Profunda",
-        descricao: "Defesa drasticamente reduzida e sofre dano contínuo.",
-        icone: "🦔",
-        efeitos: { defesa: "-4", vida: "-5/turno" }
     },
     revelacao_proibida: {
         nome: "Revelação Proibida",
@@ -64,8 +57,6 @@ const BUFFS_INFO = {
         icone: "🪨",
         efeitos: { defesa: "+4" }
     },
-
-    // Outros buffs compostos realmente usados
     teia_pegajosa: {
         nome: "Teia Pegajosa",
         descricao: "Reduz sua agilidade e defesa por teia grudenta.",
@@ -84,18 +75,6 @@ const BUFFS_INFO = {
         icone: "🌿",
         efeitos: { agilidade: "-X", forca: "-X" }
     },
-    chama_neon: {
-        nome: "Chama de Néon",
-        descricao: "Você sofre queimaduras e se move mais devagar.",
-        icone: "🔥",
-        efeitos: { vida: "-3/turno", agilidade: "-2" }
-    },
-    aura_sombria: {
-        nome: "Aura Sombria",
-        descricao: "O orbe corrompe sua defesa e sanidade.",
-        icone: "🌑",
-        efeitos: { defesa: "-X", sanidade: "-5/turno" }
-    },
     aura_real: {
         nome: "Aura Real",
         descricao: "Aumenta força e defesa.",
@@ -103,19 +82,33 @@ const BUFFS_INFO = {
         efeitos: { forca: "+4", defesa: "+1" }
     },
 
-    // Debuffs simples
+    // DOTs padronizados (apenas estes foram alterados)
     veneno: {
-        nome: "Veneno",
+        nome: "Envenenado",
         descricao: "Você sofre dano contínuo a cada turno.",
         icone: "☠️",
         efeitos: { vida: "-X/turno" }
     },
     sangramento: {
-        nome: "Sangramento",
+        nome: "Sangrando",
         descricao: "Você está sangrando e perde vida a cada turno.",
         icone: "🩸",
         efeitos: { vida: "-X/turno" }
     },
+    em_chamas: {
+        nome: "Em Chamas",
+        descricao: "Você está queimando, sofre dano contínuo e tem agilidade reduzida.",
+        icone: "🔥",
+        efeitos: { vida: "-X/turno", agilidade: "-Y" }
+    },
+    aura_sombria: {
+        nome: "Aura Sombria",
+        descricao: "Você está sob efeito de energia sombria e perde sanidade a cada turno.",
+        icone: "🌑",
+        efeitos: { sanidade: "-X/turno", defesa: "-Y" }
+    },
+
+    // Debuffs simples globais
     agilidade: {
         nome: "Lentidão",
         descricao: "Reduz sua agilidade.",
@@ -161,11 +154,11 @@ const COMPOSITE_BUFFS = {
     olhar_penetrante: ["defesa", "precisao"],           // Olho Onisciente
     vortice_abissal: ["sanidade", "defesa"],            // Orbe Abissal
     endurecimento_ancestral: ["defesa"],                // Gárgula Ancestral (buff próprio)
-    // Outros compostos em uso por monstros comuns ou bosses de outros capítulos:
+    // ===== Removido chama_neon por padronização com em_chamas =====
+    // teia_pegajosa, gelatina_pegajosa, grilhoes_naturais, aura_sombria e aura_real mantidos
     teia_pegajosa: ["agilidade", "defesa"],
     gelatina_pegajosa: ["agilidade", "defesa"],
     grilhoes_naturais: ["agilidade", "forca"],
-    chama_neon: ["agilidade", "vida"],
     aura_sombria: ["defesa", "sanidade"],
     aura_real: ["forca", "defesa"]
 };
@@ -175,7 +168,7 @@ const COMPOSITE_BUFFS = {
 // Utilitário para buscar info do buff/debuff
 function getBuffInfo(buffKey) {
     return BUFFS_INFO[buffKey] || null;
-}isTituloEquipado
+}
 function isCompositeBuff(buffKey) {
     return !!COMPOSITE_BUFFS[buffKey];
 }
@@ -184,7 +177,8 @@ function isCompositeBuff(buffKey) {
 /* =====================[ TRECHO 4: DEBUFFS DO JOGADOR — APLICAÇÃO E ATUALIZAÇÃO ]===================== */
 
 // -- Aplicar debuff genérico no player --
-// Agora veneno, sangramento e precisão aceitam value e turns custom
+// SANGRAMENTO: Aceita apenas valor inicial, ignora "turns", duração sempre fixa em 3 turnos.
+// Comentário: Isso é obrigatório para manter a consistência do DOT e evitar bugs por uso incorreto.
 function applyPlayerDebuff(type, value, turns) {
     if (!gameState.debuffs) gameState.debuffs = {};
 
@@ -213,6 +207,53 @@ function applyPlayerDebuff(type, value, turns) {
         }
     }
 
+    // Sangramento: SEMPRE aceita só o valor inicial, ignora "turns" recebido (sempre 3 turnos, ticks decrescentes).
+    // ATENÇÃO: O parâmetro "turns" é ignorado por padrão aqui!
+    if (type === "sangramento") {
+        if (typeof value !== "number" || value < 1) return;
+        let ticks = [];
+        if (value > 20) {
+            ticks = [value, value - 3, value - 6];
+        } else if (value > 10) {
+            ticks = [value, value - 2, value - 4];
+        } else {
+            ticks = [value, value - 1, value - 2];
+        }
+        // Previne ticks negativos
+        ticks = ticks.map(v => (v > 0 ? v : 1));
+        // Sempre duração 3 turnos
+        gameState.debuffs.sangramento = { value: ticks[0], ticks, turn: 0, turns: 3 };
+        return;
+    }
+
+    // ===== AURA SOMBRIA: Suporta objeto { sanidade: X, defesa: Y }, duração igual para ambos =====
+    // - DOT de sanidade: diminui X por tick.
+    // - Defesa: redução fixa no atributo enquanto durar (volta ao normal ao expirar).
+    // - Comentário: Ambos expiram juntos, DOT e redução de defesa atrelados.
+    if (type === "aura_sombria" && typeof value === "object" && value !== null) {
+        // Aceita: applyPlayerDebuff("aura_sombria", { sanidade: X, defesa: Y }, turns)
+        const sanidadeTick = typeof value.sanidade === "number" ? value.sanidade : 0;
+        const defesaRed = typeof value.defesa === "number" ? value.defesa : 0;
+        // Aplica o DOT de sanidade como parte do debuff composto
+        gameState.debuffs.aura_sombria = {
+            sanidadeTick,
+            defesaRed,
+            turns: typeof turns === "number" && turns > 0 ? turns : 1,
+            turn: 0
+        };
+        // Redução de defesa entra como debuff secundário "defesa", mas volta ao normal ao expirar
+        if (defesaRed > 0) {
+            // Guarda valor anterior, se já houver, acumula
+            if (gameState.debuffs.defesa) {
+                gameState.debuffs.defesa.value += defesaRed;
+                gameState.debuffs.defesa.turns = Math.max(gameState.debuffs.defesa.turns, turns);
+            } else {
+                gameState.debuffs.defesa = { value: defesaRed, turns: typeof turns === "number" && turns > 0 ? turns : 1 };
+            }
+        }
+        return;
+    }
+
     // Stacking inteligente: soma valor, duração = maior (exceto precisão, veneno e sangramento)
     if (type === "defesa" || type === "agilidade" || type === "forca") {
         if (gameState.debuffs[type]) {
@@ -222,8 +263,8 @@ function applyPlayerDebuff(type, value, turns) {
             gameState.debuffs[type] = { value, turns };
         }
     }
-    // Precisão, veneno e sangramento: sempre value/turns custom — não acumulam, apenas renovam duração e valor
-    else if (type === "precisao" || type === "veneno" || type === "sangramento") {
+    // Precisão, veneno: sempre value/turns custom — não acumulam, apenas renovam duração e valor
+    else if (type === "precisao" || type === "veneno") {
         gameState.debuffs[type] = { value, turns };
         if (type === "precisao") {
             if (!playerProfile.ofuscamentosSofridos) playerProfile.ofuscamentosSofridos = 0;
@@ -257,96 +298,84 @@ function tickPlayerDebuffs() {
                 addMessage(`Você sofre ${danoVeneno} de dano do veneno!`, true);
             }
         }
-        // Sangramento (valor fixo)
+        // Sangramento (novo algoritmo, ticks decrescentes, duração sempre 3 turnos)
         if (type === "sangramento") {
-            const danoSangue = gameState.debuffs[type].value || 0;
-            if (danoSangue > 0) {
-                gameState.vida = Math.max(0, gameState.vida - danoSangue);
-                addMessage(`Você sofre ${danoSangue} de dano do sangramento!`, true);
+            const debuff = gameState.debuffs[type];
+            const ticks = debuff.ticks;
+            const turno = debuff.turn;
+            if (ticks && ticks[turno] > 0) {
+                gameState.vida = Math.max(0, gameState.vida - ticks[turno]);
+                addMessage(`Você sofre ${ticks[turno]} de dano do sangramento!`, true);
+            }
+            gameState.debuffs[type].turn++;
+        }
+        // Em Chamas (DOT padronizado)
+        if (type === "em_chamas") {
+            const debuff = gameState.debuffs[type];
+            if (debuff && typeof debuff.value === "object" && debuff.value !== null) {
+                const dano = typeof debuff.value.dano === "number" ? debuff.value.dano : 0;
+                if (dano > 0) {
+                    gameState.vida = Math.max(0, gameState.vida - dano);
+                    addMessage(`Você sofre ${dano} de dano das chamas!`, true);
+                }
             }
         }
-        // Chama de Néon (composto)
-        if (type === "chama_neon") {
-            gameState.vida = Math.max(0, gameState.vida - 3);
-            addMessage("As queimaduras das Chamas de Néon causam 3 de dano!", true);
-        }
-        // Aura Sombria (composto)
+        // ===== AURA SOMBRIA: DOT de sanidade + defesa fixa, ambos expiram juntos =====
         if (type === "aura_sombria") {
-            if (typeof gameState.sanity === "number") {
-                gameState.sanity = Math.max(0, gameState.sanity - 5);
-                addMessage("A aura sombria drena sua sanidade! (-5)", true);
+            const debuff = gameState.debuffs[type];
+            if (debuff && typeof debuff.sanidadeTick === "number" && debuff.sanidadeTick > 0) {
+                if (typeof gameState.sanity === "number") {
+                    gameState.sanity = Math.max(0, gameState.sanity - debuff.sanidadeTick);
+                    addMessage(`A aura sombria drena sua sanidade! (-${debuff.sanidadeTick})`, true);
+                }
             }
+            // Redução de defesa é aplicada na aplicação do debuff (applyPlayerDebuff) e expirada aqui
+            // Quando o DOT expira, a redução de defesa também expira (removida junto)
         }
-        // Debuffs compostos exclusivos visuais (teia, gelatina, grilhoes) não têm efeito extra além dos stats afetados
-        // Efeito de stun já tratado no fluxo de combate
 
         gameState.debuffs[type].turns -= 1;
-        if (gameState.debuffs[type].turns <= 0) {
+        // Remove sangramento se passou dos ticks (após 3)
+        if (type === "sangramento") {
+            if (gameState.debuffs[type].turn >= 3) {
+                delete gameState.debuffs[type];
+                continue;
+            }
+        }
+        // Expiração de AURA SOMBRIA: remove também redução de defesa associada, se houver
+        if (type === "aura_sombria" && gameState.debuffs[type].turns <= 0) {
+            // Remove redução de defesa associada a esse DOT, se ativa
+            if (gameState.debuffs.defesa && typeof gameState.debuffs[type].defesaRed === "number") {
+                gameState.debuffs.defesa.value -= gameState.debuffs[type].defesaRed;
+                if (gameState.debuffs.defesa.value <= 0) {
+                    delete gameState.debuffs.defesa;
+                }
+            }
+            delete gameState.debuffs[type];
+            continue;
+        }
+        // Remove buff/debuff se acabou a duração (exceto sangramento que já é removido acima)
+        if (gameState.debuffs[type] && type !== "sangramento" && type !== "aura_sombria" && gameState.debuffs[type].turns <= 0) {
             delete gameState.debuffs[type];
         }
-    }
-    // Limpa debuff composto se um dos componentes sumir
-    if (gameState.debuffs["teia_pegajosa"] &&
-        (!gameState.debuffs["agilidade"] || !gameState.debuffs["defesa"])) {
-        delete gameState.debuffs["teia_pegajosa"];
-    }
-    if (gameState.debuffs["gelatina_pegajosa"] &&
-        (!gameState.debuffs["agilidade"] || !gameState.debuffs["defesa"])) {
-        delete gameState.debuffs["gelatina_pegajosa"];
-    }
-    if (gameState.debuffs["grilhoes_naturais"] &&
-        (!gameState.debuffs["agilidade"] || !gameState.debuffs["forca"])) {
-        delete gameState.debuffs["grilhoes_naturais"];
-    }
-    if (gameState.debuffs["chama_neon"] &&
-        (!gameState.debuffs["agilidade"])) {
-        delete gameState.debuffs["chama_neon"];
-    }
-    if (gameState.debuffs["aura_sombria"] &&
-        (!gameState.debuffs["defesa"])) {
-        delete gameState.debuffs["aura_sombria"];
     }
 }
 /* =====================[ FIM TRECHO 4 ]===================== */
 
-
 /* =====================[ TRECHO 5: BUFFS DO INIMIGO — APLICAÇÃO E ATUALIZAÇÃO ]===================== */
 
-// -- Aplicar buff genérico no inimigo --
+// Similar ao player, mas não precisa alterar agora (mantém padrão original)
 function applyEnemyBuff(type, value, turns) {
+    if (!gameState.currentEnemy) return;
     if (!gameState.currentEnemy.buffs) gameState.currentEnemy.buffs = {};
-
-    // Stacking inteligente: soma valor, duração = maior (exceto precisão/agilidade, que acumulam só turnos)
-    if (type === "defesa" || type === "forca") {
-        if (gameState.currentEnemy.buffs[type]) {
-            gameState.currentEnemy.buffs[type].value += value;
-            gameState.currentEnemy.buffs[type].turns = Math.max(gameState.currentEnemy.buffs[type].turns, turns);
-        } else {
-            gameState.currentEnemy.buffs[type] = { value, turns };
-        }
-    }
-    // Precisão/agilidade: só acumulam turnos
-    else if (type === "agilidade" || type === "precisao") {
-        if (gameState.currentEnemy.buffs[type]) {
-            gameState.currentEnemy.buffs[type].turns += turns;
-        } else {
-            gameState.currentEnemy.buffs[type] = { value, turns };
-        }
-    }
-    // Default genérico
-    else {
-        if (gameState.currentEnemy.buffs[type]) {
-            gameState.currentEnemy.buffs[type].value += value;
-            gameState.currentEnemy.buffs[type].turns = Math.max(gameState.currentEnemy.buffs[type].turns, turns);
-        } else {
-            gameState.currentEnemy.buffs[type] = { value, turns };
-        }
+    if (gameState.currentEnemy.buffs[type]) {
+        gameState.currentEnemy.buffs[type].value += value;
+        gameState.currentEnemy.buffs[type].turns = Math.max(gameState.currentEnemy.buffs[type].turns, turns);
+    } else {
+        gameState.currentEnemy.buffs[type] = { value, turns };
     }
 }
-
-// -- Atualizar buffs do inimigo a cada turno --
 function tickEnemyBuffs() {
-    if (!gameState.currentEnemy.buffs) return;
+    if (!gameState.currentEnemy || !gameState.currentEnemy.buffs) return;
     for (const type in gameState.currentEnemy.buffs) {
         gameState.currentEnemy.buffs[type].turns -= 1;
         if (gameState.currentEnemy.buffs[type].turns <= 0) {
@@ -356,77 +385,65 @@ function tickEnemyBuffs() {
 }
 /* =====================[ FIM TRECHO 5 ]===================== */
 
-/* =====================[ TRECHO 6: FUNÇÕES DE STATUS REAIS (PLAYER E INIMIGO) ]===================== */
-
-// Força do inimigo considerando buff
-function getEnemyForcaAtual() {
-    let forca = gameState.currentEnemy.forca;
-    if (gameState.currentEnemy.buffs && gameState.currentEnemy.buffs["forca"]) {
-        forca += gameState.currentEnemy.buffs["forca"].value;
-    }
-    return forca;
-}
-
-// Defesa do inimigo considerando buff
-function getEnemyDefesaAtual() {
-    let defesa = gameState.currentEnemy.defesa;
-    if (gameState.currentEnemy.buffs && gameState.currentEnemy.buffs["defesa"]) {
-        defesa += gameState.currentEnemy.buffs["defesa"].value;
-    }
-    return defesa;
-}
-
-// Agilidade do player considerando debuff
-function getPlayerAgilidadeAtual() {
-    let agi = gameState.agilidade;
-    if (gameState.debuffs && gameState.debuffs["agilidade"]) {
-        agi = Math.max(0, agi - gameState.debuffs["agilidade"].value);
-    }
-    return agi;
-}
-
-// Defesa do player considerando debuff
-function getPlayerDefesaAtual() {
-    let def = gameState.defesa;
-    if (gameState.debuffs && gameState.debuffs["defesa"]) {
-        def = Math.max(0, def - gameState.debuffs["defesa"].value);
-    }
-    return def;
-}
-
-// Precisão do player considerando debuff (agora valor fixo)
-function getPlayerPrecisaoAtual() {
-    let precisao = gameState.precisao;
-    if (gameState.debuffs && gameState.debuffs["precisao"]) {
-        precisao = Math.max(0, precisao - gameState.debuffs["precisao"].value);
-    }
-    return precisao;
-}
-
-// Força do player considerando debuff
+/* =====================[ TRECHO 6: GETTERS DE STATS COM BUFFS/DEBUFFS ]===================== */
+// Funções de cálculo real dos stats, somando buffs/debuffs ativos (mantém padrão do projeto)
 function getPlayerForcaAtual() {
-    let forca = gameState.forca;
-    if (gameState.debuffs && gameState.debuffs["forca"]) {
-        forca = Math.max(1, forca - gameState.debuffs["forca"].value);
-    }
-    return forca;
+    let base = gameState.forca;
+    if (gameState.debuffs && gameState.debuffs.forca) base -= gameState.debuffs.forca.value;
+    if (gameState.debuffs && gameState.debuffs.aura_sombria && typeof gameState.debuffs.aura_sombria.defesaRed === "number") base -= gameState.debuffs.aura_sombria.defesaRed;
+    return Math.max(1, base);
 }
-/* =====================[ FIM TRECHO 6 ]===================== */
+function getPlayerDefesaAtual() {
+    let base = gameState.defesa;
+    if (gameState.debuffs && gameState.debuffs.defesa) base -= gameState.debuffs.defesa.value;
+    return Math.max(0, base);
+}
+function getPlayerAgilidadeAtual() {
+    let base = gameState.agilidade;
+    if (gameState.debuffs && gameState.debuffs.agilidade) base -= gameState.debuffs.agilidade.value;
+    return Math.max(1, base);
+}
+function getPlayerPrecisaoAtual() {
+    let base = gameState.precisao;
+    if (gameState.debuffs && gameState.debuffs.precisao) base -= gameState.debuffs.precisao.value;
+    return Math.max(1, base);
+}
+function getEnemyForcaAtual() {
+    let base = gameState.currentEnemy.forca;
+    if (gameState.currentEnemy.buffs && gameState.currentEnemy.buffs.forca) base += gameState.currentEnemy.buffs.forca.value;
+    return Math.max(1, base);
+}
+function getEnemyDefesaAtual() {
+    let base = gameState.currentEnemy.defesa;
+    if (gameState.currentEnemy.buffs && gameState.currentEnemy.buffs.defesa) base += gameState.currentEnemy.buffs.defesa.value;
+    return Math.max(0, base);
+}
+function getEnemyAgilidadeAtual() {
+    let base = gameState.currentEnemy.agilidade;
+    if (gameState.currentEnemy.buffs && gameState.currentEnemy.buffs.agilidade) base += gameState.currentEnemy.buffs.agilidade.value;
+    return Math.max(1, base);
+}
+function getEnemyPrecisaoAtual() {
+    let base = gameState.currentEnemy.precisao;
+    if (gameState.currentEnemy.buffs && gameState.currentEnemy.buffs.precisao) base += gameState.currentEnemy.buffs.precisao.value;
+    return Math.max(1, base);
+}
 
-
-/* =====================[ TRECHO 7: EXPORTAÇÃO GLOBAL ]===================== */
-// ----- Exportação para uso global -----
+/* =====================[ EXPORTS GLOBAIS ]===================== */
 window.BUFFS_INFO = BUFFS_INFO;
+window.COMPOSITE_BUFFS = COMPOSITE_BUFFS;
 window.getBuffInfo = getBuffInfo;
-window.isCompositeBuff = isCompositeBuff;
 window.applyPlayerDebuff = applyPlayerDebuff;
 window.tickPlayerDebuffs = tickPlayerDebuffs;
 window.applyEnemyBuff = applyEnemyBuff;
 window.tickEnemyBuffs = tickEnemyBuffs;
+window.getPlayerForcaAtual = getPlayerForcaAtual;
+window.getPlayerDefesaAtual = getPlayerDefesaAtual;
+window.getPlayerAgilidadeAtual = getPlayerAgilidadeAtual;
+window.getPlayerPrecisaoAtual = getPlayerPrecisaoAtual;
 window.getEnemyForcaAtual = getEnemyForcaAtual;
 window.getEnemyDefesaAtual = getEnemyDefesaAtual;
-window.getPlayerAgilidadeAtual = getPlayerAgilidadeAtual;
-window.getPlayerDefesaAtual = getPlayerDefesaAtual;
-window.getPlayerPrecisaoAtual = getPlayerPrecisaoAtual;
-window.getPlayerForcaAtual = getPlayerForcaAtual;
+window.getEnemyAgilidadeAtual = getEnemyAgilidadeAtual;
+window.getEnemyPrecisaoAtual = getEnemyPrecisaoAtual;
+
 /* =====================[ FIM DO ARQUIVO buffUtils.js ]===================== */

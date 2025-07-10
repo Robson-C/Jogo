@@ -277,6 +277,9 @@ function updateEnemyPanel() {
 
         initBuffTooltipHandlers();
 
+        // Chamada adicionada para destacar painel se for boss
+        atualizarBossPanel();
+
     } else if (panel) {
         // Animação de saída antes de remover do DOM
         if (panel.classList.contains('expandido')) {
@@ -300,7 +303,19 @@ function updateEnemyPanel() {
     }
 }
 
+// Função auxiliar dedicada para destaque de boss no painel inimigo
+function atualizarBossPanel() {
+    const panel = document.getElementById('enemyPanel');
+    if (!panel || typeof isBossEnemy !== "function" || !gameState.currentEnemy) return;
+    if (isBossEnemy(gameState.currentEnemy.name)) {
+        panel.classList.add('boss-panel');
+    } else {
+        panel.classList.remove('boss-panel');
+    }
+}
+
 /* =====================[ FIM TRECHO 3 ]===================== */
+
 
 /* =====================[ TRECHO 4: UTILS DE STATUS E TOOLTIP ]===================== */
 

@@ -693,9 +693,10 @@ button:focus-visible {
 
 /* =====================[ FIM TRECHO 7 ]===================== */
 
-/* =====================[ TÍTULOS — SLOTS, GRID E PAINEL MODAL ]===================== */
+/* =====================[ FIM TRECHO 7 ]===================== */
 
-/* SLOTS de equipar (acima do painel) */
+/* =====================[ TRECHO 8: TÍTULOS — SLOTS DE EQUIPAR E PAINEL PRINCIPAL ]===================== */
+
 .titulo-equip-slots {
     display: flex;
     justify-content: center;
@@ -737,8 +738,6 @@ button:focus-visible {
     opacity: 0.67;
     cursor: default;
 }
-
-/* Painel central dos títulos */
 .titulos-painel-box {
     width: 90vw;
     max-width: 410px;
@@ -762,7 +761,10 @@ button:focus-visible {
     }
 }
 
-/* =====================[ GRID DE TÍTULOS ]===================== */
+/* =====================[ FIM TRECHO 8 ]===================== */
+
+/* =====================[ TRECHO 9: GRID DE TÍTULOS E CARDS ]===================== */
+
 .titulos-grid {
     width: 100%;
     max-width: 350px;
@@ -817,7 +819,10 @@ button:focus-visible {
     border-color: #c2b98e;
 }
 
-/* =====================[ MODAL/PAINEL DE INFORMAÇÃO DE TÍTULO ]===================== */
+/* =====================[ FIM TRECHO 9 ]===================== */
+
+/* =====================[ TRECHO 10: MODAL/PAINEL DE INFORMAÇÃO DE TÍTULO ]===================== */
+
 .painel-titulo-info {
     position: fixed;
     left: 50%;
@@ -914,7 +919,6 @@ button:focus-visible {
 .btn-fechar-titulo-info:focus {
     outline: 2px solid #c2b98e;
 }
-
 .painel-titulo-aviso {
     position: fixed;
     left: 50%;
@@ -935,7 +939,10 @@ button:focus-visible {
     to   { opacity: 1; transform: translateX(-50%) scale(1);}
 }
 
-/* =====================[ TOOLTIP DE TÍTULOS (opcional, para hover/focus) ]===================== */
+/* =====================[ FIM TRECHO 10 ]===================== */
+
+/* =====================[ TRECHO 11: TOOLTIP DE TÍTULOS ]===================== */
+
 .titulo-tooltip {
     position: absolute;
     z-index: 1200;
@@ -983,4 +990,18 @@ button:focus-visible {
     font-style: italic;
 }
 
-/* =====================[ FIM DO CSS DE TÍTULOS E MODAIS ]===================== */
+/* =====================[ FIM TRECHO 11 ]===================== */
+
+/* =====================[ TRECHO 12: DESTAQUE VISUAL AVANÇADO DE CHEFE ]===================== */
+.boss-panel {
+  position: relative;
+  border: 3px solid #b8860b; /* dourado mais escuro e menos saturado */
+  border-radius: 12px;
+  box-shadow:
+    0 0 12px 1px rgba(184,134,11,0.5),
+    inset 0 0 6px rgba(0,0,0,0.4);
+  background: linear-gradient(135deg, #3a2a1f, #23180e);
+  color: #f5e6c4;
+}
+
+/* =====================[ FIM TRECHO 12 ]===================== */
