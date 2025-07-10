@@ -331,35 +331,7 @@ function checkLevelUp() {
 }
 /* =====================[ FIM TRECHO 8 ]===================== */
 
-
-
-/* =====================[ TRECHO 9: LEVEL UP E ANDARES ]===================== */
-function checkLevelUp() {
-    if (gameState.xp >= gameState.nextLevel) {
-        gameState.level++;
-        gameState.xp -= gameState.nextLevel;
-        gameState.nextLevel = Math.floor(gameState.nextLevel * 1.5);
-
-        gameState.maxVida += 10;
-        gameState.vida = gameState.maxVida;
-        gameState.maxMana += 5;
-        gameState.mana = gameState.maxMana;
-        gameState.maxEnergia += 5;
-        gameState.energia = gameState.maxEnergia;
-        gameState.maxSanity += 5;
-        gameState.sanity = gameState.maxSanity;
-
-        gameState.forca += 2;
-        gameState.defesa += 1;
-        gameState.precisao += 1;
-        gameState.agilidade += 1;
-
-        addMessage(
-            `Nível ${gameState.level}! Atributos aumentados!`, false, false, 'levelup'
-        );
-        updateStatus();
-    }
-}
+/* =====================[ TRECHO 9: ANDARES ]===================== */
 
 function advanceToNextFloor() {
     gameState.currentFloor++;
