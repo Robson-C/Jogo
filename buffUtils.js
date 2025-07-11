@@ -81,6 +81,39 @@ const BUFFS_INFO = {
         icone: "👑",
         efeitos: { forca: "+4", defesa: "+1" }
     },
+    fraqueza_aranha: {
+        nome: "Fraqueza da Aranha",
+        descricao: "Por injetar todo o seu veneno na presa fica fraca pela duração do veneno.",
+        icone: "🕷️",
+        efeitos: { forca: "-X" }
+        },furia_abissal: {
+        nome: "Fúria Abissal",
+        descricao: "O inimigo está em fúria: força e defesa aumentadas, agilidade e precisão reduzidas.",
+        icone: "🐻‍❄️"
+    },
+    pisao_demolidor: {
+        nome: "Pisão Demolidor",
+        descricao: "Você está atordoado e com atributos reduzidos pelo impacto.",
+        icone: "🦦"
+    },
+    eco_sombrio: {
+        nome: "Eco Sombrio",
+        descricao: "Você está atordoado, confuso e com reflexos lentos.",
+        icone: "🦇"
+    },
+    aura_sombria: {
+        nome: "Aura Sombria",
+        descricao: "Você está sob efeito de energia sombria e perde sanidade a cada turno.",
+        icone: "🌑",
+        efeitos: { sanidade: "-X/turno", defesa: "-Y" }
+    },
+    chamas_debilitantes: {
+        nome: "Chamas Debilitantes",
+        descricao: "Você está queimando e sua agilidade está reduzida.",
+        icone: "🔥🐢",
+        efeitos: { vida: "-X/turno", agilidade: "-Y" }
+    },
+
 
     // DOTs padronizados (apenas estes foram alterados)
     veneno: {
@@ -95,17 +128,17 @@ const BUFFS_INFO = {
         icone: "🩸",
         efeitos: { vida: "-X/turno" }
     },
-    em_chamas: {
-        nome: "Em Chamas",
-        descricao: "Você está queimando, sofre dano contínuo e tem agilidade reduzida.",
+    chamas: {
+        nome: "Chamas",
+        descricao: "Você está queimando e perde vida a cada rodada.",
         icone: "🔥",
-        efeitos: { vida: "-X/turno", agilidade: "-Y" }
+        efeitos: { vida: "-X/turno" }
     },
-    aura_sombria: {
-        nome: "Aura Sombria",
-        descricao: "Você está sob efeito de energia sombria e perde sanidade a cada turno.",
-        icone: "🌑",
-        efeitos: { sanidade: "-X/turno", defesa: "-Y" }
+    enlouquecendo: {
+        nome: "Enlouquecendo",
+        descricao: "Você está perdendo sanidade a cada rodada.",
+        icone: "🧠",
+        efeitos: { sanidade: "-X/turno" }
     },
 
     // Debuffs simples globais
@@ -142,25 +175,35 @@ const BUFFS_INFO = {
 };
 /* =====================[ FIM TRECHO 1 ]===================== */
 
-/* =====================[ TRECHO 2: REGISTRO DE BUFFS COMPOSTOS ]===================== */
+/* =====================[ TRECHO 2: COMPOSITE_BUFFS (BUFFS COMPUESTOS/MÁSCARAS) ]===================== */
 const COMPOSITE_BUFFS = {
-    gosma_paralisante: ["agilidade", "defesa"],         // Slime Sábio
-    esporos_alucinogenos: ["precisao", "sanidade"],     // Cogumelo Ancestral
-    crescimento_selvagem: ["forca", "agilidade"],       // Planta Voraz (buff próprio)
-    encantamento_noturno: ["stun", "defesa"],           // Fada Sombria
-    perfuracao_profunda: ["defesa", "vida"],            // Cubo de Espinhos
-    revelacao_proibida: ["sanidade", "precisao"],       // Livro Proibido
-    chamas_ardentes: ["agilidade"],                     // Salamandra Radiante (buff próprio)
-    olhar_penetrante: ["defesa", "precisao"],           // Olho Onisciente
-    vortice_abissal: ["sanidade", "defesa"],            // Orbe Abissal
-    endurecimento_ancestral: ["defesa"],                // Gárgula Ancestral (buff próprio)
-    // ===== Removido chama_neon por padronização com em_chamas =====
-    // teia_pegajosa, gelatina_pegajosa, grilhoes_naturais, aura_sombria e aura_real mantidos
+    // Capítulo 1 & históricos
+    gosma_paralisante: ["agilidade", "defesa"],             // Slime Sábio
+    esporos_alucinogenos: ["precisao", "sanidade"],         // Cogumelo Ancestral
+    crescimento_selvagem: ["forca", "agilidade"],           // Planta Voraz (buff próprio)
+    encantamento_noturno: ["stun", "defesa"],               // Fada Sombria
+    perfuracao_profunda: ["defesa", "vida"],                // Cubo de Espinhos (antigo, se ainda usa)
+    revelacao_proibida: ["sanidade", "precisao"],           // Livro Proibido
+    chamas_ardentes: ["agilidade"],                         // Salamandra Radiante (buff próprio)
+    olhar_penetrante: ["defesa", "precisao"],               // Olho Onisciente
+    vortice_abissal: ["sanidade", "defesa"],                // Orbe Abissal (antigo, agora "enlouquecendo" + defesa, veja padronização)
+    endurecimento_ancestral: ["defesa"],                    // Gárgula Ancestral (buff próprio)
+    // Legados e mascaras para visuais clássicos
     teia_pegajosa: ["agilidade", "defesa"],
+    chamas_debilitantes: ["chamas", "agilidade"],
     gelatina_pegajosa: ["agilidade", "defesa"],
     grilhoes_naturais: ["agilidade", "forca"],
-    aura_sombria: ["defesa", "sanidade"],
-    aura_real: ["forca", "defesa"]
+    aura_sombria: ["defesa", "sanidade"],                   // Orbe Sombria/Aura visual clássica
+    aura_real: ["forca", "defesa"],                         // (histórico, boss especial)
+    // Novos compostos/padronizados Cap 2 e chefes
+    furia_abissal: ["forca", "defesa", "agilidade", "precisao"],    // Urso Abissal
+    pisao_demolidor: ["stun", "agilidade", "forca"],                // Tatu Demolidor
+    eco_sombrio: ["stun", "agilidade", "precisao"],                 // Morcego Prismático
+    presa_toxica: ["sangramento", "veneno"],                        // Aranha Carniceira
+    golpe_perfurante: ["sangramento", "defesa"],                    // Cubo de Espinhos
+    teia_lerdeza: ["defesa", "agilidade"],                          // Aranha Cinzenta
+    encantamento_noturno: ["stun", "defesa"],                       // Fada Sombria
+    // Adicione aqui sempre que houver skill multi-efeito
 };
 /* =====================[ FIM TRECHO 2 ]===================== */
 

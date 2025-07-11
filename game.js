@@ -34,54 +34,53 @@ const ROOM_TYPES = {
 
 const ENEMIES = [
     // ======= INIMIGOS NORMAIS CAP 1 =======
-    { name: "Slime Verde", vida: 16, maxVida: 16, forca: 6, defesa: 1, precisao: 9, agilidade: 8 },
-    { name: "Cogumelo Saltitante", vida: 17, maxVida: 17, forca: 6, defesa: 1, precisao: 10, agilidade: 9 },
-    { name: "Planta que ri", vida: 18, maxVida: 18, forca: 7, defesa: 2, precisao: 8, agilidade: 7 },
-    { name: "Fada Travessa", vida: 13, maxVida: 13, forca: 7, defesa: 2, precisao: 11, agilidade: 12 },
-    { name: "Cubo de Gelatina", vida: 20, maxVida: 20, forca: 6, defesa: 3, precisao: 8, agilidade: 6 },
-    { name: "Livro Falante", vida: 14, maxVida: 14, forca: 5, defesa: 1, precisao: 12, agilidade: 8 },
-    { name: "Salamandra de Néon", vida: 15, maxVida: 15, forca: 8, defesa: 2, precisao: 9, agilidade: 9 },
-    { name: "Olho Vigilante", vida: 13, maxVida: 13, forca: 7, defesa: 1, precisao: 13, agilidade: 10 },
-    { name: "Orbe Sombria", vida: 14, maxVida: 14, forca: 8, defesa: 1, precisao: 11, agilidade: 8 },
-    { name: "Gárgula de Pedra", vida: 22, maxVida: 22, forca: 9, defesa: 5, precisao: 10, agilidade: 5 },
-
-    // ======= INIMIGOS NORMAIS CAP 2 =======
-    { name: "Sapo com chifres", vida: 25, maxVida: 25, forca: 14, defesa: 6, precisao: 13, agilidade: 10 },
-    { name: "Cobra Alada", vida: 22, maxVida: 22, forca: 13, defesa: 5, precisao: 14, agilidade: 14 },
-    { name: "Aranha Cinzenta", vida: 21, maxVida: 21, forca: 12, defesa: 7, precisao: 13, agilidade: 11 },
-    { name: "Coruja de 3 olhos", vida: 24, maxVida: 24, forca: 12, defesa: 6, precisao: 16, agilidade: 11 },
-    { name: "Lobo de 2 cabeças", vida: 26, maxVida: 26, forca: 15, defesa: 5, precisao: 13, agilidade: 15 },
-    { name: "Rato gigante", vida: 27, maxVida: 27, forca: 13, defesa: 6, precisao: 12, agilidade: 13 },
-    { name: "Morcego de vidro", vida: 20, maxVida: 20, forca: 12, defesa: 5, precisao: 16, agilidade: 17 },
-    { name: "Aranha Carniceira", vida: 23, maxVida: 23, forca: 13, defesa: 7, precisao: 14, agilidade: 12 },
-    { name: "Urso de boca gigante", vida: 30, maxVida: 30, forca: 17, defesa: 7, precisao: 12, agilidade: 9 },
-    { name: "Tatu com garras", vida: 28, maxVida: 28, forca: 14, defesa: 10, precisao: 11, agilidade: 8 },
-
+    { name: "Slime Verde", vida: 22, maxVida: 22, forca: 6, defesa: 1, precisao: 9, agilidade: 8 },
+    { name: "Cogumelo Saltitante", vida: 22, maxVida: 22, forca: 6, defesa: 1, precisao: 10, agilidade: 9 },
+    { name: "Planta que ri", vida: 23, maxVida: 23, forca: 7, defesa: 2, precisao: 8, agilidade: 7 },
+    { name: "Fada Travessa", vida: 21, maxVida: 21, forca: 7, defesa: 2, precisao: 11, agilidade: 12 },
+    { name: "Cubo de Gelatina", vida: 28, maxVida: 28, forca: 6, defesa: 3, precisao: 8, agilidade: 6 },
+    { name: "Livro Falante", vida: 24, maxVida: 24, forca: 5, defesa: 1, precisao: 12, agilidade: 8 },
+    { name: "Salamandra de Néon", vida: 25, maxVida: 25, forca: 8, defesa: 2, precisao: 9, agilidade: 9 },
+    { name: "Olho Vigilante", vida: 23, maxVida: 23, forca: 7, defesa: 1, precisao: 13, agilidade: 10 },
+    { name: "Orbe Sombria", vida: 24, maxVida: 24, forca: 8, defesa: 1, precisao: 11, agilidade: 8 },
+    { name: "Gárgula de Pedra", vida: 30, maxVida: 30, forca: 9, defesa: 5, precisao: 10, agilidade: 5 },
 
     // ======= BOSSES CAP 1 =======
-    { name: "Slime Sábio", vida: 32, maxVida: 32, forca: 9, defesa: 3, precisao: 11, agilidade: 9 },
-    { name: "Cogumelo Ancestral", vida: 34, maxVida: 34, forca: 10, defesa: 3, precisao: 13, agilidade: 10 },
-    { name: "Planta Voraz", vida: 36, maxVida: 36, forca: 11, defesa: 4, precisao: 11, agilidade: 8 },
-    { name: "Fada Sombria", vida: 27, maxVida: 27, forca: 12, defesa: 4, precisao: 14, agilidade: 14 },
-    { name: "Cubo de Espinhos", vida: 40, maxVida: 40, forca: 10, defesa: 6, precisao: 12, agilidade: 8 },
-    { name: "Livro Proibido", vida: 28, maxVida: 28, forca: 9, defesa: 3, precisao: 15, agilidade: 9 },
-    { name: "Salamandra Radiante", vida: 30, maxVida: 30, forca: 13, defesa: 5, precisao: 12, agilidade: 12 },
-    { name: "Olho Onisciente", vida: 29, maxVida: 29, forca: 13, defesa: 4, precisao: 15, agilidade: 12 },
-    { name: "Orbe Abissal", vida: 32, maxVida: 32, forca: 14, defesa: 4, precisao: 14, agilidade: 11 },
-    { name: "Gárgula Ancestral", vida: 44, maxVida: 44, forca: 13, defesa: 8, precisao: 13, agilidade: 6 },
+    { name: "Slime Sábio", vida: 50, maxVida: 50, forca: 7, defesa: 3, precisao: 11, agilidade: 9 },
+    { name: "Cogumelo Ancestral", vida: 54, maxVida: 54, forca: 8, defesa: 3, precisao: 13, agilidade: 10 },
+    { name: "Planta Voraz", vida: 58, maxVida: 58, forca: 9, defesa: 4, precisao: 11, agilidade: 8 },
+    { name: "Fada Sombria", vida: 44, maxVida: 44, forca: 9, defesa: 4, precisao: 14, agilidade: 14 },
+    { name: "Cubo de Espinhos", vida: 62, maxVida: 62, forca: 8, defesa: 6, precisao: 12, agilidade: 8 },
+    { name: "Livro Proibido", vida: 42, maxVida: 42, forca: 8, defesa: 3, precisao: 15, agilidade: 9 },
+    { name: "Salamandra Radiante", vida: 51, maxVida: 51, forca: 9, defesa: 5, precisao: 12, agilidade: 12 },
+    { name: "Olho Onisciente", vida: 50, maxVida: 50, forca: 10, defesa: 4, precisao: 15, agilidade: 12 },
+    { name: "Orbe Abissal", vida: 56, maxVida: 56, forca: 10, defesa: 4, precisao: 14, agilidade: 11 },
+    { name: "Gárgula Ancestral", vida: 80, maxVida: 80, forca: 10, defesa: 8, precisao: 13, agilidade: 6 },
+
+    // ======= INIMIGOS NORMAIS CAP 2 =======
+    { name: "Sapo com chifres", vida: 40, maxVida: 40, forca: 18, defesa: 7, precisao: 14, agilidade: 11 },
+    { name: "Cobra Alada", vida: 36, maxVida: 36, forca: 17, defesa: 6, precisao: 16, agilidade: 16 },
+    { name: "Aranha Cinzenta", vida: 35, maxVida: 35, forca: 15, defesa: 8, precisao: 15, agilidade: 13 },
+    { name: "Coruja de 3 olhos", vida: 38, maxVida: 38, forca: 16, defesa: 8, precisao: 19, agilidade: 14 },
+    { name: "Lobo de 2 cabeças", vida: 42, maxVida: 42, forca: 20, defesa: 7, precisao: 15, agilidade: 17 },
+    { name: "Rato gigante", vida: 40, maxVida: 40, forca: 17, defesa: 8, precisao: 14, agilidade: 15 },
+    { name: "Morcego de vidro", vida: 36, maxVida: 36, forca: 15, defesa: 7, precisao: 19, agilidade: 19 },
+    { name: "Aranha Carniceira", vida: 37, maxVida: 37, forca: 17, defesa: 9, precisao: 16, agilidade: 14 },
+    { name: "Urso de boca gigante", vida: 45, maxVida: 45, forca: 22, defesa: 9, precisao: 14, agilidade: 11 },
+    { name: "Tatu com garras", vida: 41, maxVida: 41, forca: 19, defesa: 14, precisao: 12, agilidade: 10 },
 
     // ======= BOSSES CAP 2 =======
-    { name: "Sapo de Marfim", vida: 48, maxVida: 48, forca: 18, defesa: 11, precisao: 15, agilidade: 11 },
-    { name: "Cobra Espectral", vida: 45, maxVida: 45, forca: 17, defesa: 9, precisao: 17, agilidade: 16 },
-    { name: "Aranha Viúva Sombria", vida: 44, maxVida: 44, forca: 16, defesa: 12, precisao: 16, agilidade: 13 },
-    { name: "Coruja Vidente", vida: 46, maxVida: 46, forca: 15, defesa: 10, precisao: 20, agilidade: 13 },
-    { name: "Lobo Calamidade", vida: 49, maxVida: 49, forca: 20, defesa: 8, precisao: 15, agilidade: 19 },
-    { name: "Rato Rei", vida: 52, maxVida: 52, forca: 16, defesa: 11, precisao: 15, agilidade: 15 },
-    { name: "Morcego Prismático", vida: 41, maxVida: 41, forca: 15, defesa: 8, precisao: 19, agilidade: 22 },
-    { name: "Aranha da Peste", vida: 47, maxVida: 47, forca: 17, defesa: 14, precisao: 16, agilidade: 14 },
-    { name: "Urso Abissal", vida: 59, maxVida: 59, forca: 24, defesa: 14, precisao: 14, agilidade: 10 },
-    { name: "Tatu Demolidor", vida: 62, maxVida: 62, forca: 22, defesa: 18, precisao: 13, agilidade: 12 },
-   
+    { name: "Sapo de Marfim", vida: 90, maxVida: 90, forca: 15, defesa: 14, precisao: 16, agilidade: 13 },
+    { name: "Cobra Espectral", vida: 85, maxVida: 85, forca: 20, defesa: 11, precisao: 19, agilidade: 18 },
+    { name: "Aranha Viúva Sombria", vida: 83, maxVida: 83, forca: 19, defesa: 15, precisao: 18, agilidade: 16 },
+    { name: "Coruja Vidente", vida: 86, maxVida: 86, forca: 17, defesa: 13, precisao: 25, agilidade: 16 },
+    { name: "Lobo Calamidade", vida: 88, maxVida: 88, forca: 23, defesa: 10, precisao: 18, agilidade: 22 },
+    { name: "Rato Rei", vida: 92, maxVida: 92, forca: 19, defesa: 15, precisao: 17, agilidade: 18 },
+    { name: "Morcego Prismático", vida: 80, maxVida: 80, forca: 18, defesa: 11, precisao: 24, agilidade: 26 },
+    { name: "Aranha da Peste", vida: 87, maxVida: 87, forca: 22, defesa: 18, precisao: 18, agilidade: 16 },
+    { name: "Urso Abissal", vida: 99, maxVida: 99, forca: 28, defesa: 16, precisao: 15, agilidade: 13 },
+    { name: "Tatu Demolidor", vida: 101, maxVida: 101, forca: 25, defesa: 22, precisao: 14, agilidade: 13 },
+
     // ======= INIMIGOS NORMAIS CAP 3 =======
     { name: "Globin pequeno", vida: 23, maxVida: 23, forca: 12, defesa: 4, precisao: 14, agilidade: 18 },
     { name: "Marionete viva", vida: 24, maxVida: 24, forca: 12, defesa: 7, precisao: 13, agilidade: 12 },
@@ -155,8 +154,6 @@ const ENEMIES = [
     { name: "Sombra de Alex", vida: 94, maxVida: 94, forca: 37, defesa: 33, precisao: 35, agilidade: 29 },
 
 ];
-
-// Pool progressivo com pelo menos 3 inimigos por andar, boss mais forte no final
 
 const ENEMY_POOLS = {
     1: [

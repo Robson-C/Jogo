@@ -394,3 +394,52 @@ function initBuffTooltipHandlers() {
     });
 }
 /* =====================[ FIM TRECHO 4 ]===================== */
+
+
+
+
+
+
+
+
+/* =====================[ TRECHO X: FUNÇÕES PARA TESTES / DEPOIS DELETAR ]===================== */
+function ativarRunCurta() {
+    if (window.__runCurtaAtivo) return;
+    window.__runCurtaAtivo = true;
+    if (!window._orig_getRandomRoomsToNextFloor) {
+        window._orig_getRandomRoomsToNextFloor = window.getRandomRoomsToNextFloor;
+    }
+    if (!window._orig_sortearTipoDeSala) {
+        window._orig_sortearTipoDeSala = window.sortearTipoDeSala;
+    }
+    // Sempre 12 salas até o chefe
+    window.getRandomRoomsToNextFloor = function() { return 12; };
+    // Alterna monstro/vazia até o boss na sala 12
+    window.__runCurtaSalaAtual = 0;
+    window.sortearTipoDeSala = function() {
+        window.__runCurtaSalaAtual = (window.__runCurtaSalaAtual || 0) + 1;
+        if (window.__runCurtaSalaAtual === 10) return 'com monstro';
+        if (window.__runCurtaSalaAtual === 11) return 'vazia';
+        if (window.__runCurtaSalaAtual === 12) return 'boss';
+        // alterna: ímpar = monstro, par = vazia
+        return (window.__runCurtaSalaAtual % 2 === 1) ? 'com monstro' : 'vazia';
+    };
+    if (window.addMessage) window.addMessage('Modo RUN CURTA ATIVADO — 12 salas (monstro/vazia/boss).', true, true, 'levelup');
+}
+
+function desativarRunCurta() {
+    if (!window.__runCurtaAtivo) return;
+    window.__runCurtaAtivo = false;
+    if (window._orig_getRandomRoomsToNextFloor) {
+        window.getRandomRoomsToNextFloor = window._orig_getRandomRoomsToNextFloor;
+        delete window._orig_getRandomRoomsToNextFloor;
+    }
+    if (window._orig_sortearTipoDeSala) {
+        window.sortearTipoDeSala = window._orig_sortearTipoDeSala;
+        delete window._orig_sortearTipoDeSala;
+    }
+    delete window.__runCurtaSalaAtual;
+    if (window.addMessage) window.addMessage('Modo RUN CURTA DESATIVADO. Retornando ao fluxo padrão.', true, true, 'levelup');
+}
+
+/* =====================[ FIM TRECHO X ]===================== */
