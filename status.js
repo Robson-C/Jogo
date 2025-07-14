@@ -34,13 +34,20 @@ function updateStatus() {
             if (active && !stats.some(stat => handledBuffs.has(stat))) {
                 const info = getBuffInfo(compKey);
                 const turns = Math.max(...stats.map(stat => gameState.debuffs[stat].turns));
-                let efeitosLinha = stats.map(stat => {
-                    let statIcon = stat === "forca" ? "🗡️" : stat === "defesa" ? "🛡️" : stat === "agilidade" ? "💨" : stat;
-                    let value = gameState.debuffs[stat].value;
-                    let sign = value < 0 ? "" : "-";
-                    value = Math.abs(value);
-                    return `${statIcon} ${sign}${value}`;
-                }).join(", ");
+                let efeitosLinha = "";
+                if (compKey === "mordida_adeus") {
+                    // Só exibe o efeito de veneno para o player
+                    let value = gameState.debuffs["mordida_adeus"].value;
+                    efeitosLinha = `☠️ -${value} vida/turno`;
+                } else {
+                    efeitosLinha = stats.map(stat => {
+                        let statIcon = stat === "forca" ? "🗡️" : stat === "defesa" ? "🛡️" : stat === "agilidade" ? "💨" : stat;
+                        let value = gameState.debuffs[stat].value;
+                        let sign = value < 0 ? "" : "-";
+                        value = Math.abs(value);
+                        return `${statIcon} ${sign}${value}`;
+                    }).join(", ");
+                }
                 buffsArr.push(`
                     <span class="buff-icon" data-buff='${compKey}' data-turns='${turns}' data-desc='${info.descricao}' data-efeitos='${efeitosLinha}'
                         tabindex="0"
@@ -195,17 +202,24 @@ function updateEnemyPanel() {
         Object.keys(COMPOSITE_BUFFS).forEach(compKey => {
             const stats = COMPOSITE_BUFFS[compKey];
             const buffsObj = gameState.currentEnemy.buffs || {};
-            const active = stats.every(stat => buffsObj[stat]);
+            const active = buffsObj[compKey] && stats.every(stat => buffsObj[stat]);
             if (active && !stats.some(stat => handledBuffs.has(stat))) {
                 const info = getBuffInfo(compKey);
                 const turns = Math.max(...stats.map(stat => buffsObj[stat].turns));
-                let efeitosLinha = stats.map(stat => {
-                    let statIcon = stat === "forca" ? "🗡️" : stat === "defesa" ? "🛡️" : stat === "agilidade" ? "💨" : stat;
-                    let value = buffsObj[stat].value;
-                    let sign = value > 0 ? "+" : "-";
-                    value = Math.abs(value);
-                    return `${statIcon} ${sign}${value}`;
-                }).join(", ");
+                let efeitosLinha = "";
+                if (compKey === "mordida_adeus") {
+                    // Só exibe o efeito de força para o inimigo
+                    let value = buffsObj["mordida_adeus"].value;
+                    efeitosLinha = `🗡️ ${value} força`;
+                } else {
+                    efeitosLinha = stats.map(stat => {
+                        let statIcon = stat === "forca" ? "🗡️" : stat === "defesa" ? "🛡️" : stat === "agilidade" ? "💨" : stat;
+                        let value = buffsObj[stat].value;
+                        let sign = value > 0 ? "+" : "-";
+                        value = Math.abs(value);
+                        return `${statIcon} ${sign}${value}`;
+                    }).join(", ");
+                }
                 buffsArr.push(`
                     <span class="buff-icon" data-buff='${compKey}' data-turns='${turns}' data-desc='${info.descricao}' data-efeitos='${efeitosLinha}'
                         tabindex="0"
@@ -313,9 +327,7 @@ function atualizarBossPanel() {
         panel.classList.remove('boss-panel');
     }
 }
-
 /* =====================[ FIM TRECHO 3 ]===================== */
-
 
 /* =====================[ TRECHO 4: UTILS DE STATUS E TOOLTIP ]===================== */
 

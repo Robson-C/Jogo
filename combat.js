@@ -152,10 +152,19 @@ function playerHealSpell() {
     if (!gameState.inCombat || gameState.mana < 15) return;
     gameState.mana -= 15;
     const healAmount = 25 + gameState.level * 2;
-    gameState.vida = Math.min(gameState.maxVida, gameState.vida + healAmount);
-    addMessage(`Você se curou em ${healAmount} ❤️ de Vida!`);
+
+    // Função centralizadora para aplicar cura, com redução se estiver envenenado
+    let curaFinal = healAmount;
+    if (gameState.debuffs && gameState.debuffs.veneno) {
+        curaFinal = Math.floor(healAmount * 0.5);
+        addMessage("Sua cura foi reduzida pelo veneno!", true);
+    }
+    gameState.vida = Math.min(gameState.maxVida, gameState.vida + curaFinal);
+    addMessage(`Você se curou em ${curaFinal} ❤️ de Vida!`);
+
     checkCombatEndOrNextTurn();
 }
+
 
 function playerFlee() {
     gameState.combatesSemFugirSeguidos = 0;

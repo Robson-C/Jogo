@@ -38,9 +38,8 @@ const ENEMY_BEHAVIORS_COMUM_CAP1 = {
             ataqueInimigoBasico(enemy);
         } else {
             ataqueInimigoBasico(enemy, 0.7);
-            // REMOVIDO: applyPlayerDebuff("grilhoes_naturais", 2, 2);
-            applyPlayerDebuff("agilidade", 2, 2);
-            applyPlayerDebuff("forca", 2, 2);
+            // Troca para máscara composta
+            applyPlayerDebuff("grilhoes_naturais", 2, 2);
             addMessage("Raízes prendem suas pernas! Força e agilidade reduzidas.");
         }
     },
@@ -60,9 +59,8 @@ const ENEMY_BEHAVIORS_COMUM_CAP1 = {
             ataqueInimigoBasico(enemy);
         } else {
             ataqueInimigoBasico(enemy, 0.7);
-            // REMOVIDO: applyPlayerDebuff("gelatina_pegajosa", 2, 2);
-            applyPlayerDebuff("agilidade", 2, 2);
-            applyPlayerDebuff("defesa", 2, 2);
+            // Troca para máscara composta
+            applyPlayerDebuff("gelatina_pegajosa", 2, 2);
             addMessage("O Cubo de Gelatina gruda em você! Agilidade e defesa reduzidas.");
         }
     },
@@ -82,10 +80,9 @@ const ENEMY_BEHAVIORS_COMUM_CAP1 = {
             ataqueInimigoBasico(enemy);
         } else {
             ataqueInimigoBasico(enemy, 0.8);
-            // Antes: applyPlayerDebuff("chama_neon", 0, 2); applyPlayerDebuff("agilidade", 2, 2);
-            // Agora: DOT padronizado "em_chamas"
-            applyPlayerDebuff("em_chamas", { dano: 3, agilidade: 2 }, 2);
-            addMessage("A Salamandra lança chamas neon! Você começa a queimar e perde agilidade.");
+            // Debuff já composto, manter como está
+            applyPlayerDebuff("chamas", 3, 2);
+            addMessage("A Salamandra lança chamas neon! Você começa a queimar.");
         }
     },
     "Olho Vigilante": function(enemy) {
@@ -104,8 +101,8 @@ const ENEMY_BEHAVIORS_COMUM_CAP1 = {
             ataqueInimigoBasico(enemy);
         } else {
             ataqueInimigoBasico(enemy, 0.8);
-            applyPlayerDebuff("defesa", 2, 2);
-            applyPlayerDebuff("enlouquecendo", 5, 2); // perde 5 de sanidade por rodada durante 2 turnos
+            // Troca para máscara composta
+            applyPlayerDebuff("aura_sombria", { sanidade: 5, defesa: 2 }, 2);
             addMessage("O Orbe Sombria envolve você em sombras! Defesa reduzida e sua mente começa a enfraquecer.");
         }
     },
@@ -130,9 +127,7 @@ const ENEMY_BEHAVIORS_CHEFE_CAP1 = {
             ataqueInimigoBasico(enemy);
         } else {
             ataqueInimigoBasico(enemy, 0.8);
-            // REMOVIDO: applyPlayerDebuff("gosma_paralisante", 0, 3);
-            applyPlayerDebuff("defesa", 3, 3);
-            applyPlayerDebuff("agilidade", 3, 3);
+            applyPlayerDebuff("gosma_paralisante", 3, 3);
             addMessage("A gosma do Slime Sábio paralisa seu corpo! Defesa e agilidade reduzidas.");
         }
     },
@@ -142,10 +137,7 @@ const ENEMY_BEHAVIORS_CHEFE_CAP1 = {
             ataqueInimigoBasico(enemy);
         } else {
             ataqueInimigoBasico(enemy, 0.8);
-            // REMOVIDO: applyPlayerDebuff("esporos_alucinogenos", 0, 3);
-            applyPlayerDebuff("precisao", 3, 3);
-            // Efeito original já mexia direto na sanity:
-            gameState.sanity = Math.max(0, gameState.sanity - 4);
+            applyPlayerDebuff("esporos_alucinogenos", { precisao: 3, sanidade: 4 }, 3);
             addMessage("O Cogumelo Ancestral libera esporos tóxicos! Precisão reduzida e você alucina.");
         }
     },
@@ -154,10 +146,8 @@ const ENEMY_BEHAVIORS_CHEFE_CAP1 = {
         if (roll < 65) {
             ataqueInimigoBasico(enemy);
         } else {
-            // Esse buff é para o inimigo, mantido conforme análise
-            applyEnemyBuff("crescimento_selvagem", 0, 3);
-            applyEnemyBuff("forca", 3, 3);
-            applyEnemyBuff("agilidade", 2, 3);
+            // Troca por máscara composta única, não aplicar buffs simples separados!
+            applyEnemyBuff("crescimento_selvagem", { forca: 3, agilidade: 2 }, 3);
             addMessage("A Planta Voraz cresce de forma selvagem! Força e agilidade aumentam drasticamente.");
         }
     },
@@ -167,9 +157,7 @@ const ENEMY_BEHAVIORS_CHEFE_CAP1 = {
             ataqueInimigoBasico(enemy);
         } else {
             ataqueInimigoBasico(enemy);
-            // REMOVIDO: applyPlayerDebuff("encantamento_noturno", 0, 2);
-            applyPlayerDebuff("stun", 1, 1);
-            applyPlayerDebuff("defesa", 2, 2);
+            applyPlayerDebuff("encantamento_noturno", { stun: 1, defesa: 2 }, 2);
             addMessage("A Fada Sombria te envolve em magia sombria! Você fica atordoado e perde defesa.");
         }
     },
@@ -179,10 +167,7 @@ const ENEMY_BEHAVIORS_CHEFE_CAP1 = {
             ataqueInimigoBasico(enemy);
         } else {
             ataqueInimigoBasico(enemy, 1.5);
-            // Antes: applyPlayerDebuff("perfuracao_profunda", 0, 2);
-            // Agora: sangramento simples e defesa simples (já padronizado)
-            applyPlayerDebuff("sangramento", 5);
-            applyPlayerDebuff("defesa", 4, 2);
+            applyPlayerDebuff("golpe_perfurante", { sangramento: 5, defesa: 4 }, 2);
             addMessage("O Cubo de Espinhos desfere um golpe perfurante! Muita defesa reduzida, você começa a sangrar.");
         }
     },
@@ -192,9 +177,7 @@ const ENEMY_BEHAVIORS_CHEFE_CAP1 = {
             ataqueInimigoBasico(enemy);
         } else {
             ataqueInimigoBasico(enemy, 0.8);
-            // REMOVIDO: applyPlayerDebuff("revelacao_proibida", 0, 3);
-            gameState.sanity = Math.max(0, gameState.sanity - 10);
-            applyPlayerDebuff("precisao", 3, 3);
+            applyPlayerDebuff("revelacao_proibida", { sanidade: 10, precisao: 3 }, 3);
             addMessage("O Livro Proibido revela segredos sombrios! Precisão reduzida e você delira.");
         }
     },
@@ -203,9 +186,8 @@ const ENEMY_BEHAVIORS_CHEFE_CAP1 = {
         if (roll < 65) {
             ataqueInimigoBasico(enemy);
         } else {
-            // Buff no inimigo, mantém padrão
-            applyEnemyBuff("chamas_ardentes", 0, 3);
-            applyEnemyBuff("agilidade", 4, 3);
+            // Troca por máscara composta única
+            applyEnemyBuff("chamas_ardentes", 4, 3);
             addMessage("A Salamandra Radiante fica envolta em chamas ardentes! Agilidade aumenta.");
         }
     },
@@ -215,9 +197,7 @@ const ENEMY_BEHAVIORS_CHEFE_CAP1 = {
             ataqueInimigoBasico(enemy);
         } else {
             ataqueInimigoBasico(enemy, 0.8);
-            // REMOVIDO: applyPlayerDebuff("olhar_penetrante", 0, 2);
-            applyPlayerDebuff("defesa", 3, 2);
-            applyPlayerDebuff("precisao", 2, 2);
+            applyPlayerDebuff("olhar_penetrante", { defesa: 3, precisao: 2 }, 2);
             addMessage("O Olho Onisciente observa sua alma! Defesa e precisão caem drasticamente.");
         }
     },
@@ -227,8 +207,7 @@ const ENEMY_BEHAVIORS_CHEFE_CAP1 = {
             ataqueInimigoBasico(enemy);
         } else {
             ataqueInimigoBasico(enemy, 0.8);
-            applyPlayerDebuff("defesa", 3, 3);
-            applyPlayerDebuff("enlouquecendo", 5, 3); // perde 5 de sanidade por rodada durante 3 turnos
+            applyPlayerDebuff("vortice_abissal", { sanidade: 5, defesa: 3 }, 3);
             addMessage("O Orbe Abissal envolve sua mente em uma aura sombria! Defesa muito reduzida e sua sanidade é drenada.");
         }
     },
@@ -237,9 +216,8 @@ const ENEMY_BEHAVIORS_CHEFE_CAP1 = {
         if (roll < 65) {
             ataqueInimigoBasico(enemy);
         } else {
-            // Buff no inimigo, mantém padrão
-            applyEnemyBuff("endurecimento_ancestral", 0, 3);
-            applyEnemyBuff("defesa", 4, 3);
+            // Troca por máscara composta única
+            applyEnemyBuff("endurecimento_ancestral", 4, 3);
             addMessage("A Gárgula Ancestral endurece a pele! Defesa do inimigo aumenta muito.");
         }
     }
@@ -264,7 +242,7 @@ const ENEMY_BEHAVIORS_COMUM_CAP2 = {
             ataqueInimigoBasico(enemy);
         } else {
             ataqueInimigoBasico(enemy);
-            applyPlayerDebuff("veneno", 4, 3);
+            applyPlayerDebuff("veneno", 3, 4);
             addMessage("A Cobra Alada te morde! Você fica envenenado.");
         }
     },
@@ -274,8 +252,7 @@ const ENEMY_BEHAVIORS_COMUM_CAP2 = {
             ataqueInimigoBasico(enemy);
         } else {
             ataqueInimigoBasico(enemy);
-            applyPlayerDebuff("defesa", 3, 2);
-            applyPlayerDebuff("agilidade", 3, 2);
+            applyPlayerDebuff("teia_pegajosa", 3, 2);
             addMessage("A Aranha Cinzenta te envolve em teias! Defesa e agilidade reduzidas.");
         }
     },
@@ -331,9 +308,8 @@ const ENEMY_BEHAVIORS_COMUM_CAP2 = {
             ataqueInimigoBasico(enemy);
         } else {
             ataqueInimigoBasico(enemy);
-            applyPlayerDebuff("sangramento", 3);
-            applyPlayerDebuff("veneno", 3, 3);
-            addMessage("A Aranha Carniceira te fere profundamente! Você está sangrando e envenenado.");
+            applyPlayerDebuff("veneno_hemorragico", 3, 3);
+            addMessage("A Aranha Carniceira injeta um veneno hemorrágico! Você sangra e é envenenado ao mesmo tempo.");
         }
     },
     "Urso de boca gigante": function(enemy) {
@@ -386,12 +362,12 @@ const ENEMY_BEHAVIORS_CHEFE_CAP2 = {
             ataqueInimigoBasico(enemy);
         } else {
             ataqueInimigoBasico(enemy);
-            applyPlayerDebuff("veneno", 6, 10);
+            applyPlayerDebuff("mordida_adeus", 6, 10);
             if (!enemy._forcaOriginal) enemy._forcaOriginal = enemy.forca;
             const perda = Math.round(enemy._forcaOriginal * 0.3);
-            applyEnemyBuff("forca", -perda, 10);
+            applyEnemyBuff("mordida_adeus", -perda, 10);
             addMessage(
-                "Mordida de adeus! A Aranha Viúva Sombria te morde e injeta veneno mortal, ela fica à espera da sua morte.<br>" +
+                "Mordida de adeus! A Aranha Viúva Sombria te morde e injeta todo seu veneno mortal.<br>" +
                 "Viúva Sombria está enfraquecida por ter injetado todo o veneno."
             );
         }
@@ -401,8 +377,7 @@ const ENEMY_BEHAVIORS_CHEFE_CAP2 = {
         if (roll < 70) { // 30% especial (buff agilidade e precisão)
             ataqueInimigoBasico(enemy);
         } else {
-            applyEnemyBuff("agilidade", 6, 3);
-            applyEnemyBuff("precisao", 6, 3);
+            applyEnemyBuff("visao_futura", { agilidade: 6, precisao: 6 }, 3);
             addMessage("A coruja olha o futuro sabendo todos seus golpes.");
         }
     },
@@ -425,8 +400,7 @@ const ENEMY_BEHAVIORS_CHEFE_CAP2 = {
         if (roll < 70) { // 30% especial (buff força e defesa)
             ataqueInimigoBasico(enemy);
         } else {
-            applyEnemyBuff("forca", 4, 3);
-            applyEnemyBuff("defesa", 3, 3);
+            applyEnemyBuff("aura_real", { forca: 4, defesa: 3 }, 3);
             addMessage("O Rato Rei irradia poder e aumenta sua força e defesa.");
         }
     },
@@ -435,10 +409,7 @@ const ENEMY_BEHAVIORS_CHEFE_CAP2 = {
         if (roll < 65) { // 35% especial (stun + confusão)
             ataqueInimigoBasico(enemy);
         } else {
-            applyPlayerDebuff("stun", 1, 1);
-            // Supondo "confusao" debuff composto, aplicar os simples:
-            applyPlayerDebuff("agilidade", 3, 3);
-            applyPlayerDebuff("precisao", 3, 3);
+            applyPlayerDebuff("eco_sombrio", { stun: 1, agilidade: 3, precisao: 3 }, 3);
             addMessage("O morcego emite um eco sombrio que desorienta e paralisa você.");
         }
     },
@@ -448,9 +419,8 @@ const ENEMY_BEHAVIORS_CHEFE_CAP2 = {
             ataqueInimigoBasico(enemy);
         } else {
             ataqueInimigoBasico(enemy);
-            applyPlayerDebuff("veneno", 6, 4);
-            applyPlayerDebuff("sangramento", 6, 3);
-            addMessage("Você sofre uma mordida infectada que causa sangramento e veneno intensos.");
+            applyPlayerDebuff("veneno_hemorragico", 5, 3);
+            addMessage("A Aranha Peste injeta um veneno hemorrágico! Você sangra e é envenenado ao mesmo tempo.");
         }
     },
     "Urso Abissal": function(enemy) {
@@ -458,10 +428,7 @@ const ENEMY_BEHAVIORS_CHEFE_CAP2 = {
         if (roll < 70) { // 30% especial (buff força, defesa, debuff agilidade/precisão)
             ataqueInimigoBasico(enemy, 1.4);
         } else {
-            applyEnemyBuff("forca", 6, 4);
-            applyEnemyBuff("defesa", 4, 4);
-            applyEnemyBuff("agilidade", -2, 4);
-            applyEnemyBuff("precisao", -1, 4);
+            applyEnemyBuff("furia_abissal", { forca: 6, defesa: 4, agilidade: -2, precisao: -1 }, 4);
             addMessage("O Urso dá um rugido e entra em fúria, ficando mais forte e resistente, mas menos ágil e preciso.");
         }
     },
@@ -470,9 +437,7 @@ const ENEMY_BEHAVIORS_CHEFE_CAP2 = {
         if (roll < 65) { // 35% especial (stun, agilidade e força reduzidas)
             ataqueInimigoBasico(enemy, 1.4);
         } else {
-            applyPlayerDebuff("stun", 1, 1);
-            applyPlayerDebuff("agilidade", 7, 3);
-            applyPlayerDebuff("forca", 2, 3);
+            applyPlayerDebuff("pisao_demolidor", { stun: 1, agilidade: 7, forca: 2 }, 3);
             addMessage("O Tatu pisa com força esmagadora, te atordoa e demole o chão deixando difícil estabilidade.");
         }
     }
