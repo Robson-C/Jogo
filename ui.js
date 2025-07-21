@@ -52,10 +52,10 @@ function addMessage(text, isCritical = false, isHighlighted = false, customClass
 }
 
 /** Garante scroll automático para a última mensagem. */
-function scrollFullHistoryToEnd() {
+function scrollFullHistoryToTop() {
     if (DOM_ELEMENTS.fullHistory) {
         DOM_ELEMENTS.fullHistory.scrollTo({
-            top: DOM_ELEMENTS.fullHistory.scrollHeight,
+            top: 0,
             behavior: 'smooth'
         });
     }
@@ -63,7 +63,7 @@ function scrollFullHistoryToEnd() {
 
 /** Renderiza o histórico visualmente, aplicando animação só à última mensagem relevante. */
 function updateMessageDisplay() {
-    const lastMessages = gameState.messageHistory.slice(-messageCount);
+    const lastMessages = gameState.messageHistory.slice(-messageCount).reverse();;
     DOM_ELEMENTS.fullHistory.innerHTML = lastMessages
         .map((msg, i, arr) => {
             let classes = "message";
@@ -91,7 +91,7 @@ function updateMessageDisplay() {
             }
         });
     }
-    scrollFullHistoryToEnd();
+    scrollFullHistoryToTop();
 }
 
 /** Tradução de nome de sala para mensagem contextual. */

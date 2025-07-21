@@ -30,7 +30,7 @@ const BUFFS_INFO = {
     revelacao_proibida: {
         nome: "Revelação Proibida",
         descricao: "Palavras proibidas enfraquecem sua sanidade e precisão.",
-        icone: "📖",
+        icone: "📜",
         efeitos: { sanidade: "-X", precisao: "-Y" }
     },
     chamas_ardentes: {
@@ -135,8 +135,78 @@ const BUFFS_INFO = {
         icone: "👁️‍🗨️",
         efeitos: { agilidade: "+X", precisao: "+Y" }
     },
-    // ...adicione outras máscaras conforme necessidade do design...
-    // DOTs padronizados e debuffs simples abaixo:
+    truque_sujo: {
+        nome: "Truque Sujo",
+        descricao: "Você foi atingido por areia nos olhos. Sua agilidade e precisão caem.",
+        icone: "🪨",
+        efeitos: { agilidade: "-X", precisao: "-Y" }
+    },
+    fios_enrolados: {
+        nome: "Fios Enrolados",
+        descricao: "Fios presos nos seus membros reduzem agilidade, energia e podem atordoar.",
+        icone: "🪢",
+        efeitos: { agilidade: "-X", energia: "-Y", stun: "1" }
+    },
+    canto_hipnotico: {
+        nome: "Canto Hipnótico",
+        descricao: "O canto da Harpia abala sua sanidade e defesa.",
+        icone: "🎶",
+        efeitos: { sanidade: "-X", defesa: "-Y" }
+    },
+    reflexo_imortal: {
+        nome: "Reflexo Imortal",
+        descricao: "O brilho da armadura enfraquece seu ataque enquanto o inimigo se protege.",
+        icone: "🛡️",
+        efeitos: { forca: "-X", buff_defesa_inimigo: "+Y" }
+    },
+    costura_cruel: {
+        nome: "Costura Cruel",
+        descricao: "O orc costurado te faz sangrar, reduz sua defesa e agilidade.",
+        icone: "🧵",
+        efeitos: { sangramento: "-X", defesa: "-Y", agilidade: "-Z" }
+    },
+    terra_perturbadora: {
+        nome: "Terra Perturbadora",
+        descricao: "Uma onda mágica drena sua energia vital e abala sua mente.",
+        icone: "🌎",
+        efeitos: { sanidade: "-X", energia: "-Y" }
+    },
+    poder_brutal: {
+        nome: "Poder Brutal",
+        descricao: "O ogro de crista fica mais forte e muito mais resistente.",
+        icone: "🦍",
+        efeitos: { buff_forca_inimigo: "+X", buff_defesa_inimigo: "+Y" }
+    },
+    investida_furiosa: {
+        nome: "Investida Furiosa",
+        descricao: "O minotauro aumenta sua força e precisão após investir contra você.",
+        icone: "🐂",
+        efeitos: { buff_forca_inimigo: "+X", buff_precisao_inimigo: "+Y" }
+    },
+    buff_defesa_inimigo: {
+        nome: "Defesa Reforçada",
+        descricao: "O inimigo aumentou muito sua defesa.",
+        icone: "🛡️",
+        efeitos: { defesa: "+X" }
+    },
+    buff_forca_inimigo: {
+        nome: "Força Reforçada",
+        descricao: "O inimigo aumentou muito sua força.",
+        icone: "🗡️",
+        efeitos: { forca: "+X" }
+    },
+    buff_precisao_inimigo: {
+        nome: "Precisão Reforçada",
+        descricao: "O inimigo aumentou muito sua precisão.",
+        icone: "🎯",
+        efeitos: { precisao: "+X" }
+    },
+    regeneracao_selvagem: {
+        nome: "Regeneração Selvagem",
+        descricao: "O Troll se regenera rapidamente a cada turno.",
+        icone: "🧬",
+        efeitos: { vida: "+X/turno" }
+    },
     veneno: {
         nome: "Envenenado",
         descricao: "Você sofre dano contínuo a cada turno.",
@@ -161,7 +231,6 @@ const BUFFS_INFO = {
         icone: "🧠",
         efeitos: { sanidade: "-X/turno" }
     },
-    // Debuffs simples globais
     agilidade: {
         nome: "Lentidão",
         descricao: "Reduz sua agilidade.",
@@ -195,6 +264,7 @@ const BUFFS_INFO = {
 };
 /* =====================[ FIM TRECHO 1 ]===================== */
 
+
 /* =====================[ TRECHO 2: COMPOSITE_BUFFS (BUFFS COMPUESTOS/MÁSCARAS) ]===================== */
 // Mapeia máscaras para os debuffs simples correspondentes. Comentado por boss/inimigo identificado:
 // Apenas faz um mapa das máscaras, toda habilidade que usa alguma máscara em vez de debuffs/buffs simples deve ficar aqui!
@@ -218,11 +288,22 @@ const COMPOSITE_BUFFS = {
     eco_sombrio: ["stun", "agilidade", "precisao"],             // Morcego Prismático
     aura_sombria: ["sanidade", "defesa"],                       // Orbe Sombria
     golpe_perfurante: ["sangramento", "defesa"],                // Cubo de Espinhos
-    veneno_hemorragico: ["sangramento", "veneno"],               // Aranha Carniceira e Aranha da Peste
+    veneno_hemorragico: ["sangramento", "veneno"],              // Aranha Carniceira e Aranha da Peste
     visao_futura: ["agilidade", "precisao"],                    // Coruja Vidente
-    // Se necessário, adicione novas máscaras com boss/inimigo nas skills futuras.
+    truque_sujo: ["agilidade", "precisao"],                         // Globin pequeno
+    fios_enrolados: ["agilidade", "energia", "stun"],               // Marionete viva
+    canto_hipnotico: ["sanidade", "defesa"],                        // Harpia
+    reflexo_imortal: ["forca", "buff_defesa_inimigo"],              // Esqueleto de armadura
+    costura_cruel: ["sangramento", "defesa", "agilidade"],          // Orc costurado
+    terra_perturbadora: ["sanidade", "energia"],                    // Anjo de barro
+    // Troll não precisa de máscara composta (buff simples + regeneração passiva)
+    poder_brutal: ["buff_forca_inimigo", "buff_defesa_inimigo"],    // Ogro de Crista
+    investida_furiosa: ["buff_forca_inimigo", "buff_precisao_inimigo"], // Minotauro
+    metal_refletor: ["buff_defesa_inimigo", "precisao"]             // Golem de Aço
 };
+// Se criar buff/debuff simples novos, adicione ao dicionário BUFFS_INFO para descrição/ícone na UI!
 /* =====================[ FIM TRECHO 2 ]===================== */
+
 
 /* =====================[ TRECHO 3: UTILITÁRIOS DE BUFFS/DEBUFFS ]===================== */
 //Para garantir que, ao mostrar a máscara para o player, exista nome/descrição/ícone/efeitos para exibir.

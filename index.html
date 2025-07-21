@@ -34,6 +34,7 @@
             <button id="btnLore" aria-label="História do jogo" tabindex="0">História</button>
         </div>
     </div>
+
     <!-- PAINEL: TÍTULOS -->
     <div id="painelTitulos" class="menu-painel" style="display:none;" role="dialog" aria-label="Painel de Títulos" tabindex="-1">
         <h2 class="titulo-jogo-painel">Torre da Redenção</h2>
@@ -41,6 +42,7 @@
         <div class="painel-conteudo"></div>
         <button class="btn-voltar-menu" aria-label="Voltar ao Menu Inicial" tabindex="0">Voltar</button>
     </div>
+
     <!-- PAINEL: CONQUISTAS -->
     <div id="painelConquistas" class="menu-painel" style="display:none;" role="dialog" aria-label="Painel de Conquistas" tabindex="-1">
         <h2 class="titulo-jogo-painel">Torre da Redenção</h2>
@@ -48,6 +50,7 @@
         <div class="painel-conteudo"></div>
         <button class="btn-voltar-menu" aria-label="Voltar ao Menu Inicial" tabindex="0">Voltar</button>
     </div>
+
     <!-- PAINEL: LORE / HISTÓRIA -->
     <div id="painelLore" class="menu-painel" style="display:none;" role="dialog" aria-label="Painel de História do Jogo" tabindex="-1">
         <h2 class="titulo-jogo-painel">Torre da Redenção</h2>
@@ -55,18 +58,29 @@
         <div class="painel-conteudo"></div>
         <button class="btn-voltar-menu" aria-label="Voltar ao Menu Inicial" tabindex="0">Voltar</button>
     </div>
-    <!-- CONTAINER DO JOGO COM FLEXBOX VERTICAL -->
+
+    <!-- CONTAINER DO JOGO COM ORDEM PERSONALIZADA -->
     <div class="game-container" style="display:none;" role="main" aria-label="Área principal do Jogo" tabindex="-1">
         <div class="game-inner" style="display: flex; flex-direction: column; height: 100%; min-height: 0;">
-            <div id="fullHistory" class="full-history" aria-live="polite" aria-atomic="false" aria-label="Histórico de Mensagens do Jogo" tabindex="0">
-                <!-- Mensagens serão adicionadas aqui -->
-            </div>
+
+            <!-- 1. Status do Jogador -->
             <div id="status" class="status-box" aria-label="Painel de Status do Jogador" tabindex="0">
                 <!-- Status será atualizado aqui -->
             </div>
+
+            <!-- 2. Painel do Inimigo (inserido dinamicamente via JS) -->
+            <!-- #enemyPanel será inserido após #status por JS e animado apenas quando necessário -->
+
+            <!-- 3. Botões de Ação -->
             <div id="options" class="options-box" aria-label="Opções do Jogador" tabindex="0">
                 <!-- Opções serão geradas aqui -->
             </div>
+
+            <!-- 4. Histórico -->
+            <div id="fullHistory" class="full-history" aria-live="polite" aria-atomic="false" aria-label="Histórico de Mensagens do Jogo" tabindex="0">
+                <!-- Mensagens serão adicionadas aqui -->
+            </div>
+
         </div>
     </div>
 
@@ -78,6 +92,7 @@
         </div>
     </div>
 
+    <!-- Scripts -->
     <script src="game.js"></script>
     <script src="title.js"></script>
     <script src="buffUtils.js"></script>
