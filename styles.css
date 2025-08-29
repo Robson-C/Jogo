@@ -1,0 +1,514 @@
+/* =====================[ TRECHO 1: BASE, TOKENS E RESET GLOBAL ]===================== */
+/* [DOC] Tokens e tipografia fluidos: 1rem cresce com a largura do device.
+   [WHY] Opção 2 (fluido): base 360px ⇒ html{ font-size: 100dvw/36 } ⇒ 1rem = 10px em 360px. */
+:root{
+  /* Neutras */
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --border: #dcdcdc;
+  --text: #111111;
+  --runline: #111;
+  --muted: #505050;
+
+  /* Barras */
+  --life: #d81515;
+  --mana: #1459ec;
+  --energy: #27ac05;
+  --sanity: #7027ec;
+  --hp: #e5484d;
+  --track: #e5e7eb;
+
+  --radius: 0.8rem;     /* 8px base */
+  --gap: 0.8rem;        /* 8px base */
+  --btn-h: 4.4rem;      /* 44px base */
+}
+
+*{ box-sizing: border-box; }
+html{ font-size: calc(100dvw / 36); } /* [CHANGE] rem escalar por largura do device */
+html, body{ height: 100%; margin: 0; }
+body{
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  color: var(--text);
+  background: #eceff1;     /* área externa ao “aparelho” */
+  overflow: hidden;         /* sem scroll global */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+/* =====================[ FIM TRECHO 1 ]===================== */
+
+
+/* =====================[ TRECHO 2: STAGE E CONTAINER 360x800 ]===================== */
+/* [DOC] Centraliza o "aparelho" (36rem × 80rem) no viewport e define o container do jogo. */
+.stage{
+  width: 100dvw;    /* [CHANGE] usar dvw para refletir largura útil dinâmica */
+  height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+
+.game{
+  width: 36rem;               /* 360px base */
+  height: 80rem;              /* 800px base */
+  background: var(--bg);
+  border: 0.1rem solid #c9cdd2;
+  border-radius: 1rem;        /* 10px base */
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;                /* 6px base */
+  overflow: hidden;           /* zero scroll interno */
+}
+
+/* [STATE] Alocação de alturas por seção (base 800px) */
+.toprow    { height: 5rem; }    /* 50px */
+.stats-grid{ height: 12.8rem; } /* 128px */
+.secstats  { height: 4.8rem; }  /* 48px */
+.room      { height: 13.2rem; } /* 132px */
+.runline   { height: 3.6rem; }  /* 36px */
+.actions   { height: 20rem; }   /* 200px */
+.log       { height: 8.8rem; }  /* 88px */
+.ads       { height: 5.8rem; }  /* 58px */
+/* =====================[ FIM TRECHO 2 ]===================== */
+
+
+/* =====================[ TRECHO 3: HEADER + XP (3 COLUNAS) ]===================== */
+.toprow{
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  column-gap: 1.5rem;
+}
+
+.toprow .level{
+  font-size: 1.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.toprow .icon-btn{
+  width: 4.4rem; 
+  height: 4.4rem;
+  font-size: 2.4rem;
+  border: 0.1rem solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius);
+  color: var(--muted);
+}
+.toprow .icon-btn:focus-visible{
+  outline: 0.2rem solid #999;
+  outline-offset: 0.2rem;
+}
+
+/* Pilha central (valor + barra) */
+.xp-stack{
+  display: grid;
+  grid-template-rows: auto 0.8rem; /* valor | barra */
+  row-gap: 0.6rem;
+  align-items: center;
+}
+
+.xp-label{
+  font-size: 1.4rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1;
+}
+
+/* Estrutura da barra (estilo compartilhado refinado no TRECHO 4) */
+.xp-bar{
+  position: relative;
+  height: 0.8rem;
+  background: var(--track);
+  border-radius: 0.4rem;
+  overflow: hidden;
+}
+.xp-fill{
+  position: absolute;
+  inset: 0 100% 0 0; /* inicia vazia (0%) */
+  background: #999;  /* XP neutra */
+}
+/* =====================[ FIM TRECHO 3 ]===================== */
+
+
+/* =====================[ TRECHO 4: BARRAS DE PROGRESSO (COMPARTILHADO) ]===================== */
+.bar{
+  position: relative;
+  height: 0.8rem;
+  background: var(--track);
+  border-radius: 0.4rem;
+  overflow: hidden;
+}
+.fill{ position:absolute; inset:0 auto 0 0; }
+.fill.life{   background: var(--life); }
+.fill.mana{   background: var(--mana); }
+.fill.energy{ background: var(--energy); }
+.fill.sanity{ background: var(--sanity); }
+.fill.hp{     background: var(--hp); }
+/* =====================[ FIM TRECHO 4 ]===================== */
+
+
+/* =====================[ TRECHO 5: STATS 2×2 (VIDA, MANA, ENERGIA, SANIDADE) ]===================== */
+/* [DOC] Aplica emojis nos 4 cards de .stats-grid sem alterar HTML/JS (usa :nth-child).
+   Ordem: 1=Vida ❤️, 2=Mana 💧, 3=Energia ⚡, 4=Sanidade 🧠.  */
+.stats-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 6rem 6rem;  /* 60 + 60 + gap 0.8 = 12.8rem */
+  gap: 0.8rem;
+}
+
+.stat-card{
+  border: 0.1rem solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.8rem;
+  background:#fff;
+  display:flex; 
+  flex-direction:column; 
+  justify-content:center;
+}
+
+.stat-head{
+  display:flex; 
+  align-items:baseline; 
+  justify-content:space-between;
+  font-size:1.4rem; 
+  font-weight:600; 
+  margin-bottom:0.6rem;
+}
+
+.stat-name{ font-size: 1.6rem; color: var(--muted); }
+.stat-val { font-weight:500; color:#505050; }
+
+
+
+/* Espaço lateral dos ícones (antes e depois) */
+.stats-grid .stat-name::before{
+  display: inline-block;
+  margin-left: 0.25rem;   /* espaço antes do ícone */
+  margin-right: 0.35rem;  /* espaço depois do ícone */
+}
+
+/* Conteúdos já usados */
+.stats-grid .stat-card:nth-child(1) .stat-name::before{ content: "❤️"; } /* VIDA */
+.stats-grid .stat-card:nth-child(2) .stat-name::before{ content: "💧"; } /* MANA */
+.stats-grid .stat-card:nth-child(3) .stat-name::before{ content: "⚡"; } /* ENERGIA */
+.stats-grid .stat-card:nth-child(4) .stat-name::before{ content: "🧠"; } /* SANIDADE */
+/* =====================[ FIM TRECHO 5 ]===================== */
+
+/* =====================[ TRECHO 6: STATUS DO JOGADOR (4 ÍCONES EM EMOJI) ]===================== */
+.secstats{ 
+  display:flex; 
+  align-items:center; 
+  height: 4.8rem;
+}
+
+.secstats-grid{
+  display:grid; 
+  width:100%;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.6rem;
+}
+
+.stat-chip{
+  position: relative;               
+  height: 100%;
+  min-height: 4.4rem;                 /* alvo de toque acessível */
+  border: 0.1rem solid var(--border);
+  background:#fff;
+  border-radius: var(--radius);
+  font-size: 2rem;
+  font-weight: 600;
+  color:#222;
+  padding: 1rem 0.6rem;
+  padding-left: 3.4rem;               /* espaço para o emoji à esquerda */
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+/* Foco visível */
+.stat-chip:focus-visible{
+  outline: 0.2rem solid #111;
+  outline-offset: 0.2rem;
+}
+
+/* Base do “ícone” (emoji) à esquerda */
+.stat-chip::before{
+  content: "";                      /* será definido por modificador */
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.8rem;                /* tamanho do emoji */
+  line-height: 1;
+}
+
+/* Ícones por atributo (emojis) */
+.stat-chip--atk::before{ content: "⚔️"; }  /* Ataque */
+.stat-chip--def::before{ content: "🛡️"; }  /* Defesa */
+.stat-chip--acc::before{ content: "🎯"; }  /* Precisão */
+.stat-chip--agi::before{ content: "💨"; }  /* Agilidade */
+/* =====================[ FIM TRECHO 6 ]===================== */
+
+
+/* =====================[ TRECHO 7: PAINEL DE SALA / INIMIGO ]===================== */
+.room{
+  border: 0.1rem solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.8rem;
+  background:#fff;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+/* Título da sala (INFO) */
+.room-title{
+  margin: 0;
+  text-align:center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #222;
+}
+
+/* Cartão do inimigo (COMBAT) */
+.enemy-card{
+  display: grid;
+  grid-template-rows: auto auto auto;
+  row-gap: 0.8rem;
+}
+
+/* Toggle de visibilidade entre os modos */
+.room.room--info   .enemy-card { display:none; }
+
+/* Nome do inimigo */
+.enemy-name{
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+/* Barra de HP do inimigo (reusa .bar/.fill.hp) */
+.enemy-hp{ height: 1rem; }
+/* =====================[ FIM TRECHO 7 ]===================== */
+
+
+/* =====================[ TRECHO 7.1: RUNLINE (DIA/ANDAR) ]===================== */
+.runline{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5rem;
+  border: 0.1rem solid var(--border);
+  background: var(--surface);
+  border-radius: 0.6rem;
+  font-size: 1.6rem;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--runline);
+}
+.runline .runline-day{ font-weight: 600; }
+.runline .runline-floor{ font-weight: 600; text-align: right; }
+/* =====================[ FIM TRECHO 7.1 ]===================== */
+
+
+/* =====================[ TRECHO 8: AÇÕES PRINCIPAIS ]===================== */
+.actions{ 
+  display:flex; 
+  flex-direction:column; 
+  gap: 0.8rem; 
+}
+.btn{
+  height: var(--btn-h);
+  border-radius: var(--radius);
+  border: 0.1rem solid var(--border);
+  background:#f2f2f2; 
+  color:#111;
+  font-size: 1.6rem;
+  font-weight:600;
+}
+.btn-primary{ background:#e9e9e9; }
+/* =====================[ FIM TRECHO 8 ]===================== */
+
+/* =====================[ TRECHO 9: LOG (4 LINHAS, SEM SCROLL) ]===================== */
+/* [DOC]
+   - Layout de "terminal limpo": cada linha com barra de severidade à esquerda.
+   - 3 níveis: info (azul), mod (âmbar), crit (vermelho).
+   - Zebra sutil para facilitar varredura. Sem timestamps/agrupamento.
+*/
+.log{
+  border: 0.1rem solid var(--border);
+  border-radius: var(--radius);
+  background:#fff;
+  padding: 0.8rem;
+  display:flex;
+  align-items:center;
+  /* Paleta local de severidade (evita tocar :root) */
+  --sev-info: #2563eb; /* azul */
+  --sev-mod:  #d97706; /* âmbar */
+  --sev-crit: #b91c1c; /* vermelho escuro */
+}
+
+.log-view{
+  width:100%;
+  line-height: 2.2rem;  /* 4 linhas × 2.2 = 8.8rem */
+  font-size: 1.5rem;    /* leitura mais confortável que 1.4rem */
+}
+
+.log-line{
+  position: relative;
+  padding: 0.4rem 0.6rem 0.4rem 1rem; /* espaço para a barra */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-bottom: 0.1rem solid #eee;
+  border-left: 0.3rem solid transparent; /* barra de severidade */
+}
+.log-line:last-child{ border-bottom:0; }
+
+/* Zebra sutil (não exagerar para não virar ruído) */
+.log-line:nth-child(even){ background:#fafafa; }
+
+/* Cores por severidade (definidas na .log) */
+.log-line[data-sev="info"]{ border-left-color: var(--sev-info); }
+.log-line[data-sev="mod"] { border-left-color: var(--sev-mod);  }
+.log-line[data-sev="crit"]{ border-left-color: var(--sev-crit); }
+
+/* =====================[ FIM TRECHO 9 ]===================== */
+
+/* =====================[ TRECHO 10: ÁREA ADS / PROMO INTERNA ]===================== */
+.ads{
+  display:flex; 
+  align-items:center; 
+  justify-content:center;
+  border: 0.1rem dashed var(--border);
+  border-radius: var(--radius);
+  background:#fafafa; 
+  color:#777;
+  font-weight:600;
+}
+/* =====================[ FIM TRECHO 10 ]===================== */
+
+
+/* =====================[ TRECHO 11: OVERLAY DE LANDSCAPE (BLOQUEIO) ]===================== */
+.rotate-overlay{
+  position: fixed; 
+  inset: 0; 
+  display: none;
+  align-items: center; 
+  justify-content: center;
+  background: rgba(0,0,0,0.65); 
+  color:#fff; 
+  z-index: 9999;
+}
+.rotate-card{
+  background:#151515; 
+  border: 0.1rem solid #3a3a3a;
+  border-radius: 1.2rem; 
+  padding: 2rem; 
+  width: min(90vw, 36rem);
+  text-align: center;
+}
+.rotate-emoji{ font-size: 2.8rem; margin-bottom: 0.8rem; }
+@media (orientation: landscape){
+  .rotate-overlay{ display:flex; }
+  body{ overflow:hidden; }  /* reforço de bloqueio */
+}
+/* =====================[ FIM TRECHO 11 ]===================== */
+
+
+/* =====================[ TRECHO 12: ACESSIBILIDADE (FOCO VISÍVEL) ]===================== */
+button:focus-visible{
+  outline: 0.2rem solid #888;
+  outline-offset: 0.2rem;
+}
+/* =====================[ FIM TRECHO 12 ]===================== */
+
+/* =====================[ TRECHO 13: MODAL DE LOG (overlay + dialog 60vh) ]===================== */
+.log { cursor: pointer; } /* Área do log abre o histórico */
+body.no-scroll {
+  overflow: hidden;
+  height: 100vh;
+  touch-action: none;
+}
+.modal-overlay[hidden] { display: none; }
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;          /* botão abaixo do painel */
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  padding: 1.2rem;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+}
+.modal-dialog {
+  background: var(--surface);
+  color: var(--text);
+  /* largura será definida em runtime para casar com a .log */
+  width: auto;
+  max-width: 92vw;
+  height: 60vh;                    /* 60vh mantém mais conteúdo visível */
+  max-height: 60vh;
+  border-radius: var(--radius);
+  box-shadow: 0 0.8rem 2.4rem rgba(0,0,0,0.35);
+  display: flex;
+  flex-direction: column;
+  outline: 0;
+  overflow: hidden;                /* corpo rola internamente */
+}
+.modal-body {
+  padding: 0.8rem 1rem;            /* leve redução geral */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  flex: 1 1 auto;
+  font-size: 1.5rem;               /* mantém legibilidade */
+  /* Paleta local de severidade */
+  --sev-info: #2563eb;
+  --sev-mod:  #d97706;
+  --sev-crit: #b91c1c;
+}
+/* Linhas do histórico (visual equivalente ao log curto, porém mais compacto) */
+.modal-body .modal-log-line{
+  position: relative;
+  padding: 0.25rem 0.8rem 0.25rem 1rem;  /* ↓ padding vertical */
+  border-bottom: 0.1rem solid #f1f1f1;   /* separador sutil */
+  line-height: 1.30;                     /* ↓ altura de linha */
+  font-size: 1.45rem;                     /* leve ajuste para compensar densidade */
+  border-left: 0.3rem solid transparent;  /* barra de severidade */
+}
+/* Zebra bem sutil para não “abrir” espaço visual */
+.modal-body .modal-log-line:nth-child(even){ background:#fdfdfd; }
+.modal-body .modal-log-line:last-child { border-bottom: 0; }
+
+/* Cores por severidade */
+.modal-body .modal-log-line[data-sev="info"]{ border-left-color: var(--sev-info); }
+.modal-body .modal-log-line[data-sev="mod"] { border-left-color: var(--sev-mod);  }
+.modal-body .modal-log-line[data-sev="crit"]{ border-left-color: var(--sev-crit); }
+
+/* Botão redondo “X” abaixo do painel */
+.modal-close.modal-close-round {
+  width: 5.6rem;                   /* ≥ 44px */
+  height: 5.6rem;
+  min-width: 5.6rem;
+  min-height: 5.6rem;
+  border-radius: 50%;
+  border: 0.1rem solid var(--border);
+  background: #f6f6f6;
+  font-weight: 700;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-close.modal-close-round:focus {
+  outline: 0.2rem solid #000;
+  outline-offset: 0.1rem;
+}
+/* =====================[ FIM TRECHO 13 ]===================== */

@@ -1,105 +1,182 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<!-- =====================[ TRECHO 1: DOCUMENTO & HEAD ]===================== -->
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#42351c">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-    <meta http-equiv="Pragma" content="no-cache"/>
-    <meta http-equiv="Expires" content="0"/>
-    <title>Torre da Redenção</title>
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" href="icon.png">
-    <link rel="stylesheet" href="style.css">
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-          navigator.serviceWorker.register('service-worker.js').catch(() => {});
-        });
-      }
-    </script>
+  <meta charset="utf-8" />
+  <!-- [CHANGE][WHY] usar largura real do device + bloquear zoom do usuário -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>Torre da Redenção</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- [DOC] PWA Manifest + cor de tema para barra do SO -->
+  <meta name="theme-color" content="#0f0f0f" />
+  <link rel="manifest" href="manifest.json" />
 </head>
+<!-- =====================[ FIM TRECHO 1 ]===================== -->
 
 <body>
-    <!-- MENU INICIAL -->
-    <div id="menuInicial" class="menu-inicial" role="main" aria-label="Menu Inicial do Jogo" tabindex="-1">
-        <h1 class="titulo-jogo-menu" id="mainTitle">Torre da Redenção</h1>
-        <div class="menu-botoes">
-            <button id="btnIniciarJogo" aria-label="Iniciar Jogo" tabindex="0">Iniciar Jogo</button>
-            <button id="btnTitulos" aria-label="Títulos desbloqueados" tabindex="0">Títulos</button>
-            <button id="btnConquistas" aria-label="Conquistas" tabindex="0">Conquistas</button>
-            <button id="btnLore" aria-label="História do jogo" tabindex="0">História</button>
+  <!-- =====================[ TRECHO 2: OVERLAY DE LANDSCAPE (BLOQUEIO) ]===================== -->
+  <!-- [DOC] CSS-only: sem ARIA dinâmica para não conflitar sem JS. -->
+  <div class="rotate-overlay">
+    <div class="rotate-card">
+      <div class="rotate-emoji" aria-hidden="true">📱↻</div>
+      <p>Gire o dispositivo para <strong>retrato</strong>.</p>
+    </div>
+  </div>
+  <!-- =====================[ FIM TRECHO 2 ]===================== -->
+
+  <!-- =====================[ TRECHO 3: STAGE & CONTAINER 360x800 ]===================== -->
+  <main class="stage">
+    <section class="game" aria-label="Protótipo de interface">
+
+      <!-- =====================[ TRECHO 4: HEADER + XP (3 COLUNAS) ]===================== -->
+      <header class="toprow" aria-label="Topo do jogo">
+        <div class="level" aria-label="Nível atual">Level <strong>99</strong></div>
+
+        <div class="xp-stack" aria-label="Experiência">
+          <div class="xp-label" aria-hidden="true">0/100</div>
+          <div class="xp-bar" role="progressbar" aria-label="Barra de XP" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="0">
+            <div class="xp-fill" style="width:0%"></div>
+          </div>
         </div>
-    </div>
 
-    <!-- PAINEL: TÍTULOS -->
-    <div id="painelTitulos" class="menu-painel" style="display:none;" role="dialog" aria-label="Painel de Títulos" tabindex="-1">
-        <h2 class="titulo-jogo-painel">Torre da Redenção</h2>
-        <h3 class="painel-section-title">Títulos</h3>
-        <div class="painel-conteudo"></div>
-        <button class="btn-voltar-menu" aria-label="Voltar ao Menu Inicial" tabindex="0">Voltar</button>
-    </div>
+        <button class="icon-btn" type="button" aria-label="Menu" title="Menu" disabled>☰</button>
+      </header>
+      <!-- =====================[ FIM TRECHO 4 ]===================== -->
 
-    <!-- PAINEL: CONQUISTAS -->
-    <div id="painelConquistas" class="menu-painel" style="display:none;" role="dialog" aria-label="Painel de Conquistas" tabindex="-1">
-        <h2 class="titulo-jogo-painel">Torre da Redenção</h2>
-        <h3 class="painel-section-title">Conquistas</h3>
-        <div class="painel-conteudo"></div>
-        <button class="btn-voltar-menu" aria-label="Voltar ao Menu Inicial" tabindex="0">Voltar</button>
-    </div>
+      <!-- =====================[ TRECHO 5: STATS PRINCIPAIS (VIDA/MANA/ENERGIA/SANIDADE) ]===================== -->
+      <section class="stats-grid" aria-label="Atributos principais do jogador">
+        <article class="stat-card">
+          <div class="stat-head"><span class="stat-name">VIDA</span><span class="stat-val">100/100</span></div>
+          <div class="bar" role="progressbar" aria-label="Vida" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+            <div class="fill life" style="width:100%"></div>
+          </div>
+        </article>
 
-    <!-- PAINEL: LORE / HISTÓRIA -->
-    <div id="painelLore" class="menu-painel" style="display:none;" role="dialog" aria-label="Painel de História do Jogo" tabindex="-1">
-        <h2 class="titulo-jogo-painel">Torre da Redenção</h2>
-        <h3 class="painel-section-title">História</h3>
-        <div class="painel-conteudo"></div>
-        <button class="btn-voltar-menu" aria-label="Voltar ao Menu Inicial" tabindex="0">Voltar</button>
-    </div>
+        <article class="stat-card">
+          <div class="stat-head"><span class="stat-name">MANA</span><span class="stat-val">100/100</span></div>
+          <div class="bar" role="progressbar" aria-label="Mana" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+            <div class="fill mana" style="width:100%"></div>
+          </div>
+        </article>
 
-    <!-- CONTAINER DO JOGO COM ORDEM PERSONALIZADA -->
-    <div class="game-container" style="display:none;" role="main" aria-label="Área principal do Jogo" tabindex="-1">
-        <div class="game-inner" style="display: flex; flex-direction: column; height: 100%; min-height: 0;">
+        <article class="stat-card">
+          <div class="stat-head"><span class="stat-name">ENERGIA</span><span class="stat-val">100/100</span></div>
+          <div class="bar" role="progressbar" aria-label="Energia" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+            <div class="fill energy" style="width:100%"></div>
+          </div>
+        </article>
 
-            <!-- 1. Status do Jogador -->
-            <div id="status" class="status-box" aria-label="Painel de Status do Jogador" tabindex="0">
-                <!-- Status será atualizado aqui -->
-            </div>
+        <article class="stat-card">
+          <div class="stat-head"><span class="stat-name">SANIDADE</span><span class="stat-val">100/100</span></div>
+          <div class="bar" role="progressbar" aria-label="Sanidade" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+            <div class="fill sanity" style="width:100%"></div>
+          </div>
+        </article>
+      </section>
+      <!-- =====================[ FIM TRECHO 5 ]===================== -->
 
-            <!-- 2. Painel do Inimigo (inserido dinamicamente via JS) -->
-            <!-- #enemyPanel será inserido após #status por JS e animado apenas quando necessário -->
-
-            <!-- 3. Botões de Ação -->
-            <div id="options" class="options-box" aria-label="Opções do Jogador" tabindex="0">
-                <!-- Opções serão geradas aqui -->
-            </div>
-
-            <!-- 4. Histórico -->
-            <div id="fullHistory" class="full-history" aria-live="polite" aria-atomic="false" aria-label="Histórico de Mensagens do Jogo" tabindex="0">
-                <!-- Mensagens serão adicionadas aqui -->
-            </div>
-
+      <!-- =====================[ TRECHO 6: STATUS DO JOGADOR (ATAQUE/DEFESA/PRECISÃO/AGILIDADE) ]===================== -->
+      <section class="secstats" aria-label="Status do jogador">
+        <div class="secstats-grid">
+          <button class="stat-chip stat-chip--atk" type="button" aria-label="Ataque" disabled></button>
+          <button class="stat-chip stat-chip--def" type="button" aria-label="Defesa" disabled></button>
+          <button class="stat-chip stat-chip--acc" type="button" aria-label="Precisão" disabled></button>
+          <button class="stat-chip stat-chip--agi" type="button" aria-label="Agilidade" disabled></button>
         </div>
-    </div>
+      </section>
+      <!-- =====================[ FIM TRECHO 6 ]===================== -->
 
-    <!-- MODAL DE ORIENTAÇÃO -->
-    <div id="orientationLockModal" style="display:none;" role="alertdialog" aria-modal="true" aria-label="Modo Retrato Obrigatório" tabindex="-1">
-        <div class="orientation-modal-inner">
-            <span style="font-size:3em;display:block;" aria-hidden="true">🔄</span>
-            <div class="orientation-text">Por favor, gire o aparelho para o modo retrato<br><span style="font-size:0.85em;">(Portrait mode)</span></div>
+      <!-- =====================[ TRECHO 7: PAINEL DE SALA / INIMIGO ]===================== -->
+      <section class="room room--info" aria-label="Sala atual">
+        <h2 class="room-title" aria-live="polite">Sala Vazia</h2>
+
+        <!-- Cartão do inimigo (visível apenas quando o atributo [hidden] for removido via JS) -->
+        <article class="enemy-card" hidden>
+          <!-- [DOC] enemy-head é um *hook* de layout futuro; hoje não há estilo específico. -->
+          <div class="enemy-head">
+            <div class="enemy-name" aria-live="polite">Inimigo</div>
+            <div class="enemy-hp" role="progressbar" aria-label="HP do inimigo" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+              <div class="fill hp" style="width:100%"></div>
+            </div>
+          </div>
+
+          <div class="enemy-stats">
+            <div class="secstats-grid" aria-label="Status do inimigo">
+              <div class="stat-chip stat-chip--atk" title="Ataque do inimigo" aria-label="Ataque do inimigo">0</div>
+              <div class="stat-chip stat-chip--def" title="Defesa do inimigo" aria-label="Defesa do inimigo">0</div>
+              <div class="stat-chip stat-chip--acc" title="Precisão do inimigo" aria-label="Precisão do inimigo">0</div>
+              <div class="stat-chip stat-chip--agi" title="Agilidade do inimigo" aria-label="Agilidade do inimigo">0</div>
+            </div>
+          </div>
+        </article>
+      </section>
+      <!-- =====================[ FIM TRECHO 7 ]===================== -->
+
+      <!-- =====================[ TRECHO 7.1: RUNLINE (DIA / ANDAR) ]===================== -->
+      <section class="runline" aria-label="Resumo da run (Dia e Andar)">
+        <span class="runline-day">Dia 1</span>
+        <span class="runline-floor">Andar 1</span>
+      </section>
+      <!-- =====================[ FIM TRECHO 7.1 ]===================== -->
+
+      <!-- =====================[ TRECHO 8: AÇÕES PRINCIPAIS ]===================== -->
+      <!-- [DOC] Os quatro botões abaixo são **slots de ação**. IDs fixos indicam APENAS a posição (1–4).
+           O significado (rótulo e efeito) é definido dinamicamente pelo JS conforme a sala. -->
+      <section class="actions" aria-label="Ações principais">
+        <button id="act-1" class="btn" type="button" disabled>???</button>
+        <button id="act-2" class="btn" type="button" disabled>???</button>
+        <button id="act-3" class="btn" type="button" disabled>???</button>
+        <button id="act-4" class="btn btn-primary" type="button">EXPLORAR</button>
+      </section>
+      <!-- =====================[ FIM TRECHO 8 ]===================== -->
+
+      <!-- =====================[ TRECHO 9: LOG (4 LINHAS, SEM SCROLL) ]===================== -->
+      <section class="log" aria-label="Mensagens">
+        <div class="log-view" role="log" aria-live="polite">
+          <div class="log-line" title="Mensagem de log um">Mensagem de log um</div>
+          <div class="log-line" title="Mensagem de log dois">Mensagem de log dois</div>
+          <div class="log-line" title="Mensagem de log três">Mensagem de log três</div>
+          <div class="log-line" title="Mensagem de log quatro">Mensagem de log quatro</div>
         </div>
-    </div>
+      </section>
+      <!-- =====================[ FIM TRECHO 9 ]===================== -->
+       
+      <!-- =====================[ TRECHO 9B: MODAL — HISTÓRICO DE LOGS (50vh, sem título) ]===================== -->
+      <!-- [DOC] Overlay com dialog rolável (50vh), largura igual ao painel de log, e botão redondo abaixo. -->
+      <div class="modal-overlay" id="log-modal" aria-hidden="true" hidden>
+        <div class="modal-dialog" role="dialog" aria-modal="true" aria-label="Histórico de logs">
+          <div class="modal-body" id="log-modal-body" tabindex="0" aria-label="Histórico de mensagens"></div>
+        </div>
+        <button type="button" class="modal-close modal-close-round" aria-label="Fechar">✕</button>
+      </div>
+      <!-- =====================[ FIM TRECHO 9B ]===================== -->
 
-    <!-- Scripts -->
-    <script src="game.js"></script>
-    <script src="title.js"></script>
-    <script src="buffUtils.js"></script>
-    <script src="status.js"></script>
-    <script src="exploration.js"></script>
-    <script src="enemyBehaviors.js"></script>
-    <script src="ui.js"></script>
-    <script src="combat.js"></script>
+      <!-- =====================[ TRECHO 10: ADS / PROMO INTERNA ]===================== -->
+      <section class="ads" aria-label="Espaço promocional">ADS</section>
+      <!-- =====================[ FIM TRECHO 10 ]===================== -->
+
+      <!-- =====================[ TRECHO 11: Scripts ]===================== -->
+      <!-- [CHANGE][DOC] Módulo de idiomas 100% offline (sem fetch/XHR), aplica traduções no boot -->
+      <script src="i18n.js" defer></script>
+      <script src="ui.js" defer></script>
+      <script src="game.js" defer></script>
+      
+      <!-- [DOC] Registro do Service Worker para PWA offline (escopo relativo à pasta atual) -->
+      <script>
+      (function() {
+        if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+          window.addEventListener('load', function() {
+            try {
+              navigator.serviceWorker.register('./sw.js', { scope: './' });
+            } catch (e) {
+              /* silencioso por design */
+            }
+          });
+        }
+      })();
+      </script>
+      <!-- =====================[ FIM TRECHO 11 ]===================== -->
+
+    </section>
+  </main>
 </body>
 </html>
